@@ -68,43 +68,54 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 ## Example Output
 
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MAGI SYSTEM — Deliberation Results
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+> MAGI SYSTEM — Deliberation Results
+> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  ■ MELCHIOR-1 [Scientist] ──── Verdict: Approve
-  ┌──────────────────────┬──────┐
-  │ Correctness/Rigor    │  ◎   │
-  │ Performance          │  ○   │
-  │ Security             │  ○   │
-  │ Technical Consistency│  ◎   │
-  └──────────────────────┴──────┘
+**Topic:** Should we migrate from REST to GraphQL?
 
-  ■ BALTHASAR-2 [Mother] ──── Verdict: Conditional Approval
-  ┌──────────────────────┬──────┐
-  │ Maintainability      │  ○   │
-  │ Testability          │  △   │
-  │ Operability          │  ○   │
-  │ Team Impact          │  △   │
-  └──────────────────────┴──────┘
+### MELCHIOR-1 [Scientist] — Verdict: Approve
 
-  ■ CASPAR-3 [Woman] ──── Verdict: Approve
-  ┌──────────────────────┬──────┐
-  │ Design Elegance      │  ◎   │
-  │ Innovation           │  ◎   │
-  │ Feasibility          │  ○   │
-  │ Adaptability         │  ○   │
-  └──────────────────────┴──────┘
+| Axis | Score |
+|------|-------|
+| Correctness/Rigor | ◎ |
+| Performance | ○ |
+| Security | ○ |
+| Technical Consistency | ◎ |
 
-  ━━━ Final Judgment ━━━
+> Technically sound. Type safety and schema validation are superior to REST.
 
-  【Verdict】: Conditional Approval
-  【Votes】: MELCHIOR ✅ / BALTHASAR ⚠️ / CASPAR ✅
-  【Confidence】: Medium
+### BALTHASAR-2 [Mother] — Verdict: Conditional Approval
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+| Axis | Score |
+|------|-------|
+| Maintainability | ○ |
+| Testability | △ |
+| Operability | ○ |
+| Team Impact | △ |
+
+> Concerns about onboarding cost. Team needs GraphQL training first.
+
+### CASPAR-3 [Woman] — Verdict: Approve
+
+| Axis | Score |
+|------|-------|
+| Design Elegance | ◎ |
+| Innovation | ◎ |
+| Feasibility | ○ |
+| Adaptability | ○ |
+
+> Beautiful query API. The industry is moving this way.
+
+> ━━━ Final Judgment ━━━
+
+| | MELCHIOR | BALTHASAR | CASPAR |
+|---|---------|-----------|--------|
+| **Verdict** | Approve | Cond. Approval | Approve |
+
+- **Overall Verdict:** Conditional Approval
+- **Confidence:** Medium (2:1)
+- **Conditions:** Team training before full adoption
 
 ## Project Structure
 

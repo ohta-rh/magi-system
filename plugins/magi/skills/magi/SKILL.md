@@ -97,60 +97,65 @@ Score conversion: ◎=5, ○=4, △=3, ▽=2, ×=1
 
 ## Phase 4: Deliberation Output
 
-Report the results in the following format:
+Report the results in the following format (use Markdown tables for scores, keep ━━━ headers for NERV aesthetic):
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   MAGI SYSTEM — Deliberation Results
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
-  Topic: (state the topic)
+**Topic:** (state the topic)
 
-  ■ MELCHIOR-1 [Scientist] ──── Verdict: (verdict)
-  ┌──────────────────────┬──────┐
-  │ Correctness/Rigor    │ (symbol) │
-  │ Performance          │ (symbol) │
-  │ Security             │ (symbol) │
-  │ Technical Consistency│ (symbol) │
-  └──────────────────────┴──────┘
-  Findings: (1-2 line summary of overall analysis)
+### MELCHIOR-1 [Scientist] — Verdict: (verdict)
 
-  ■ BALTHASAR-2 [Mother] ──── Verdict: (verdict)
-  ┌──────────────────────┬──────┐
-  │ Maintainability      │ (symbol) │
-  │ Testability          │ (symbol) │
-  │ Operability          │ (symbol) │
-  │ Team Impact          │ (symbol) │
-  └──────────────────────┴──────┘
-  Findings: (1-2 line summary of overall analysis)
+| Axis | Score |
+|------|-------|
+| Correctness/Rigor | (symbol) |
+| Performance | (symbol) |
+| Security | (symbol) |
+| Technical Consistency | (symbol) |
 
-  ■ CASPAR-3 [Woman] ──── Verdict: (verdict)
-  ┌──────────────────────┬──────┐
-  │ Design Elegance      │ (symbol) │
-  │ Innovation           │ (symbol) │
-  │ Feasibility          │ (symbol) │
-  │ Adaptability         │ (symbol) │
-  └──────────────────────┴──────┘
-  Findings: (1-2 line summary of overall analysis)
+> (1-2 line summary of overall analysis)
 
-  ━━━ Multi-Dimensional Summary ━━━
+### BALTHASAR-2 [Mother] — Verdict: (verdict)
 
-  Strengths (areas with ◎):
-  - (List evaluation axes where ◎ was scored across all MAGI)
+| Axis | Score |
+|------|-------|
+| Maintainability | (symbol) |
+| Testability | (symbol) |
+| Operability | (symbol) |
+| Team Impact | (symbol) |
 
-  Concerns (areas with △ or below):
-  - (List evaluation axes where △ or below was scored across all MAGI)
+> (1-2 line summary of overall analysis)
 
-  ━━━ Final Judgment ━━━
+### CASPAR-3 [Woman] — Verdict: (verdict)
 
-  【Verdict】: Approve / Reject / Conditional Approval / Indeterminate
-  【Votes】: MELCHIOR (verdict) / BALTHASAR (verdict) / CASPAR (verdict)
-  【Confidence】: High / Medium / Low
-  【Conditions】: (Aggregate conditions if any conditional approvals. Otherwise "None")
+| Axis | Score |
+|------|-------|
+| Design Elegance | (symbol) |
+| Innovation | (symbol) |
+| Feasibility | (symbol) |
+| Adaptability | (symbol) |
 
-  【Recommended Actions】:
-  - (1-3 concrete next steps based on deliberation results)
+> (1-2 line summary of overall analysis)
 
+```
+━━━ Final Judgment ━━━
+```
+
+| | MELCHIOR | BALTHASAR | CASPAR |
+|---|---------|-----------|--------|
+| **Verdict** | (verdict) | (verdict) | (verdict) |
+
+- **Overall Verdict:** Approve / Reject / Conditional Approval / Indeterminate
+- **Confidence:** High / Medium / Low
+- **Conditions:** (Aggregate conditions if any. Otherwise "None")
+
+**Recommended Actions:**
+1. (1-3 concrete next steps based on deliberation results)
+
+```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
