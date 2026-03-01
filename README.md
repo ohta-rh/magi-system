@@ -14,14 +14,16 @@ A **Claude Code plugin** inspired by the [MAGI](https://evangelion.fandom.com/wi
 
 ## Installation
 
-### Plugin
+### Plugin (Recommended)
 
-```bash
-claude plugin marketplace add ohta-rh/magi-system
-claude plugin install magi@magi-plugins
+Run inside Claude Code interactive mode:
+
+```
+/plugin marketplace add ohta-rh/magi-system
+/plugin install magi@magi-plugins
 ```
 
-### Manual
+### Manual Symlink
 
 ```bash
 git clone https://github.com/ohta-rh/magi-system.git
@@ -108,7 +110,7 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 ```
 magi-system/
-├── .claude-plugin/          # Plugin distribution config
+├── .claude-plugin/          # Plugin marketplace & manifest
 ├── skills/magi/
 │   ├── SKILL.md             # Orchestrator
 │   └── agents/
