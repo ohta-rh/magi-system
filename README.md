@@ -27,7 +27,7 @@ Run inside Claude Code interactive mode:
 
 ```bash
 git clone https://github.com/ohta-rh/magi-system.git
-ln -s "$(pwd)/magi-system/skills/magi" ~/.claude/skills/magi
+ln -s "$(pwd)/magi-system/plugins/magi/skills/magi" ~/.claude/skills/magi
 ```
 
 Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
@@ -110,13 +110,17 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 ```
 magi-system/
-├── .claude-plugin/          # Plugin marketplace & manifest
-├── skills/magi/
-│   ├── SKILL.md             # Orchestrator
-│   └── agents/
-│       ├── melchior.md      # The Scientist
-│       ├── balthasar.md     # The Mother
-│       └── caspar.md        # The Woman
+├── .claude-plugin/
+│   └── marketplace.json       # Marketplace catalog
+├── plugins/magi/
+│   ├── .claude-plugin/
+│   │   └── plugin.json        # Plugin manifest
+│   └── skills/magi/
+│       ├── SKILL.md           # Orchestrator
+│       └── agents/
+│           ├── melchior.md    # The Scientist
+│           ├── balthasar.md   # The Mother
+│           └── caspar.md      # The Woman
 └── README.md
 ```
 

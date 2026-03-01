@@ -1,13 +1,16 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "magi-plugins",
+  "description": "MAGI System — Engineering decision support inspired by Neon Genesis Evangelion",
   "owner": {
     "name": "ohta-rh"
   },
   "plugins": [
     {
       "name": "magi",
-      "source": ".",
-      "description": "MAGI System — Three supercomputers deliberate engineering decisions in parallel"
+      "description": "Three supercomputers deliberate engineering decisions in parallel, each from a unique perspective",
+      "source": "./plugins/magi",
+      "category": "productivity"
     }
   ]
 }

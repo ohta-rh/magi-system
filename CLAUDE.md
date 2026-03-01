@@ -6,14 +6,16 @@ A Claude Code plugin that implements the MAGI supercomputer council from Neon Ge
 
 ```
 .claude-plugin/
-  marketplace.json    — Plugin marketplace definition
-  plugin.json         — Plugin manifest
-skills/magi/
-  SKILL.md            — Main skill (orchestrator for /magi command)
-  agents/
-    melchior.md       — MELCHIOR-1: The Scientist (technical excellence)
-    balthasar.md      — BALTHASAR-2: The Mother (sustainability)
-    caspar.md         — CASPAR-3: The Woman (pragmatic aesthetics)
+  marketplace.json          — Marketplace catalog (for /plugin marketplace add)
+plugins/magi/
+  .claude-plugin/
+    plugin.json             — Plugin manifest
+  skills/magi/
+    SKILL.md                — Main skill (orchestrator for /magi command)
+    agents/
+      melchior.md           — MELCHIOR-1: The Scientist (technical excellence)
+      balthasar.md          — BALTHASAR-2: The Mother (sustainability)
+      caspar.md             — CASPAR-3: The Woman (pragmatic aesthetics)
 ```
 
 ## How It Works
