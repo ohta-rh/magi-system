@@ -1,0 +1,8 @@
+{
+  "name": "magi",
+  "description": "MAGI System — Three supercomputers deliberate engineering decisions in parallel, each from a unique perspective.",
+  "version": "1.0.0",
+  "author": {
+    "name": "ohta-rh"
+  }
+}

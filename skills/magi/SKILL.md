@@ -57,10 +57,10 @@ Output the following:
 
 ### Step 1: Load Agent Prompts
 
-Read the following 3 files **in parallel** using Read:
-- `~/.claude/skills/magi-system/agents/melchior.md`
-- `~/.claude/skills/magi-system/agents/balthasar.md`
-- `~/.claude/skills/magi-system/agents/caspar.md`
+First, locate the MAGI agent files. Use Glob with pattern `**/magi/agents/melchior.md` and path `~/.claude/` to find the agents directory. Then read all three agent files **in parallel** using Read from the discovered directory:
+- `melchior.md`
+- `balthasar.md`
+- `caspar.md`
 
 ### Step 2: Parallel Agent Launch
 

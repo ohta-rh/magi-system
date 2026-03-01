@@ -1,0 +1,11 @@
+{
+  "name": "magi-plugins",
+  "description": "MAGI System — Engineering decision support inspired by Neon Genesis Evangelion",
+  "plugins": [
+    {
+      "name": "magi",
+      "description": "Three-council engineering decision system with MELCHIOR, BALTHASAR, and CASPAR",
+      "source": "."
+    }
+  ]
+}
