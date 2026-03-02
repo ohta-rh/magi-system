@@ -329,23 +329,24 @@ After delivering the verdict to the user, persist a summary of this deliberation
 
 2. **Check if `.magi/decisions.json` exists** using Glob in the project root
 
-3. **If the file exists**: Read the current contents, parse as a JSON array, append the new entry, and write back using Bash:
-   ```
-   Use Bash to read the file, append the new entry to the array, and write back
-   ```
+3. **If the file exists**: Read the current contents with Read, parse as a JSON array, append the new entry.
 
-4. **If the file does not exist**: Create the `.magi/` directory (if needed) and write a new JSON array containing just this entry using Write:
-   ```
-   Use Bash to create the directory: mkdir -p .magi
-   Use Write to create .magi/decisions.json with [entry]
-   ```
+4. **Pruning**: If the array length exceeds 50 entries after appending, remove the oldest entries (from the beginning of the array) to bring the count to 50. This keeps the decision log bounded.
 
-5. **Confirm logging** with a brief note after the verdict output:
+5. **If the file does not exist**: Create the `.magi/` directory (if needed) using Bash (`mkdir -p .magi`), then write a new JSON array containing just this entry.
+
+6. **Write the file** using the Write tool (preferred over Bash for atomic file operations). Write the entire JSON array to `.magi/decisions.json`.
+
+7. **Confirm logging** with a brief note after the verdict output:
    ```
    📋 Decision logged to .magi/decisions.json
    ```
 
-This phase runs silently after the verdict. Logging failures should not affect the user-facing output — if writing fails, note the error but do not retry.
+### Limitations
+
+- **Maximum entries**: 50 most recent decisions. Older entries are pruned on each write.
+- **Concurrent writes**: If multiple MAGI sessions run simultaneously, the last writer wins. This is acceptable for a decision log — no locking mechanism is implemented.
+- **Failure handling**: Logging failures should not affect the user-facing output — if writing fails, note the error but do not retry.
 
 ## Phase 6: Interactive Drill-Down (Optional)
 
@@ -353,7 +354,15 @@ After the verdict is delivered and the decision is logged, offer the user a foll
 
 ### Trigger
 
-Always offer this phase after Phase 5 completes, regardless of the verdict outcome.
+Phase 6 is conditionally offered based on the verdict outcome:
+
+| Verdict Outcome | Phase 6 Action |
+|----------------|----------------|
+| 3:0 Unanimous Approve | **Skip** — Session ends after Phase 5 |
+| 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
+| Any Conditional Approval | **Trigger** — Offer re-evaluate + accept |
+| 1:1:1 Indeterminate | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
+| 3:0 Unanimous Reject | **Trigger** — Offer re-evaluate + accept |
 
 ### Options
 
@@ -372,6 +381,9 @@ Present the following choices via AskUserQuestion:
 
 ### Implementation Notes
 
-- If the verdict was unanimous (3:0), omit option 1 (no dissenter exists)
-- If the verdict was indeterminate (1:1:1), replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts
-- This phase may recurse: if the user re-evaluates, the new deliberation also offers a drill-down at the end
+- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after Phase 5 with a brief closing note.
+- **2:1 Split**: Option 1 uses the dissenter identified in Phase 3.5. Re-spawn with focused elaboration prompt.
+- **1:1:1 Indeterminate**: Replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts.
+- **3:0 Unanimous Reject**: Omit option 1 (no dissenter). Offer re-evaluate to let the user amend their proposal.
+- **Conditional Approval (any split)**: Always offer re-evaluate so the user can address conditions.
+- This phase may recurse: if the user re-evaluates, the new deliberation applies the same conditional Phase 6 logic.
