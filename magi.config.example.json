@@ -1,0 +1,26 @@
+{
+  "_comment": "MAGI System configuration. Copy to magi.config.json and customize.",
+  "agents": [
+    {
+      "name": "MELCHIOR-1",
+      "persona": "The Scientist — Technical excellence, correctness, performance, security",
+      "file": "plugins/magi/skills/magi/agents/melchior.md",
+      "model": "sonnet"
+    },
+    {
+      "name": "BALTHASAR-2",
+      "persona": "The Mother — Sustainability, maintainability, testing, operations, team",
+      "file": "plugins/magi/skills/magi/agents/balthasar.md",
+      "model": "sonnet"
+    },
+    {
+      "name": "CASPAR-3",
+      "persona": "The Woman — Pragmatic aesthetics, design elegance, innovation, feasibility",
+      "file": "plugins/magi/skills/magi/agents/caspar.md",
+      "model": "sonnet"
+    }
+  ],
+  "voting": {
+    "quorum": 3
+  }
+}

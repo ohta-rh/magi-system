@@ -71,7 +71,17 @@ Before activation, check for a custom agent configuration file in the project ro
      "voting": { "quorum": 3 }
    }
    ```
-3. If the file does not exist or is invalid, use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: sonnet`
+3. **If the file does not exist**: Use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: sonnet`. No warning needed.
+4. **If the file exists but is malformed**: Output a visible warning and fall back to defaults:
+   ```
+   ⚠ MAGI Config Warning: magi.config.json found but invalid — (reason). Falling back to default agents.
+   ```
+   Common validation errors to detect:
+   - JSON parse failure (syntax error)
+   - Missing `agents` array
+   - Agent entry missing required `name` or `file` field
+   - Agent `file` path does not exist (check with Glob)
+   - `voting.quorum` is not a positive integer
 
 Store the resolved agent list for use in Phase 2.
 
