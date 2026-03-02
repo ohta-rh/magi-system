@@ -91,11 +91,12 @@ what evidence would change your verdict.)
 
 ### Structured Output
 
-After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. This allows the orchestrator to extract your scores and verdict programmatically.
+After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. See the MAGI_OUTPUT Schema Definition in SKILL.md for full field requirements.
 
 ```
 <!-- MAGI_OUTPUT
 {
+  "schema_version": "1.0",
   "verdict": "Approve|Reject|Conditional Approval",
   "conditions": "state conditions if Conditional Approval, otherwise null",
   "scores": {
@@ -109,7 +110,5 @@ After your human-readable analysis above, you MUST include the following machine
 -->
 ```
 
-- Replace `0` with your actual scores (1-5)
-- Replace `"..."` with your one-line rationale for each axis
-- `risks` is an array of strings; use `[]` if no risks
+- Replace `0` with your actual scores (1-5) and `"..."` with rationale
 - This block MUST be valid JSON inside the HTML comment markers
