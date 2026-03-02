@@ -16,6 +16,12 @@ plugins/magi/
       melchior.md           — MELCHIOR-1: The Scientist (technical excellence)
       balthasar.md          — BALTHASAR-2: The Mother (sustainability)
       caspar.md             — CASPAR-3: The Woman (pragmatic aesthetics)
+    references/
+      output-format.md      — Phase 4 output templates (NERV aesthetic)
+      judgment-rules.md     — Voting rules and confidence levels
+      schema.md             — MAGI_OUTPUT structured output schema
+    examples/
+      sample-deliberation.md — Example deliberation output
 ```
 
 ## How It Works

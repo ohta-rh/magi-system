@@ -1,0 +1,84 @@
+# Phase 4: Deliberation Output Format
+
+Report the results in the following format (use Markdown tables for scores, keep ━━━ headers for NERV aesthetic):
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  MAGI SYSTEM — Deliberation Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Topic:** (state the topic)
+
+### MELCHIOR-1 [Scientist] — Verdict: (verdict)
+
+| Axis | Score |
+|------|-------|
+| Correctness/Rigor | (1-5) |
+| Performance | (1-5) |
+| Security | (1-5) |
+| Technical Consistency | (1-5) |
+
+> (1-2 line summary of overall analysis)
+
+### BALTHASAR-2 [Mother] — Verdict: (verdict)
+
+| Axis | Score |
+|------|-------|
+| Maintainability | (1-5) |
+| Testability | (1-5) |
+| Operability | (1-5) |
+| Team Impact | (1-5) |
+
+> (1-2 line summary of overall analysis)
+
+### CASPAR-3 [Woman] — Verdict: (verdict)
+
+| Axis | Score |
+|------|-------|
+| Design Elegance | (1-5) |
+| Innovation | (1-5) |
+| Feasibility | (1-5) |
+| Adaptability | (1-5) |
+
+> (1-2 line summary of overall analysis)
+
+### Divergence Map
+
+Score overview across all agents and axes. Each axis is evaluated by a single agent — cross-agent spread is not applicable. For cross-agent divergence, see Phase 3.5 Contention Analysis (verdict-level disagreement).
+
+| Agent | Axis | Score |
+|-------|------|-------|
+| MELCHIOR-1 | Correctness/Rigor | (1-5) |
+| MELCHIOR-1 | Performance | (1-5) |
+| MELCHIOR-1 | Security | (1-5) |
+| MELCHIOR-1 | Technical Consistency | (1-5) |
+| BALTHASAR-2 | Maintainability | (1-5) |
+| BALTHASAR-2 | Testability | (1-5) |
+| BALTHASAR-2 | Operability | (1-5) |
+| BALTHASAR-2 | Team Impact | (1-5) |
+| CASPAR-3 | Design Elegance | (1-5) |
+| CASPAR-3 | Innovation | (1-5) |
+| CASPAR-3 | Feasibility | (1-5) |
+| CASPAR-3 | Adaptability | (1-5) |
+
+- If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
+
+```
+━━━ Final Judgment ━━━
+```
+
+| | MELCHIOR | BALTHASAR | CASPAR |
+|---|---------|-----------|--------|
+| **Verdict** | (verdict) | (verdict) | (verdict) |
+
+- **Overall Verdict:** Approve / Reject / Conditional Approval / Indeterminate
+- **Confidence:** High / Medium / Low
+- **Conditions:** (Aggregate conditions if any. Otherwise "None")
+
+**Recommended Actions:**
+1. (1-3 concrete next steps based on deliberation results)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```

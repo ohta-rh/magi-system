@@ -194,32 +194,7 @@ Scores use a 5-point scale (5 = best, 1 = worst).
 
 ### MAGI_OUTPUT Schema Definition
 
-This is the authoritative schema for the structured output block emitted by each agent. Agents MUST conform to this schema. The orchestrator extracts data based on these field definitions.
-
-```json
-{
-  "schema_version": "1.0",
-  "verdict": "Approve | Reject | Conditional Approval",
-  "conditions": "string or null — required if verdict is Conditional Approval",
-  "scores": {
-    "<axis_key>": {
-      "score": "integer 1-5 (5 = best, 1 = worst)",
-      "rationale": "string — one-line justification"
-    }
-  },
-  "risks": ["string — each a distinct risk or concern. Empty array if none"]
-}
-```
-
-**Field rules:**
-- `schema_version`: Must be `"1.0"`. Future versions will increment this field.
-- `verdict`: Exactly one of the three values. No other values are valid.
-- `conditions`: Must be a non-empty string if verdict is `"Conditional Approval"`, otherwise `null`.
-- `scores`: Object with agent-specific axis keys. Each agent has exactly 4 axes. Keys must match the agent's defined evaluation axes.
-- `scores.*.score`: Integer from 1 to 5 inclusive.
-- `scores.*.rationale`: Non-empty string.
-- `risks`: Array of strings. Use `[]` (empty array) if no risks identified.
-- The entire JSON block MUST be valid JSON enclosed in `<!-- MAGI_OUTPUT ... -->` HTML comment markers.
+See [references/schema.md](references/schema.md) for the authoritative schema definition and field rules.
 
 ### Phase 3.5: Cross-Agent Contention Analysis
 
@@ -248,99 +223,9 @@ This contention summary is included in the Phase 4 output (before Final Judgment
 
 ## Phase 4: Deliberation Output
 
-Report the results in the following format (use Markdown tables for scores, keep ━━━ headers for NERV aesthetic):
+Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Divergence Map, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
 
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MAGI SYSTEM — Deliberation Results
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**Topic:** (state the topic)
-
-### MELCHIOR-1 [Scientist] — Verdict: (verdict)
-
-| Axis | Score |
-|------|-------|
-| Correctness/Rigor | (1-5) |
-| Performance | (1-5) |
-| Security | (1-5) |
-| Technical Consistency | (1-5) |
-
-> (1-2 line summary of overall analysis)
-
-### BALTHASAR-2 [Mother] — Verdict: (verdict)
-
-| Axis | Score |
-|------|-------|
-| Maintainability | (1-5) |
-| Testability | (1-5) |
-| Operability | (1-5) |
-| Team Impact | (1-5) |
-
-> (1-2 line summary of overall analysis)
-
-### CASPAR-3 [Woman] — Verdict: (verdict)
-
-| Axis | Score |
-|------|-------|
-| Design Elegance | (1-5) |
-| Innovation | (1-5) |
-| Feasibility | (1-5) |
-| Adaptability | (1-5) |
-
-> (1-2 line summary of overall analysis)
-
-### Divergence Map
-
-Score overview across all agents and axes. Each axis is evaluated by a single agent — cross-agent spread is not applicable. For cross-agent divergence, see Phase 3.5 Contention Analysis (verdict-level disagreement).
-
-| Agent | Axis | Score |
-|-------|------|-------|
-| MELCHIOR-1 | Correctness/Rigor | (1-5) |
-| MELCHIOR-1 | Performance | (1-5) |
-| MELCHIOR-1 | Security | (1-5) |
-| MELCHIOR-1 | Technical Consistency | (1-5) |
-| BALTHASAR-2 | Maintainability | (1-5) |
-| BALTHASAR-2 | Testability | (1-5) |
-| BALTHASAR-2 | Operability | (1-5) |
-| BALTHASAR-2 | Team Impact | (1-5) |
-| CASPAR-3 | Design Elegance | (1-5) |
-| CASPAR-3 | Innovation | (1-5) |
-| CASPAR-3 | Feasibility | (1-5) |
-| CASPAR-3 | Adaptability | (1-5) |
-
-- If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
-
-```
-━━━ Final Judgment ━━━
-```
-
-| | MELCHIOR | BALTHASAR | CASPAR |
-|---|---------|-----------|--------|
-| **Verdict** | (verdict) | (verdict) | (verdict) |
-
-- **Overall Verdict:** Approve / Reject / Conditional Approval / Indeterminate
-- **Confidence:** High / Medium / Low
-- **Conditions:** (Aggregate conditions if any. Otherwise "None")
-
-**Recommended Actions:**
-1. (1-3 concrete next steps based on deliberation results)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### Judgment Rules
-
-- **Unanimous** (3:0): Final verdict matches. Confidence: High
-- **Majority** (2:1): Adopt majority verdict. Confidence: Medium. Minority concerns noted in conditions
-- **Conditional Approval** counts as Approve. However, conditions are aggregated in the final verdict
-- **Three-way split** (all different verdicts): Indeterminate. Confidence: Low. Present all views and defer to user
-
-### Risk Summary
-
-Consolidate "Risks and Concerns" from all three MAGI, deduplicate, and reflect in recommended actions.
+Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
 
 ## Phase 5: Decision Logging
 
