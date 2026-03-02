@@ -40,7 +40,7 @@ plugins/magi/
 |-------|-------------|
 | Phase 0 | Topic clarification |
 | Phase 1 | Configuration check (`magi.config.json`) + activation sequence |
-| Phase 2 | Parallel agent launch (default 3 or configured N agents) |
+| Phase 2 | Parallel agent launch (exactly 3 agents, default or custom) |
 | Phase 3 | Result synthesis: structured extraction, partial results handling, contention analysis (2:1 splits) |
 | Phase 4 | Deliberation output: per-agent reports, divergence map, judgment rules, risk summary |
 | Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
@@ -55,3 +55,4 @@ plugins/magi/
 - Verdicts are: Approve / Reject / Conditional Approval
 - Final judgment follows majority rule (2:1 or 3:0)
 - Partial results: 2/3 = warning + capped confidence; 1/3 or 0/3 = no verdict
+- Custom agent configs (`magi.config.json`) must define exactly 3 agents — voting logic requires a 3-member council

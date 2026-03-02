@@ -2,7 +2,7 @@
 name: magi
 description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question or proposal]"
-allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep
+allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
 ---
 
 # MAGI SYSTEM — Engineering Decision Support System
@@ -49,8 +49,7 @@ Before activation, check for a custom agent configuration file in the project ro
    {
      "agents": [
        { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "sonnet" }
-     ],
-     "voting": { "quorum": 3 }
+     ]
    }
    ```
 3. **If the file does not exist**: Use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: sonnet`. No warning needed.
@@ -61,9 +60,9 @@ Before activation, check for a custom agent configuration file in the project ro
    Common validation errors to detect:
    - JSON parse failure (syntax error)
    - Missing `agents` array
+   - Agent count is not exactly 3 (voting logic requires 3 agents)
    - Agent entry missing required `name` or `file` field
    - Agent `file` path does not exist (check with Glob)
-   - `voting.quorum` is not a positive integer
 
 Store the resolved agent list for use in Phase 2.
 
@@ -185,17 +184,21 @@ See [references/schema.md](references/schema.md) for the authoritative schema de
 When a 2:1 split is detected:
 
 1. **Identify the dissenter** — the single agent whose verdict differs from the majority
-2. **Find high-divergence axes** — compare scores across all agents. Flag any axis where the score gap between any two agents is ≥ 2 points
-3. **Quote the dissenter's rationale** — extract the dissenter's Overall Analysis and the rationale for their highest-divergence axis
-4. **Produce a contention summary** in this format:
+2. **Compare per-agent average scores** — compute the mean of each agent's 4 axis scores. Flag if the dissenter's average diverges by ≥ 1.0 from the majority agents' averages. Note: each agent evaluates different axes, so individual axis scores are NOT comparable across agents
+3. **Identify the dissenter's weakest axis** — find the dissenter's lowest-scoring axis as the primary concern driving their verdict
+4. **Quote the dissenter's rationale** — extract the dissenter's Overall Analysis and the rationale for their lowest-scoring axis
+5. **Produce a contention summary** in this format:
 
 ```
 ### Contention Analysis (2:1 Split)
 
 **Dissenter:** (agent name) — Verdict: (verdict)
 
-**High-Divergence Axes:**
-- (axis name): (agent1)=(score) vs (agent2)=(score) (Δ=gap)
+**Score Averages:**
+- (agent1): (avg) / (agent2): (avg) / (agent3): (avg)
+
+**Dissenter's Weakest Axis:**
+- (axis name): (score) — (rationale)
 
 **Dissenter's Core Argument:**
 > (quoted rationale from dissenter's overall analysis)

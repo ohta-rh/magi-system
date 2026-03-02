@@ -1,0 +1,14 @@
+# MAGI runtime artifacts
+.magi/
+magi.config.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/

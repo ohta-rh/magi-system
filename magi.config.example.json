@@ -1,5 +1,5 @@
 {
-  "_comment": "MAGI System configuration. Copy to magi.config.json and customize.",
+  "_comment": "MAGI System configuration. Copy to magi.config.json and customize. Exactly 3 agents are required.",
   "agents": [
     {
       "name": "MELCHIOR-1",
@@ -19,8 +19,5 @@
       "file": "plugins/magi/skills/magi/agents/caspar.md",
       "model": "sonnet"
     }
-  ],
-  "voting": {
-    "quorum": 3
-  }
+  ]
 }
