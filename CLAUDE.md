@@ -38,13 +38,12 @@ plugins/magi/
 
 | Phase | Description |
 |-------|-------------|
-| Phase 0 | Topic clarification + prior rulings check (`.magi/decisions.json`) |
+| Phase 0 | Topic clarification |
 | Phase 1 | Configuration check (`magi.config.json`) + activation sequence |
 | Phase 2 | Parallel agent launch (default 3 or configured N agents) |
 | Phase 3 | Result synthesis: structured extraction, partial results handling, contention analysis (2:1 splits) |
 | Phase 4 | Deliberation output: per-agent reports, divergence map, judgment rules, risk summary |
-| Phase 5 | Decision logging to `.magi/decisions.json` |
-| Phase 6 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
+| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
 
 ## Conventions
 

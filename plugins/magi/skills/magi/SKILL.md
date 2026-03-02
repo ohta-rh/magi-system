@@ -2,7 +2,7 @@
 name: magi
 description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question or proposal]"
-allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, Bash, Write
+allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep
 ---
 
 # MAGI SYSTEM — Engineering Decision Support System
@@ -36,24 +36,6 @@ Proceed to Phase 1 if ALL of the following are met:
 - Sufficient technical context is available
 
 **When in doubt, ask with AskUserQuestion.** Maximum 2 questions, each with 2-4 options.
-
-### Prior Rulings Check
-
-Before proceeding to Phase 1, check for prior MAGI decisions:
-
-1. Use Glob to check if `.magi/decisions.json` exists in the project root
-2. If the file exists, read it with Read and search for entries related to the current topic (keyword match on the `topic` field)
-3. If related prior rulings are found, display them in the activation sequence:
-   ```
-   ⚠ Prior Ruling Found:
-     Topic: (previous topic)
-     Date: (date)
-     Verdict: (previous verdict)
-     Confidence: (confidence)
-   ```
-4. Prior rulings are informational only — they do not override the current deliberation. Agents are NOT shown prior rulings to avoid anchoring bias
-
-If no `.magi/decisions.json` exists or no related rulings are found, skip silently.
 
 ## Phase 1: Activation Sequence
 
@@ -227,60 +209,17 @@ Follow the output format defined in [references/output-format.md](references/out
 
 Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
 
-## Phase 5: Decision Logging
+## Phase 5: Interactive Drill-Down (Optional)
 
-After delivering the verdict to the user, persist a summary of this deliberation for future reference.
-
-### Procedure
-
-1. **Prepare the entry** as a JSON object:
-   ```json
-   {
-     "topic": "(the deliberation topic)",
-     "date": "(YYYY-MM-DD)",
-     "agents": {
-       "MELCHIOR-1": { "verdict": "...", "scores": { ... } },
-       "BALTHASAR-2": { "verdict": "...", "scores": { ... } },
-       "CASPAR-3": { "verdict": "...", "scores": { ... } }
-     },
-     "final_verdict": "Approve|Reject|Conditional Approval|Indeterminate",
-     "confidence": "High|Medium|Low",
-     "conditions": "... or null"
-   }
-   ```
-
-2. **Check if `.magi/decisions.json` exists** using Glob in the project root
-
-3. **If the file exists**: Read the current contents with Read, parse as a JSON array, append the new entry.
-
-4. **Pruning**: If the array length exceeds 50 entries after appending, remove the oldest entries (from the beginning of the array) to bring the count to 50. This keeps the decision log bounded.
-
-5. **If the file does not exist**: Create the `.magi/` directory (if needed) using Bash (`mkdir -p .magi`), then write a new JSON array containing just this entry.
-
-6. **Write the file** using the Write tool (preferred over Bash for atomic file operations). Write the entire JSON array to `.magi/decisions.json`.
-
-7. **Confirm logging** with a brief note after the verdict output:
-   ```
-   📋 Decision logged to .magi/decisions.json
-   ```
-
-### Limitations
-
-- **Maximum entries**: 50 most recent decisions. Older entries are pruned on each write.
-- **Concurrent writes**: If multiple MAGI sessions run simultaneously, the last writer wins. This is acceptable for a decision log — no locking mechanism is implemented.
-- **Failure handling**: Logging failures should not affect the user-facing output — if writing fails, note the error but do not retry.
-
-## Phase 6: Interactive Drill-Down (Optional)
-
-After the verdict is delivered and the decision is logged, offer the user a follow-up action using AskUserQuestion.
+After the verdict is delivered, offer the user a follow-up action using AskUserQuestion.
 
 ### Trigger
 
-Phase 6 is conditionally offered based on the verdict outcome:
+Phase 5 is conditionally offered based on the verdict outcome:
 
-| Verdict Outcome | Phase 6 Action |
+| Verdict Outcome | Phase 5 Action |
 |----------------|----------------|
-| 3:0 Unanimous Approve | **Skip** — Session ends after Phase 5 |
+| 3:0 Unanimous Approve | **Skip** — Session ends after Phase 4 |
 | 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
 | Any Conditional Approval | **Trigger** — Offer re-evaluate + accept |
 | 1:1:1 Indeterminate | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
@@ -296,16 +235,16 @@ Present the following choices via AskUserQuestion:
 
 2. **"Re-evaluate with amended proposal"** — Always available. If selected:
    - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
-   - Re-run the full deliberation (Phase 1 through Phase 5) with the amended topic
+   - Re-run the full deliberation (Phase 1 through Phase 4) with the amended topic
 
 3. **"Accept verdict"** — Always available. This is the default option. If selected:
    - End the session with no further action
 
 ### Implementation Notes
 
-- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after Phase 5 with a brief closing note.
+- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after Phase 4 with a brief closing note.
 - **2:1 Split**: Option 1 uses the dissenter identified in Phase 3.5. Re-spawn with focused elaboration prompt.
 - **1:1:1 Indeterminate**: Replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts.
 - **3:0 Unanimous Reject**: Omit option 1 (no dissenter). Offer re-evaluate to let the user amend their proposal.
 - **Conditional Approval (any split)**: Always offer re-evaluate so the user can address conditions.
-- This phase may recurse: if the user re-evaluates, the new deliberation applies the same conditional Phase 6 logic.
+- This phase may recurse: if the user re-evaluates, the new deliberation applies the same conditional Phase 5 logic.

@@ -71,7 +71,6 @@ Each agent follows an **Internal Deliberation Protocol** — a persona-specific 
 ## Features
 
 - **Structured Output Schema** — Agents emit machine-readable JSON (`<!-- MAGI_OUTPUT -->`) alongside human-readable analysis for reliable programmatic extraction
-- **Decision Log** — Verdicts are persisted to `.magi/decisions.json`; prior rulings on related topics are surfaced before new deliberations
 - **Configurable Agents** — Drop a `magi.config.json` in your project root to customize agents, personas, and models
 - **Divergence Map** — Score overview table across all 12 axes for at-a-glance comparison
 - **Contention Analysis** — On 2:1 splits, the dissenter's rationale is quoted and high-divergence axes are highlighted
