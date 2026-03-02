@@ -29,6 +29,6 @@ plugins/magi/
 ## Conventions
 
 - All skill and agent files are written in English
-- Agent output uses the ◎/○/△/▽/× scoring scale (5/4/3/2/1)
+- Agent output uses a numeric 1-5 scoring scale (5 = best, 1 = worst)
 - Verdicts are: Approve / Reject / Conditional Approval
 - Final judgment follows majority rule (2:1 or 3:0)

@@ -117,6 +117,12 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale (5 = best,
 - **Confidence:** Medium (2:1)
 - **Conditions:** Team training before full adoption
 
+**Recommended Actions:**
+1. Run a GraphQL pilot on a non-critical service
+2. Conduct team training sessions before full migration
+
+> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 ## Project Structure
 
 ```
