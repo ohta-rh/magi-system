@@ -253,25 +253,23 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 ### Divergence Map
 
-Compare all axes across agents side-by-side. Flag high-divergence axes (spread ≥ 2) with ⚠️.
+Score overview across all agents and axes. Each axis is evaluated by a single agent — cross-agent spread is not applicable. For cross-agent divergence, see Phase 3.5 Contention Analysis (verdict-level disagreement).
 
-| Axis | MELCHIOR | BALTHASAR | CASPAR | Spread | |
-|------|----------|-----------|--------|--------|-|
-| Correctness/Rigor | (score) | — | — | — | |
-| Performance | (score) | — | — | — | |
-| Security | (score) | — | — | — | |
-| Technical Consistency | (score) | — | — | — | |
-| Maintainability | — | (score) | — | — | |
-| Testability | — | (score) | — | — | |
-| Operability | — | (score) | — | — | |
-| Team Impact | — | (score) | — | — | |
-| Design Elegance | — | — | (score) | — | |
-| Innovation | — | — | (score) | — | |
-| Feasibility | — | — | (score) | — | |
-| Adaptability | — | — | (score) | — | |
+| Agent | Axis | Score |
+|-------|------|-------|
+| MELCHIOR-1 | Correctness/Rigor | (1-5) |
+| MELCHIOR-1 | Performance | (1-5) |
+| MELCHIOR-1 | Security | (1-5) |
+| MELCHIOR-1 | Technical Consistency | (1-5) |
+| BALTHASAR-2 | Maintainability | (1-5) |
+| BALTHASAR-2 | Testability | (1-5) |
+| BALTHASAR-2 | Operability | (1-5) |
+| BALTHASAR-2 | Team Impact | (1-5) |
+| CASPAR-3 | Design Elegance | (1-5) |
+| CASPAR-3 | Innovation | (1-5) |
+| CASPAR-3 | Feasibility | (1-5) |
+| CASPAR-3 | Adaptability | (1-5) |
 
-- **Spread** = max score − min score among agents that evaluated that axis
-- Axes with spread ≥ 2 are flagged with ⚠️ in the rightmost column
 - If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
 
 ```
@@ -299,7 +297,6 @@ Compare all axes across agents side-by-side. Flag high-divergence axes (spread �
 - **Majority** (2:1): Adopt majority verdict. Confidence: Medium. Minority concerns noted in conditions
 - **Conditional Approval** counts as Approve. However, conditions are aggregated in the final verdict
 - **Three-way split** (all different verdicts): Indeterminate. Confidence: Low. Present all views and defer to user
-- **Confidence Degradation**: If any axis in the Divergence Map has a spread ≥ 3, confidence drops one level (High → Medium, Medium → Low). This stacks with the 2:1 split rule — a 2:1 split with a ≥ 3-point divergence results in Low confidence
 
 ### Risk Summary
 

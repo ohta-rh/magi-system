@@ -49,5 +49,4 @@ plugins/magi/
 - Overall Analysis is 4-6 lines, leading with the most important deliberation finding
 - Verdicts are: Approve / Reject / Conditional Approval
 - Final judgment follows majority rule (2:1 or 3:0)
-- Confidence degrades on high divergence (spread ≥ 3 drops confidence one level)
 - Partial results: 2/3 = warning + capped confidence; 1/3 or 0/3 = no verdict
