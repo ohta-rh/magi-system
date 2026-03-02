@@ -73,100 +73,47 @@ Each agent follows an **Internal Deliberation Protocol** — a persona-specific 
 - **Structured Output Schema** — Agents emit machine-readable JSON (`<!-- MAGI_OUTPUT -->`) alongside human-readable analysis for reliable programmatic extraction
 - **Decision Log** — Verdicts are persisted to `.magi/decisions.json`; prior rulings on related topics are surfaced before new deliberations
 - **Configurable Agents** — Drop a `magi.config.json` in your project root to customize agents, personas, and models
-- **Divergence Map** — Cross-agent score comparison table flags high-divergence axes (spread ≥ 2) at a glance
+- **Divergence Map** — Score overview table across all 12 axes for at-a-glance comparison
 - **Contention Analysis** — On 2:1 splits, the dissenter's rationale is quoted and high-divergence axes are highlighted
 - **Partial Results Protocol** — Graceful degradation when agents fail (2/3: warning + capped confidence; 1/3 or 0/3: no verdict)
 - **Interactive Drill-Down** — After verdict delivery, drill into a dissenter's concerns, re-evaluate with amendments, or accept
 
 ## Example Output
 
-> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-> MAGI SYSTEM — Deliberation Results
-> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-**Topic:** Should we migrate from REST to GraphQL?
-
-### MELCHIOR-1 [Scientist] — Verdict: Approve
-
-| Axis | Score |
-|------|-------|
-| Correctness/Rigor | 5 |
-| Performance | 4 |
-| Security | 4 |
-| Technical Consistency | 5 |
-
-> Technically sound. Type safety and schema validation are superior to REST.
-
-### BALTHASAR-2 [Mother] — Verdict: Conditional Approval
-
-| Axis | Score |
-|------|-------|
-| Maintainability | 4 |
-| Testability | 3 |
-| Operability | 4 |
-| Team Impact | 3 |
-
-> Concerns about onboarding cost. Team needs GraphQL training first.
-
-### CASPAR-3 [Woman] — Verdict: Approve
-
-| Axis | Score |
-|------|-------|
-| Design Elegance | 5 |
-| Innovation | 5 |
-| Feasibility | 4 |
-| Adaptability | 4 |
-
-> Beautiful query API. The industry is moving this way.
-
-> ━━━ Final Judgment ━━━
-
-| | MELCHIOR | BALTHASAR | CASPAR |
-|---|---------|-----------|--------|
-| **Verdict** | Approve | Cond. Approval | Approve |
-
-- **Overall Verdict:** Conditional Approval
-- **Confidence:** Medium (2:1)
-- **Conditions:** Team training before full adoption
-
-**Recommended Actions:**
-1. Run a GraphQL pilot on a non-critical service
-2. Conduct team training sessions before full migration
-
-> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+See [plugins/magi/skills/magi/examples/sample-deliberation.md](plugins/magi/skills/magi/examples/sample-deliberation.md) for a full sample deliberation output.
 
 ## Configuration
 
-Create `magi.config.json` in your project root to customize agents:
+Copy [`magi.config.example.json`](magi.config.example.json) to `magi.config.json` in your project root and customize:
 
-```json
-{
-  "agents": [
-    { "name": "MELCHIOR-1", "persona": "The Scientist", "file": "agents/melchior.md", "model": "sonnet" },
-    { "name": "BALTHASAR-2", "persona": "The Mother", "file": "agents/balthasar.md", "model": "sonnet" },
-    { "name": "CASPAR-3", "persona": "The Woman", "file": "agents/caspar.md", "model": "sonnet" }
-  ],
-  "voting": { "quorum": 3 }
-}
+```bash
+cp magi.config.example.json magi.config.json
 ```
 
-Without a config file, the default three MAGI are used.
+Without a config file, the default three MAGI are used. If `magi.config.json` is found but malformed, a warning is displayed and defaults are used.
 
 ## Project Structure
 
 ```
 magi-system/
 ├── .claude-plugin/
-│   └── marketplace.json       # Marketplace catalog
+│   └── marketplace.json          # Marketplace catalog
+├── magi.config.example.json      # Example configuration
 ├── plugins/magi/
 │   ├── .claude-plugin/
-│   │   └── plugin.json        # Plugin manifest
+│   │   └── plugin.json           # Plugin manifest
 │   └── skills/magi/
-│       ├── SKILL.md           # Orchestrator
-│       └── agents/
-│           ├── melchior.md    # The Scientist
-│           ├── balthasar.md   # The Mother
-│           └── caspar.md      # The Woman
+│       ├── SKILL.md              # Orchestrator (core flow)
+│       ├── agents/
+│       │   ├── melchior.md       # The Scientist
+│       │   ├── balthasar.md      # The Mother
+│       │   └── caspar.md         # The Woman
+│       ├── references/
+│       │   ├── output-format.md  # Phase 4 output templates
+│       │   ├── judgment-rules.md # Voting rules & confidence
+│       │   └── schema.md         # MAGI_OUTPUT schema
+│       └── examples/
+│           └── sample-deliberation.md  # Example output
 └── README.md
 ```
 

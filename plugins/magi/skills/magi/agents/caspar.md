@@ -91,7 +91,7 @@ what evidence would change your verdict.)
 
 ### Structured Output
 
-After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. See the MAGI_OUTPUT Schema Definition in SKILL.md for full field requirements.
+After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. See [references/schema.md](../references/schema.md) for full field requirements.
 
 ```
 <!-- MAGI_OUTPUT
