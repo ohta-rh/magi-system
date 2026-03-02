@@ -88,3 +88,28 @@ what evidence would change your verdict.)
 
 ### References
 (If research was conducted, list sources. May be omitted if no research was needed)
+
+### Structured Output
+
+After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. This allows the orchestrator to extract your scores and verdict programmatically.
+
+```
+<!-- MAGI_OUTPUT
+{
+  "verdict": "Approve|Reject|Conditional Approval",
+  "conditions": "state conditions if Conditional Approval, otherwise null",
+  "scores": {
+    "design_elegance": { "score": 0, "rationale": "..." },
+    "innovation_competitiveness": { "score": 0, "rationale": "..." },
+    "feasibility": { "score": 0, "rationale": "..." },
+    "adaptability_extensibility": { "score": 0, "rationale": "..." }
+  },
+  "risks": ["risk1", "risk2"]
+}
+-->
+```
+
+- Replace `0` with your actual scores (1-5)
+- Replace `"..."` with your one-line rationale for each axis
+- `risks` is an array of strings; use `[]` if no risks
+- This block MUST be valid JSON inside the HTML comment markers

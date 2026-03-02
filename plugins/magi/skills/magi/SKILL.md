@@ -2,7 +2,7 @@
 name: magi
 description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question or proposal]"
-allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep
+allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, Bash, Write
 ---
 
 # MAGI SYSTEM — Engineering Decision Support System
@@ -37,7 +37,45 @@ Proceed to Phase 1 if ALL of the following are met:
 
 **When in doubt, ask with AskUserQuestion.** Maximum 2 questions, each with 2-4 options.
 
+### Prior Rulings Check
+
+Before proceeding to Phase 1, check for prior MAGI decisions:
+
+1. Use Glob to check if `.magi/decisions.json` exists in the project root
+2. If the file exists, read it with Read and search for entries related to the current topic (keyword match on the `topic` field)
+3. If related prior rulings are found, display them in the activation sequence:
+   ```
+   ⚠ Prior Ruling Found:
+     Topic: (previous topic)
+     Date: (date)
+     Verdict: (previous verdict)
+     Confidence: (confidence)
+   ```
+4. Prior rulings are informational only — they do not override the current deliberation. Agents are NOT shown prior rulings to avoid anchoring bias
+
+If no `.magi/decisions.json` exists or no related rulings are found, skip silently.
+
 ## Phase 1: Activation Sequence
+
+### Step 0: Configuration Check
+
+Before activation, check for a custom agent configuration file in the project root:
+
+1. Use Glob with pattern `magi.config.json` in the current working directory
+2. If `magi.config.json` exists, read it with Read. Expected schema:
+   ```json
+   {
+     "agents": [
+       { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "sonnet" }
+     ],
+     "voting": { "quorum": 3 }
+   }
+   ```
+3. If the file does not exist or is invalid, use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: sonnet`
+
+Store the resolved agent list for use in Phase 2.
+
+### Step 1: Output Activation Banner
 
 Output the following:
 
@@ -53,18 +91,28 @@ Output the following:
   Initializing Parallel Agents ...
 ```
 
-## Phase 2: Launch Three Agents in Parallel
+If a custom configuration was loaded, also output:
+
+```
+  Configuration: magi.config.json (N agents)
+```
+
+## Phase 2: Launch Agents in Parallel
 
 ### Step 1: Load Agent Prompts
 
-First, locate the MAGI agent files. Use Glob with pattern `**/magi/agents/melchior.md` and path `~/.claude/` to find the agents directory. Then read all three agent files **in parallel** using Read from the discovered directory:
+**Default mode (no config):** Locate the MAGI agent files. Use Glob with pattern `**/magi/agents/melchior.md` and path `~/.claude/` to find the agents directory. Then read all three agent files **in parallel** using Read from the discovered directory:
 - `melchior.md`
 - `balthasar.md`
 - `caspar.md`
 
+**Custom config mode:** For each agent in the resolved agent list, read the agent file from the path specified in `file`. Paths are relative to the project root. Read all agent files **in parallel**.
+
 ### Step 2: Parallel Agent Launch
 
-Replace `$ARGUMENTS` in the loaded prompts with the actual topic, and **launch all 3 agents simultaneously (3 Agent tools in parallel within a single message).** Do NOT create a Team.
+Replace `$ARGUMENTS` in the loaded prompts with the actual topic, and **launch all agents simultaneously (N Agent tools in parallel within a single message).** Do NOT create a Team.
+
+**Default mode** launches exactly 3 agents:
 
 ```
 Agent:
@@ -89,11 +137,74 @@ Agent:
   prompt: (contents of agents/caspar.md with $ARGUMENTS replaced by the topic)
 ```
 
+**Custom config mode** iterates over the agent list and launches each with the configured `name` and `model`:
+
+```
+For each agent in config.agents:
+  Agent:
+    subagent_type: general-purpose
+    name: (agent.name)
+    model: (agent.model, default "sonnet")
+    description: "(agent.name) engineering analysis"
+    prompt: (contents of agent.file with $ARGUMENTS replaced by the topic)
+```
+
 ## Phase 3: Result Synthesis
 
-Once all 3 Agents have completed, extract scores and verdicts from each Agent's response.
+### Step 1: Collect Responses and Handle Partial Results
+
+Once the parallel agent calls return, classify the results:
+
+- **3/3 agents responded with valid output**: Proceed to normal synthesis (Step 2)
+- **2/3 agents responded**: Synthesize with a warning. Confidence is capped at Medium regardless of vote alignment. Note the missing agent in the output
+- **1/3 or 0/3 agents responded**: Report failure. Do NOT issue a verdict. Output an error message and suggest the user retry
+
+**Valid output** means the agent's response contains:
+1. A `<!-- MAGI_OUTPUT {...} -->` block with parseable JSON, OR
+2. At minimum, a clearly stated Verdict line and numeric scores for all 4 axes
+
+If an agent responds but its output is malformed, treat it as a missing response.
+
+### Step 2: Structured Result Extraction
+
+For each agent that returned valid output, extract data from the `<!-- MAGI_OUTPUT {...} -->` block:
+
+1. Find the `<!-- MAGI_OUTPUT` marker in the agent's response
+2. Extract the JSON between the markers
+3. Parse the following fields:
+   - `verdict`: string ("Approve", "Reject", or "Conditional Approval")
+   - `conditions`: string or null
+   - `scores`: object with axis keys, each containing `score` (number) and `rationale` (string)
+   - `risks`: array of strings
+
+If the structured block is missing but the agent produced human-readable scores and verdict, fall back to extracting from prose. Prefer the structured block when available.
 
 Scores use a 5-point scale (5 = best, 1 = worst).
+
+### Phase 3.5: Cross-Agent Contention Analysis
+
+**This phase is triggered ONLY on a 2:1 split verdict.** Skip if unanimous (3:0) or indeterminate (1:1:1).
+
+When a 2:1 split is detected:
+
+1. **Identify the dissenter** — the single agent whose verdict differs from the majority
+2. **Find high-divergence axes** — compare scores across all agents. Flag any axis where the score gap between any two agents is ≥ 2 points
+3. **Quote the dissenter's rationale** — extract the dissenter's Overall Analysis and the rationale for their highest-divergence axis
+4. **Produce a contention summary** in this format:
+
+```
+### Contention Analysis (2:1 Split)
+
+**Dissenter:** (agent name) — Verdict: (verdict)
+
+**High-Divergence Axes:**
+- (axis name): (agent1)=(score) vs (agent2)=(score) (Δ=gap)
+
+**Dissenter's Core Argument:**
+> (quoted rationale from dissenter's overall analysis)
+```
+
+This contention summary is included in the Phase 4 output (before Final Judgment).
 
 ## Phase 4: Deliberation Output
 
@@ -140,6 +251,29 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 > (1-2 line summary of overall analysis)
 
+### Divergence Map
+
+Compare all axes across agents side-by-side. Flag high-divergence axes (spread ≥ 2) with ⚠️.
+
+| Axis | MELCHIOR | BALTHASAR | CASPAR | Spread | |
+|------|----------|-----------|--------|--------|-|
+| Correctness/Rigor | (score) | — | — | — | |
+| Performance | (score) | — | — | — | |
+| Security | (score) | — | — | — | |
+| Technical Consistency | (score) | — | — | — | |
+| Maintainability | — | (score) | — | — | |
+| Testability | — | (score) | — | — | |
+| Operability | — | (score) | — | — | |
+| Team Impact | — | (score) | — | — | |
+| Design Elegance | — | — | (score) | — | |
+| Innovation | — | — | (score) | — | |
+| Feasibility | — | — | (score) | — | |
+| Adaptability | — | — | (score) | — | |
+
+- **Spread** = max score − min score among agents that evaluated that axis
+- Axes with spread ≥ 2 are flagged with ⚠️ in the rightmost column
+- If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
+
 ```
 ━━━ Final Judgment ━━━
 ```
@@ -165,7 +299,79 @@ Report the results in the following format (use Markdown tables for scores, keep
 - **Majority** (2:1): Adopt majority verdict. Confidence: Medium. Minority concerns noted in conditions
 - **Conditional Approval** counts as Approve. However, conditions are aggregated in the final verdict
 - **Three-way split** (all different verdicts): Indeterminate. Confidence: Low. Present all views and defer to user
+- **Confidence Degradation**: If any axis in the Divergence Map has a spread ≥ 3, confidence drops one level (High → Medium, Medium → Low). This stacks with the 2:1 split rule — a 2:1 split with a ≥ 3-point divergence results in Low confidence
 
 ### Risk Summary
 
 Consolidate "Risks and Concerns" from all three MAGI, deduplicate, and reflect in recommended actions.
+
+## Phase 5: Decision Logging
+
+After delivering the verdict to the user, persist a summary of this deliberation for future reference.
+
+### Procedure
+
+1. **Prepare the entry** as a JSON object:
+   ```json
+   {
+     "topic": "(the deliberation topic)",
+     "date": "(YYYY-MM-DD)",
+     "agents": {
+       "MELCHIOR-1": { "verdict": "...", "scores": { ... } },
+       "BALTHASAR-2": { "verdict": "...", "scores": { ... } },
+       "CASPAR-3": { "verdict": "...", "scores": { ... } }
+     },
+     "final_verdict": "Approve|Reject|Conditional Approval|Indeterminate",
+     "confidence": "High|Medium|Low",
+     "conditions": "... or null"
+   }
+   ```
+
+2. **Check if `.magi/decisions.json` exists** using Glob in the project root
+
+3. **If the file exists**: Read the current contents, parse as a JSON array, append the new entry, and write back using Bash:
+   ```
+   Use Bash to read the file, append the new entry to the array, and write back
+   ```
+
+4. **If the file does not exist**: Create the `.magi/` directory (if needed) and write a new JSON array containing just this entry using Write:
+   ```
+   Use Bash to create the directory: mkdir -p .magi
+   Use Write to create .magi/decisions.json with [entry]
+   ```
+
+5. **Confirm logging** with a brief note after the verdict output:
+   ```
+   📋 Decision logged to .magi/decisions.json
+   ```
+
+This phase runs silently after the verdict. Logging failures should not affect the user-facing output — if writing fails, note the error but do not retry.
+
+## Phase 6: Interactive Drill-Down (Optional)
+
+After the verdict is delivered and the decision is logged, offer the user a follow-up action using AskUserQuestion.
+
+### Trigger
+
+Always offer this phase after Phase 5 completes, regardless of the verdict outcome.
+
+### Options
+
+Present the following choices via AskUserQuestion:
+
+1. **"Deep dive into [dissenter]'s concerns"** — Available only if there was a 2:1 split. Replace `[dissenter]` with the actual dissenting agent's name (e.g., "Deep dive into BALTHASAR-2's concerns"). If selected:
+   - Re-spawn the dissenting agent with a focused prompt: the original topic plus the instruction "Elaborate on your concerns in detail. Explain what specific risks you foresee and what conditions would change your verdict."
+   - Present the agent's expanded analysis to the user
+
+2. **"Re-evaluate with amended proposal"** — Always available. If selected:
+   - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
+   - Re-run the full deliberation (Phase 1 through Phase 5) with the amended topic
+
+3. **"Accept verdict"** — Always available. This is the default option. If selected:
+   - End the session with no further action
+
+### Implementation Notes
+
+- If the verdict was unanimous (3:0), omit option 1 (no dissenter exists)
+- If the verdict was indeterminate (1:1:1), replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts
+- This phase may recurse: if the user re-evaluates, the new deliberation also offers a drill-down at the end
