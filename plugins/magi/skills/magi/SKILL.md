@@ -93,7 +93,7 @@ Agent:
 
 Once all 3 Agents have completed, extract scores and verdicts from each Agent's response.
 
-Score conversion: ◎=5, ○=4, △=3, ▽=2, ×=1
+Scores use a 5-point scale (5 = best, 1 = worst).
 
 ## Phase 4: Deliberation Output
 
@@ -111,10 +111,10 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 | Axis | Score |
 |------|-------|
-| Correctness/Rigor | (symbol) |
-| Performance | (symbol) |
-| Security | (symbol) |
-| Technical Consistency | (symbol) |
+| Correctness/Rigor | (1-5) |
+| Performance | (1-5) |
+| Security | (1-5) |
+| Technical Consistency | (1-5) |
 
 > (1-2 line summary of overall analysis)
 
@@ -122,10 +122,10 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 | Axis | Score |
 |------|-------|
-| Maintainability | (symbol) |
-| Testability | (symbol) |
-| Operability | (symbol) |
-| Team Impact | (symbol) |
+| Maintainability | (1-5) |
+| Testability | (1-5) |
+| Operability | (1-5) |
+| Team Impact | (1-5) |
 
 > (1-2 line summary of overall analysis)
 
@@ -133,10 +133,10 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 | Axis | Score |
 |------|-------|
-| Design Elegance | (symbol) |
-| Innovation | (symbol) |
-| Feasibility | (symbol) |
-| Adaptability | (symbol) |
+| Design Elegance | (1-5) |
+| Innovation | (1-5) |
+| Feasibility | (1-5) |
+| Adaptability | (1-5) |
 
 > (1-2 line summary of overall analysis)
 

@@ -62,7 +62,7 @@ Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 | **BALTHASAR-2** | The Mother | Maintainability, Testability, Operability, Team Impact |
 | **CASPAR-3** | The Woman | Design Elegance, Innovation, Feasibility, Adaptability |
 
-Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) ○(4) △(3) ▽(2) ×(1)
+Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale (5 = best, 1 = worst)
 
 **Voting:** 3:0 unanimous (high confidence) / 2:1 majority (medium) / 1:1:1 indeterminate
 
@@ -78,10 +78,10 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 | Axis | Score |
 |------|-------|
-| Correctness/Rigor | ◎ |
-| Performance | ○ |
-| Security | ○ |
-| Technical Consistency | ◎ |
+| Correctness/Rigor | 5 |
+| Performance | 4 |
+| Security | 4 |
+| Technical Consistency | 5 |
 
 > Technically sound. Type safety and schema validation are superior to REST.
 
@@ -89,10 +89,10 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 | Axis | Score |
 |------|-------|
-| Maintainability | ○ |
-| Testability | △ |
-| Operability | ○ |
-| Team Impact | △ |
+| Maintainability | 4 |
+| Testability | 3 |
+| Operability | 4 |
+| Team Impact | 3 |
 
 > Concerns about onboarding cost. Team needs GraphQL training first.
 
@@ -100,10 +100,10 @@ Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale: ◎(5) �
 
 | Axis | Score |
 |------|-------|
-| Design Elegance | ◎ |
-| Innovation | ◎ |
-| Feasibility | ○ |
-| Adaptability | ○ |
+| Design Elegance | 5 |
+| Innovation | 5 |
+| Feasibility | 4 |
+| Adaptability | 4 |
 
 > Beautiful query API. The industry is moving this way.
 
