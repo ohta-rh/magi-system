@@ -56,13 +56,15 @@ Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
  └─────────────────┘   └──────────────────┘
 ```
 
-| MAGI | Persona | Evaluation Axes |
-|------|---------|-----------------|
-| **MELCHIOR-1** | The Scientist | Correctness, Performance, Security, Technical Consistency |
-| **BALTHASAR-2** | The Mother | Maintainability, Testability, Operability, Team Impact |
-| **CASPAR-3** | The Woman | Design Elegance, Innovation, Feasibility, Adaptability |
+| MAGI | Persona | Cognitive Framework | Evaluation Axes |
+|------|---------|--------------------:|-----------------|
+| **MELCHIOR-1** | The Scientist | Scientific Method | Correctness, Performance, Security, Technical Consistency |
+| **BALTHASAR-2** | The Mother | Time Horizons & Human Capacity | Maintainability, Testability, Operability, Team Impact |
+| **CASPAR-3** | The Woman | Pattern Recognition & Aesthetics | Design Elegance, Innovation, Feasibility, Adaptability |
 
-Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale (5 = best, 1 = worst)
+Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale (5 = best, 1 = worst).
+
+Each agent follows an **Internal Deliberation Protocol** — a persona-specific thinking process executed before scoring. MELCHIOR forms and falsifies technical hypotheses. BALTHASAR stress-tests across time horizons and identifies decay vectors. CASPAR forms a gestalt impression and calculates opportunity costs. This ensures scores emerge from deep reasoning, not surface-level checklists.
 
 **Voting:** 3:0 unanimous (high confidence) / 2:1 majority (medium) / 1:1:1 indeterminate
 
