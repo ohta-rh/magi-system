@@ -109,18 +109,28 @@ If a custom configuration was loaded, also output:
 
 ## Phase 2: Launch Agents in Parallel
 
-### Step 1: Load Agent Prompts
+**CRITICAL: Minimize tool call rounds.** The target is 2 rounds from skill start to agent launch. Batch independent tool calls aggressively.
 
-**Default mode (no config):** Locate the MAGI agent files. Use Glob with pattern `**/magi/agents/melchior.md` and path `~/.claude/` to find the agents directory. Then read all three agent files **in parallel** using Read from the discovered directory:
-- `melchior.md`
-- `balthasar.md`
-- `caspar.md`
+### Round 1: Discovery + Load (single parallel batch)
 
-**Custom config mode:** For each agent in the resolved agent list, read the agent file from the path specified in `file`. Paths are relative to the project root. Read all agent files **in parallel**.
+Issue ALL of these tool calls in a **single message**:
 
-### Step 2: Parallel Agent Launch
+1. **Glob** for `magi.config.json` in the current working directory (config check)
+2. **Glob** for `**/magi/agents/melchior.md` with path `~/.claude/` (agent path discovery)
+3. If you already know the agents directory from a previous session or from the skill base directory, **Read all three agent files in parallel** in this same batch:
+   - `melchior.md`
+   - `balthasar.md`
+   - `caspar.md`
 
-Replace `$ARGUMENTS` in the loaded prompts with the actual topic, and **launch all agents simultaneously (N Agent tools in parallel within a single message).** Do NOT create a Team.
+If agent file paths were not yet known (first discovery), issue the 3 Read calls in a follow-up batch immediately after Glob returns.
+
+**Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all 3 custom agent files in a single parallel batch.
+
+### Round 2: Banner + Simultaneous Agent Launch (single message)
+
+In a **single response**, output the activation banner text AND launch all 3 Agent tools simultaneously. Do NOT output the banner in a separate message before launching agents — combine them.
+
+Replace `$ARGUMENTS` in the loaded prompts with the actual topic. Do NOT create a Team.
 
 **Default mode** launches exactly 3 agents:
 
