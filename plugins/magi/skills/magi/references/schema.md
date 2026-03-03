@@ -27,3 +27,38 @@ This is the authoritative schema for the structured output block emitted by each
 - `scores.*.rationale`: Non-empty string.
 - `risks`: Array of strings. Use `[]` (empty array) if no risks identified.
 - The entire JSON block MUST be valid JSON enclosed in `<!-- MAGI_OUTPUT ... -->` HTML comment markers.
+
+## Schema v1.1 — Comparison Mode
+
+When agents evaluate multiple options (comparison mode), they emit this schema instead of v1.0:
+
+```json
+{
+  "schema_version": "1.1",
+  "mode": "comparison",
+  "recommendation": "string — name of the recommended option",
+  "recommendation_rationale": "string — 1-2 line rationale",
+  "options": [
+    {
+      "name": "string — option name",
+      "verdict": "Approve | Reject | Conditional Approval",
+      "conditions": "string or null",
+      "scores": {
+        "<axis_key>": {
+          "score": "integer 1-5",
+          "rationale": "string"
+        }
+      },
+      "risks": ["string"]
+    }
+  ]
+}
+```
+
+### Additional Field Rules (v1.1)
+
+- `mode`: Must be `"comparison"`.
+- `recommendation`: Must match one of the `options[].name` values.
+- `recommendation_rationale`: Non-empty string explaining the recommendation.
+- `options`: Array with 2-4 entries. Each entry follows the same `verdict`/`conditions`/`scores`/`risks` rules as v1.0.
+- v1.0 root-level fields (`verdict`, `conditions`, `scores`, `risks`) are NOT present in v1.1 — they exist inside each `options[]` entry.

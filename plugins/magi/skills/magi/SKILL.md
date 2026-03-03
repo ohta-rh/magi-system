@@ -23,7 +23,7 @@ Before consulting the MAGI, determine whether the topic has sufficient clarity f
 
 ### Comparative Topic Detection
 
-MAGI supports comparison topics (A vs B) by automatically splitting them into two independent deliberations, preserving verdict schema integrity for each.
+MAGI supports comparison topics (A vs B, or A vs B vs C) in a single deliberation by injecting a comparison prompt into `$ARGUMENTS`.
 
 **Detection heuristics** — flag the topic as comparative if it matches any of:
 - Explicit "A vs B", "A or B", "A versus B" framing
@@ -31,28 +31,16 @@ MAGI supports comparison topics (A vs B) by automatically splitting them into tw
 - Two or more named alternatives presented for selection
 - "Should we use X or Y", "X にすべきか Y にすべきか"
 
-**When a comparative topic is detected**, extract [Option A] and [Option B], then run two full deliberations in sequence:
+**When a comparative topic is detected:**
 
-1. **Deliberation 1** (Phase 1–4): "Should we adopt [Option A]?" — with [Option B] as the alternative
-2. **Deliberation 2** (Phase 1–4): "Should we adopt [Option B]?" — with [Option A] as the alternative
+1. Extract all options: [Option A], [Option B], and optionally [Option C], [Option D]
+2. If more than 4 options are detected, use AskUserQuestion to ask the user to narrow down to 4 or fewer
+3. Build the comparison prompt using the template from [references/comparison-format.md](references/comparison-format.md) — inject it as `$ARGUMENTS` in Phase 2
+4. Proceed with a single deliberation (Phase 1–4) using the comparison prompt
 
-After both deliberations complete, output a **Comparison Summary**:
+The comparison prompt instructs each agent to evaluate every option on their 4 axes and state a Recommendation. See [references/comparison-format.md](references/comparison-format.md) for the full template and Phase 4 output format.
 
-```
-━━━ Comparison Summary ━━━
-```
-
-| | [Option A] | [Option B] |
-|---|-----------|-----------|
-| **Overall Verdict** | (verdict) | (verdict) |
-| **Confidence** | (level) | (level) |
-| **MELCHIOR-1 Avg** | (avg) | (avg) |
-| **BALTHASAR-2 Avg** | (avg) | (avg) |
-| **CASPAR-3 Avg** | (avg) | (avg) |
-
-**Recommendation:** State which option received stronger support and why. Note key differentiators from each agent's perspective.
-
-Phase 5 is offered once after the Comparison Summary (not after each individual deliberation).
+Phase 5 is offered once after the Comparison Results.
 
 ### Criteria for Ambiguous Topics
 
@@ -218,6 +206,19 @@ If the structured block is missing but the agent produced human-readable scores 
 
 Scores use a 5-point scale (5 = best, 1 = worst).
 
+### Step 2a: Comparison Mode Extraction
+
+When the topic was detected as comparative (Phase 0), extract comparison-specific data from the `<!-- MAGI_OUTPUT {...} -->` block:
+
+1. Check `schema_version` is `"1.1"` and `mode` is `"comparison"`
+2. Extract `recommendation` and `recommendation_rationale` from each agent
+3. Extract per-option `verdict`, `scores`, and `risks` from the `options` array
+4. If an agent returned v1.0 format despite comparison mode, treat as partial result with warning
+
+Build the Score Matrix and Per-Agent Recommendations table from the extracted data. Tally recommendations across agents to determine consensus (3:0, 2:1, or 1:1:1).
+
+If 2+ options receive identical recommendation counts, compare average scores across recommending agents to break the tie.
+
 ### MAGI_OUTPUT Schema Definition
 
 See [references/schema.md](references/schema.md) for the authoritative schema definition and field rules.
@@ -251,11 +252,21 @@ When a 2:1 split is detected:
 
 This contention summary is included in the Phase 4 output (before Final Judgment).
 
+### Comparison Mode Contention
+
+In comparison mode, contention is based on **recommendation disagreement** rather than verdict splits:
+
+- **3:0 recommendation**: All agents recommend the same option. No contention analysis needed
+- **2:1 recommendation split**: Identify the dissenter, quote their recommendation rationale and key differentiator. Format matches the standard contention summary but replaces "Verdict" with "Recommendation"
+- **1:1:1 split** (3+ options): No majority. Present all recommendations. Confidence: Low
+
 ## Phase 4: Deliberation Output
 
 Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Divergence Map, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
 
 Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
+
+For comparison mode, follow the comparison output format in [references/comparison-format.md](references/comparison-format.md) instead. Apply the comparison recommendation tally rules from [references/judgment-rules.md](references/judgment-rules.md).
 
 ## Phase 5: Interactive Drill-Down (Optional)
 
@@ -296,3 +307,19 @@ Present the following choices via AskUserQuestion:
 - **3:0 Unanimous Reject**: Omit option 1 (no dissenter). Offer re-evaluate to let the user amend their proposal.
 - **Conditional Approval (any split)**: Always offer re-evaluate so the user can address conditions.
 - This phase may recurse: if the user re-evaluates, the new deliberation applies the same conditional Phase 5 logic.
+
+### Comparison Mode Phase 5
+
+For comparison topics, Phase 5 trigger and options differ:
+
+| Recommendation Outcome | Phase 5 Action |
+|----------------------|----------------|
+| 3:0 Unanimous | **Skip** — Session ends after Phase 4 |
+| 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
+| 1:1:1 Split | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
+
+Options:
+
+1. **"Deep dive into [dissenter]'s recommendation"** — Re-spawn dissenter with: "Explain why you recommend [their choice] over [majority choice]. Detail the specific advantages and risks." For 1:1:1 splits, replace with "Deep dive into each agent's recommendation" and re-spawn all three.
+2. **"Re-evaluate with narrowed options"** — Ask the user which options to keep or amend, then re-run the comparison deliberation
+3. **"Accept recommendation"** — End session

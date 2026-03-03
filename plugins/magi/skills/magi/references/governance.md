@@ -10,6 +10,7 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 | Agent files (`agents/*.md`) | 130 | 96 | Self-contained persona + output format; 130 allows axis expansion |
 | Reference files (`references/*.md`) | 100 | 10-85 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 85 | Illustrative, not normative |
+| comparison-format.md | 100 | 95 | Comparison prompt template + Phase 4 format |
 
 ## When Limits Are Approached (80%+)
 

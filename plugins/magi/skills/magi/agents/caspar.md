@@ -67,6 +67,10 @@ Before scoring, work through these steps internally — they shape the depth and
 
 $ARGUMENTS
 
+## Mode Override
+
+If the Topic above contains "Comparison Mode — Evaluate ALL options below", follow the comparison output format and schema v1.1 from [references/comparison-format.md](../references/comparison-format.md) instead of the default format below.
+
 ## Output Format (Strictly Follow)
 
 ### Scores
