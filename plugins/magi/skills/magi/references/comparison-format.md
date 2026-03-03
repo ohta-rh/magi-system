@@ -52,6 +52,8 @@ Structured output uses schema v1.1. See [schema.md](schema.md) for field definit
 
 ## Phase 4: Comparison Output
 
+Use per-agent sections matching standard mode ([output-format.md](output-format.md)), with sub-sections per option:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   MAGI SYSTEM — Comparison Results
@@ -60,37 +62,35 @@ Structured output uses schema v1.1. See [schema.md](schema.md) for field definit
 
 **Topic:** (original question)
 
-### Score Matrix
+### [AGENT] [Persona]
 
-| Agent | Axis | [Option A] | [Option B] | ... |
-|-------|------|-----------|-----------|-----|
-| (all 12 rows: 4 axes × 3 agents) |
+#### [Option A] — Verdict: (verdict)
 
-### Per-Agent Recommendations
+| Axis | Score |
+|------|-------|
+| (agent's 4 axes with scores) |
 
-| Agent | Recommendation | Rationale |
-|-------|---------------|-----------|
-| MELCHIOR-1 | (option) | (1-line) |
-| BALTHASAR-2 | (option) | (1-line) |
-| CASPAR-3 | (option) | (1-line) |
+> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns)
 
-If recommendation contention exists (2:1 or 1:1:1), insert contention analysis here.
+#### [Option B] — Verdict: (verdict)
+
+(same table and summary)
+
+**Recommendation:** [Option] — (1-line rationale)
+
+(Repeat for all 3 agents. Insert contention analysis before Final Recommendation if 2:1 or 1:1:1.)
 
 ```
 ━━━ Final Recommendation ━━━
 ```
 
+| | MELCHIOR | BALTHASAR | CASPAR |
+|---|---------|-----------|--------|
+| **Recommendation** | (option) | (option) | (option) |
+
 - **Recommended Option:** [Option]
 - **Confidence:** High (3:0) / Medium (2:1) / Low (1:1:1)
 - **Key Differentiator:** (from majority/consensus)
-
-### Per-Option Verdict Summary
-
-| | [Option A] | [Option B] | ... |
-|---|-----------|-----------|-----|
-| **MELCHIOR-1** | (verdict) | (verdict) | |
-| **BALTHASAR-2** | (verdict) | (verdict) | |
-| **CASPAR-3** | (verdict) | (verdict) | |
 
 **Recommended Actions:**
 1. (1-3 next steps)
