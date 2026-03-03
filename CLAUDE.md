@@ -20,8 +20,11 @@ plugins/magi/
       output-format.md      — Phase 4 output templates (NERV aesthetic)
       judgment-rules.md     — Voting rules and confidence levels
       schema.md             — MAGI_OUTPUT structured output schema
+      governance.md         — File size limits and split strategies
     examples/
       sample-deliberation.md — Example deliberation output
+scripts/
+  check-sizes.sh            — Plugin file size governance check
 ```
 
 ## How It Works
@@ -56,3 +59,9 @@ plugins/magi/
 - Final judgment follows majority rule (2:1 or 3:0)
 - Partial results: 2/3 = warning + capped confidence; 1/3 or 0/3 = no verdict
 - Custom agent configs (`magi.config.json`) must define exactly 3 agents — voting logic requires a 3-member council
+
+## Plugin Health Governance
+
+- File size limits and split strategies are defined in `plugins/magi/skills/magi/references/governance.md`
+- Before committing plugin changes, run `bash scripts/check-sizes.sh` to verify all files are within limits
+- SKILL.md must stay under 500 lines; agent files under 130 lines; reference/example files under 100 lines
