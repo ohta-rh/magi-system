@@ -19,7 +19,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Security | (1-5) |
 | Technical Consistency | (1-5) |
 
-> (1-2 line summary of overall analysis)
+> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 ### BALTHASAR-2 [Mother] — Verdict: (verdict)
 
@@ -30,7 +30,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Operability | (1-5) |
 | Team Impact | (1-5) |
 
-> (1-2 line summary of overall analysis)
+> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 ### CASPAR-3 [Woman] — Verdict: (verdict)
 
@@ -41,7 +41,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Feasibility | (1-5) |
 | Adaptability | (1-5) |
 
-> (1-2 line summary of overall analysis)
+> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 - If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
 
