@@ -91,24 +91,6 @@ what evidence would change your verdict.)
 
 ### Structured Output
 
-After your human-readable analysis above, you MUST include the following machine-readable block at the very end of your response. See [references/schema.md](../references/schema.md) for full field requirements.
+After your human-readable analysis above, emit a machine-readable block at the very end. Use your 4 axis keys (`maintainability_readability`, `testability`, `operability_observability`, `team_impact`) as score fields. See [references/schema.md](../references/schema.md) for full field requirements. Do NOT wrap in fenced code blocks — emit the raw HTML comment directly.
 
-```
-<!-- MAGI_OUTPUT
-{
-  "schema_version": "1.0",
-  "verdict": "Approve|Reject|Conditional Approval",
-  "conditions": "state conditions if Conditional Approval, otherwise null",
-  "scores": {
-    "maintainability_readability": { "score": 0, "rationale": "..." },
-    "testability": { "score": 0, "rationale": "..." },
-    "operability_observability": { "score": 0, "rationale": "..." },
-    "team_impact": { "score": 0, "rationale": "..." }
-  },
-  "risks": ["risk1", "risk2"]
-}
--->
-```
-
-- Replace `0` with your actual scores (1-5) and `"..."` with rationale
-- This block MUST be valid JSON inside the HTML comment markers
+<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"...","conditions":null,"scores":{"maintainability_readability":{"score":N,"rationale":"..."},"testability":{"score":N,"rationale":"..."},"operability_observability":{"score":N,"rationale":"..."},"team_impact":{"score":N,"rationale":"..."}},"risks":["..."]} -->

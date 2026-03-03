@@ -21,6 +21,24 @@ You are the integrated operator of the MAGI System. Launch 3 Agents in parallel,
 
 Before consulting the MAGI, determine whether the topic has sufficient clarity for engineering deliberation.
 
+### Comparative Topic Detection
+
+MAGI is a verdict machine — it evaluates a single proposal with Approve/Reject/Conditional Approval. When a topic is framed as a comparison between alternatives (A vs B), agents will improvise ad-hoc comparison formats that break the verdict schema and judgment rules.
+
+**Detection heuristics** — flag the topic as comparative if it matches any of:
+- Explicit "A vs B", "A or B", "A versus B" framing
+- "Which is better/preferred", "compare X and Y", "X と Y の比較"
+- Two or more named alternatives presented for selection
+- "Should we use X or Y", "X にすべきか Y にすべきか"
+
+**When a comparative topic is detected**, use AskUserQuestion to offer the user a warm, intelligent reframing — not a cold rejection:
+
+- **"Evaluate [Option A] (recommended)"** — Reframe as: "Should we adopt [Option A]?" with [Option B] as context
+- **"Evaluate [Option B]"** — Reframe as: "Should we adopt [Option B]?" with [Option A] as context
+- **"Evaluate both in sequence"** — Run two separate MAGI deliberations, one per option, and present both verdict tables. This preserves individual verdict integrity while giving the user comparative insight
+
+Replace [Option A] and [Option B] with the actual alternatives from the user's topic.
+
 ### Criteria for Ambiguous Topics
 
 - **Unclear subject**: Cannot identify what needs to be decided
@@ -32,6 +50,7 @@ Before consulting the MAGI, determine whether the topic has sufficient clarity f
 
 Proceed to Phase 1 if ALL of the following are met:
 - The subject of judgment can be specifically identified
+- The topic is framed as a single proposal (not a comparison between alternatives)
 - The topic can be scored by all three MAGI on their respective evaluation axes
 - Sufficient technical context is available
 
