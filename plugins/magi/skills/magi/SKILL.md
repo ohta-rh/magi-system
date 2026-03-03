@@ -262,7 +262,7 @@ In comparison mode, contention is based on **recommendation disagreement** rathe
 
 ## Phase 4: Deliberation Output
 
-Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Divergence Map, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
+Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
 
 Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
 
