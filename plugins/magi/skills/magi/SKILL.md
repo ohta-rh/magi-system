@@ -1,7 +1,7 @@
 ---
 name: magi
 description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
-argument-hint: "[question or proposal]"
+argument-hint: "[question, proposal, or comparison]"
 allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
 ---
 
@@ -23,7 +23,7 @@ Before consulting the MAGI, determine whether the topic has sufficient clarity f
 
 ### Comparative Topic Detection
 
-MAGI is a verdict machine — it evaluates a single proposal with Approve/Reject/Conditional Approval. When a topic is framed as a comparison between alternatives (A vs B), agents will improvise ad-hoc comparison formats that break the verdict schema and judgment rules.
+MAGI supports comparison topics (A vs B) by automatically splitting them into two independent deliberations, preserving verdict schema integrity for each.
 
 **Detection heuristics** — flag the topic as comparative if it matches any of:
 - Explicit "A vs B", "A or B", "A versus B" framing
@@ -31,13 +31,28 @@ MAGI is a verdict machine — it evaluates a single proposal with Approve/Reject
 - Two or more named alternatives presented for selection
 - "Should we use X or Y", "X にすべきか Y にすべきか"
 
-**When a comparative topic is detected**, use AskUserQuestion to offer the user a warm, intelligent reframing — not a cold rejection:
+**When a comparative topic is detected**, extract [Option A] and [Option B], then run two full deliberations in sequence:
 
-- **"Evaluate [Option A] (recommended)"** — Reframe as: "Should we adopt [Option A]?" with [Option B] as context
-- **"Evaluate [Option B]"** — Reframe as: "Should we adopt [Option B]?" with [Option A] as context
-- **"Evaluate both in sequence"** — Run two separate MAGI deliberations, one per option, and present both verdict tables. This preserves individual verdict integrity while giving the user comparative insight
+1. **Deliberation 1** (Phase 1–4): "Should we adopt [Option A]?" — with [Option B] as the alternative
+2. **Deliberation 2** (Phase 1–4): "Should we adopt [Option B]?" — with [Option A] as the alternative
 
-Replace [Option A] and [Option B] with the actual alternatives from the user's topic.
+After both deliberations complete, output a **Comparison Summary**:
+
+```
+━━━ Comparison Summary ━━━
+```
+
+| | [Option A] | [Option B] |
+|---|-----------|-----------|
+| **Overall Verdict** | (verdict) | (verdict) |
+| **Confidence** | (level) | (level) |
+| **MELCHIOR-1 Avg** | (avg) | (avg) |
+| **BALTHASAR-2 Avg** | (avg) | (avg) |
+| **CASPAR-3 Avg** | (avg) | (avg) |
+
+**Recommendation:** State which option received stronger support and why. Note key differentiators from each agent's perspective.
+
+Phase 5 is offered once after the Comparison Summary (not after each individual deliberation).
 
 ### Criteria for Ambiguous Topics
 
@@ -50,7 +65,6 @@ Replace [Option A] and [Option B] with the actual alternatives from the user's t
 
 Proceed to Phase 1 if ALL of the following are met:
 - The subject of judgment can be specifically identified
-- The topic is framed as a single proposal (not a comparison between alternatives)
 - The topic can be scored by all three MAGI on their respective evaluation axes
 - Sufficient technical context is available
 
@@ -127,6 +141,8 @@ If agent file paths were not yet known (first discovery), issue the 3 Read calls
 **Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all 3 custom agent files in a single parallel batch.
 
 ### Round 2: Banner + Simultaneous Agent Launch (single message)
+
+Do NOT proceed to Round 2 until all Round 1 Read calls have returned successfully.
 
 In a **single response**, output the activation banner text AND launch all 3 Agent tools simultaneously. Do NOT output the banner in a separate message before launching agents — combine them.
 

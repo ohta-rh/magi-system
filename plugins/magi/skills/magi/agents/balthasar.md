@@ -92,5 +92,6 @@ what evidence would change your verdict.)
 ### Structured Output
 
 After your human-readable analysis above, emit a machine-readable block at the very end. Use your 4 axis keys (`maintainability_readability`, `testability`, `operability_observability`, `team_impact`) as score fields. See [references/schema.md](../references/schema.md) for full field requirements. Do NOT wrap in fenced code blocks — emit the raw HTML comment directly.
+- If verdict is Conditional Approval, set `conditions` to your condition string (not null).
 
 <!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"...","conditions":null,"scores":{"maintainability_readability":{"score":N,"rationale":"..."},"testability":{"score":N,"rationale":"..."},"operability_observability":{"score":N,"rationale":"..."},"team_impact":{"score":N,"rationale":"..."}},"risks":["..."]} -->
