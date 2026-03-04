@@ -111,20 +111,18 @@ If a custom configuration was loaded, also output:
 
 ## Phase 2: Launch Agents in Parallel
 
-**CRITICAL: Minimize tool call rounds.** The target is 2 rounds from skill start to agent launch. Batch independent tool calls aggressively.
+**CRITICAL: Exactly 2 tool-call rounds from skill start to agent launch.**
 
-### Round 1: Discovery + Load (single parallel batch)
+### Round 1: Config Check + Agent Load (single parallel batch)
 
 Issue ALL of these tool calls in a **single message**:
 
 1. **Glob** for `magi.config.json` in the current working directory (config check)
-2. **Glob** for `**/magi/agents/melchior.md` with path `~/.claude/` (agent path discovery)
-3. If you already know the agents directory from a previous session or from the skill base directory, **Read all three agent files in parallel** in this same batch:
-   - `melchior.md`
-   - `balthasar.md`
-   - `caspar.md`
+2. **Read** `{base_dir}/agents/melchior.md`
+3. **Read** `{base_dir}/agents/balthasar.md`
+4. **Read** `{base_dir}/agents/caspar.md`
 
-If agent file paths were not yet known (first discovery), issue the 3 Read calls in a follow-up batch immediately after Glob returns.
+`{base_dir}` is the skill base directory from the activation context. Construct absolute paths directly — do NOT use Glob for agent file discovery.
 
 **Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all 3 custom agent files in a single parallel batch.
 
