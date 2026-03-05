@@ -10,7 +10,9 @@
 
 # MAGI SYSTEM
 
-A **Claude Code plugin** inspired by the [MAGI](https://evangelion.fandom.com/wiki/MAGI) from [Neon Genesis Evangelion](https://en.wikipedia.org/wiki/Neon_Genesis_Evangelion). Three AI agents deliberate your engineering decisions in parallel — each embodying a distinct persona, just as the original MAGI reflected the three facets of Dr. Naoko Akagi.
+> *"One mind is a hypothesis. Three minds are a verdict."*
+
+A **Claude Code plugin** that brings the [MAGI supercomputer council](https://evangelion.fandom.com/wiki/MAGI) from [Neon Genesis Evangelion](https://en.wikipedia.org/wiki/Neon_Genesis_Evangelion) into your terminal. Three AI agents — each powered by Claude Opus — deliberate your engineering decisions in parallel, scoring **12 dimensions** simultaneously. Just as the original MAGI reflected the three facets of Dr. Naoko Akagi's personality, each agent embodies a distinct cognitive framework that no single reviewer can replicate alone.
 
 ## Installation
 
@@ -56,26 +58,63 @@ Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
  └─────────────────┘   └──────────────────┘
 ```
 
-| MAGI | Persona | Cognitive Framework | Evaluation Axes |
-|------|---------|--------------------:|-----------------|
-| **MELCHIOR-1** | The Scientist | Scientific Method | Correctness, Performance, Security, Technical Consistency |
-| **BALTHASAR-2** | The Mother | Time Horizons & Human Capacity | Maintainability, Testability, Operability, Team Impact |
-| **CASPAR-3** | The Woman | Pattern Recognition & Aesthetics | Design Elegance, Innovation, Feasibility, Adaptability |
+### MELCHIOR-1 — The Scientist
 
-Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale (5 = best, 1 = worst).
+*"Show me the benchmark, or it didn't happen."*
 
-Each agent follows an **Internal Deliberation Protocol** — a persona-specific thinking process executed before scoring. MELCHIOR forms and falsifies technical hypotheses. BALTHASAR stress-tests across time horizons and identifies decay vectors. CASPAR forms a gestalt impression and calculates opportunity costs. This ensures scores emerge from deep reasoning, not surface-level checklists.
+The cold eye of technical truth. MELCHIOR reasons through the **Scientific Method** — forming falsifiable hypotheses, seeking disconfirmation over confirmation, and updating beliefs with Bayesian rigor. It distrusts appeals to popularity and "best practices" without evidence. It trusts formal guarantees, published benchmarks, and reproducible results.
+
+| Axis | What it measures |
+|------|-----------------|
+| **Correctness & Rigor** | Algorithm correctness, edge cases, fault tolerance, type safety |
+| **Performance & Efficiency** | Computational complexity, memory, throughput, latency, scalability |
+| **Security** | Threat model, attack surface, auth design, data protection |
+| **Technical Consistency** | Architecture alignment, design principles, dependency fitness |
+
+### BALTHASAR-2 — The Mother
+
+*"Will the on-call engineer at 3 AM understand this code?"*
+
+The guardian of long-term survival. BALTHASAR evaluates across **three time horizons** — 1 month (can we ship?), 6 months (can someone else maintain it?), 2 years (does it survive requirement changes?). It designs for the weakest link: the midnight on-call junior, the new hire on week two, the contractor who inherited the codebase. If only the original author can debug it, it is fragile regardless of its elegance.
+
+| Axis | What it measures |
+|------|-----------------|
+| **Maintainability & Readability** | Code comprehensibility, naming, separation of concerns, module boundaries |
+| **Testability** | Unit/integration test ease, mockability, testable design |
+| **Operability & Observability** | Logging, metrics, alerting, deployment, disaster recovery, rollback |
+| **Team Impact** | Learning curve, onboarding burden, documentation, team skill alignment |
+
+### CASPAR-3 — The Woman
+
+*"Correct but ugly is just a different kind of wrong."*
+
+The voice of intuition and strategic vision. CASPAR reasons through **Pattern Recognition and Aesthetic Judgment** — forming a gestalt impression before drilling into details, reading the political terrain, and calculating opportunity costs that the other two miss. It asks the question no one else does: *"What do we NOT do by choosing this?"*
+
+| Axis | What it measures |
+|------|-----------------|
+| **Design Elegance** | API beauty, abstraction quality, developer experience, interface intuitiveness |
+| **Innovation & Competitiveness** | New paradigm adoption, differentiation, industry trend alignment |
+| **Feasibility** | Implementation cost, timeline realism, resources, incremental adoption |
+| **Adaptability & Extensibility** | Future-proofing, extension points, pluggability |
+
+---
+
+Each agent scores 4 axes (**12 dimensions** total) on a 5-point scale. Each follows an **Internal Deliberation Protocol** — a persona-specific thinking process executed before scoring. MELCHIOR forms and falsifies technical hypotheses. BALTHASAR stress-tests across time horizons and identifies decay vectors. CASPAR forms a gestalt impression and calculates opportunity costs. Scores emerge from deep reasoning, not surface-level checklists.
 
 **Voting:** 3:0 unanimous (high confidence) / 2:1 majority (medium) / 1:1:1 indeterminate
 
+## Why Three?
+
+A single reviewer has blind spots. Two reviewers create deadlocks. Three create a **verdict** — with a built-in mechanism to surface and examine dissent. When MELCHIOR and CASPAR approve but BALTHASAR dissents, you know the proposal is technically sound and elegant but may have a sustainability problem. The split *is* the insight.
+
 ## Features
 
-- **Structured Output Schema** — Agents emit machine-readable JSON (`<!-- MAGI_OUTPUT -->`) alongside human-readable analysis for reliable programmatic extraction
-- **Configurable Agents** — Drop a `magi.config.json` in your project root to customize agents, personas, and models
-- **Divergence Map** — Score overview table across all 12 axes for at-a-glance comparison
+- **Parallel Deliberation** — All three agents analyze simultaneously, delivering a 12-dimension verdict in a single pass
+- **Comparison Mode** — "A vs B" topics automatically trigger per-option scoring with a recommendation tally
 - **Contention Analysis** — On 2:1 splits, the dissenter's rationale is quoted and high-divergence axes are highlighted
-- **Partial Results Protocol** — Graceful degradation when agents fail (2/3: warning + capped confidence; 1/3 or 0/3: no verdict)
 - **Interactive Drill-Down** — After verdict delivery, drill into a dissenter's concerns, re-evaluate with amendments, or accept
+- **Structured Output** — Machine-readable JSON (`<!-- MAGI_OUTPUT -->`) alongside human-readable analysis
+- **Configurable Agents** — Drop a `magi.config.json` in your project root to customize agents, personas, and models
 
 ## Example Output
 
