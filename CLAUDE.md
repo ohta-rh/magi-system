@@ -31,7 +31,7 @@ scripts/
 
 - `SKILL.md` is the orchestrator — it uses Glob to discover agent files, spawns agents in parallel, collects results, and synthesizes the final verdict
 - Each agent file in `agents/` defines a persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
-- Agents are spawned as `general-purpose` subagents with `model: sonnet`
+- Agents are spawned as `general-purpose` subagents with `model: opus`
 - The `$ARGUMENTS` placeholder in agent prompts is replaced with the actual topic before spawning
 - Agent files are discovered dynamically via Glob to support both plugin and manual symlink installation
 - Agents emit structured JSON output (`<!-- MAGI_OUTPUT -->`) for reliable programmatic extraction

@@ -69,11 +69,11 @@ Before activation, check for a custom agent configuration file in the project ro
    ```json
    {
      "agents": [
-       { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "sonnet" }
+       { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "opus" }
      ]
    }
    ```
-3. **If the file does not exist**: Use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: sonnet`. No warning needed.
+3. **If the file does not exist**: Use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: opus`. No warning needed.
 4. **If the file exists but is malformed**: Output a visible warning and fall back to defaults:
    ```
    ⚠ MAGI Config Warning: magi.config.json found but invalid — (reason). Falling back to default agents.
@@ -140,21 +140,21 @@ Replace `$ARGUMENTS` in the loaded prompts with the actual topic. Do NOT create 
 Agent:
   subagent_type: general-purpose
   name: MELCHIOR-1
-  model: sonnet
+  model: opus
   description: "MELCHIOR-1 engineering analysis"
   prompt: (contents of agents/melchior.md with $ARGUMENTS replaced by the topic)
 
 Agent:
   subagent_type: general-purpose
   name: BALTHASAR-2
-  model: sonnet
+  model: opus
   description: "BALTHASAR-2 engineering analysis"
   prompt: (contents of agents/balthasar.md with $ARGUMENTS replaced by the topic)
 
 Agent:
   subagent_type: general-purpose
   name: CASPAR-3
-  model: sonnet
+  model: opus
   description: "CASPAR-3 engineering analysis"
   prompt: (contents of agents/caspar.md with $ARGUMENTS replaced by the topic)
 ```
@@ -166,7 +166,7 @@ For each agent in config.agents:
   Agent:
     subagent_type: general-purpose
     name: (agent.name)
-    model: (agent.model, default "sonnet")
+    model: (agent.model, default "opus")
     description: "(agent.name) engineering analysis"
     prompt: (contents of agent.file with $ARGUMENTS replaced by the topic)
 ```
