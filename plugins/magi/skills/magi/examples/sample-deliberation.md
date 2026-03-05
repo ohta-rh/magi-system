@@ -15,7 +15,7 @@
 | Security | 4 |
 | Technical Consistency | 5 |
 
-> Technically sound. Type safety and schema validation are superior to REST. N+1 query risk is manageable with dataloader patterns.
+> The core technical claim — that GraphQL's type system provides superior contract enforcement over REST — is substantiated by formal schema validation guarantees. N+1 query risk is the primary performance concern, but dataloader patterns mitigate this effectively. Schema introspection should be disabled in production to avoid information leakage. The existing TypeScript codebase aligns well with GraphQL's strong typing model.
 
 ### BALTHASAR-2 [Mother] — Verdict: Conditional Approval
 
@@ -26,7 +26,7 @@
 | Operability | 4 |
 | Team Impact | 3 |
 
-> Concerns about onboarding cost. Team needs GraphQL training before full adoption. Testing tooling is less mature than REST equivalents.
+> The onboarding cost is the most significant sustainability risk — at the 6-month horizon, team members unfamiliar with GraphQL will struggle to debug resolver chains during incidents. Testing tooling maturity lags behind REST equivalents, particularly for integration testing of nested queries. However, schema-first design improves long-term API documentation quality. Recommend a training program before full adoption to prevent a bus-factor-1 situation with GraphQL expertise.
 
 ### CASPAR-3 [Woman] — Verdict: Approve
 
@@ -37,24 +37,7 @@
 | Feasibility | 4 |
 | Adaptability | 4 |
 
-> Beautiful query API. The industry is moving this way. Frontend teams will love the flexibility.
-
-### Divergence Map
-
-| Agent | Axis | Score |
-|-------|------|-------|
-| MELCHIOR-1 | Correctness/Rigor | 5 |
-| MELCHIOR-1 | Performance | 4 |
-| MELCHIOR-1 | Security | 4 |
-| MELCHIOR-1 | Technical Consistency | 5 |
-| BALTHASAR-2 | Maintainability | 4 |
-| BALTHASAR-2 | Testability | 3 |
-| BALTHASAR-2 | Operability | 4 |
-| BALTHASAR-2 | Team Impact | 3 |
-| CASPAR-3 | Design Elegance | 5 |
-| CASPAR-3 | Innovation | 5 |
-| CASPAR-3 | Feasibility | 4 |
-| CASPAR-3 | Adaptability | 4 |
+> The declarative query API is genuinely elegant — clients request exactly what they need, eliminating over-fetching by design. Industry momentum is unmistakable; major platforms have adopted GraphQL and the ecosystem is maturing rapidly. Frontend teams gain meaningful autonomy from backend release cycles. The opportunity cost of staying on REST is growing as tooling and community investment increasingly favor GraphQL.
 
 > ━━━ Final Judgment ━━━
 
