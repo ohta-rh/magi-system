@@ -1,0 +1,6 @@
+### Verdict
+Conditional Approval (Must add tests)
+
+### Structured Output
+
+<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"Conditional Approval","conditions":null,"scores":{"axis_a":{"score":3,"rationale":"OK"},"axis_b":{"score":3,"rationale":"OK"},"axis_c":{"score":3,"rationale":"OK"},"axis_d":{"score":3,"rationale":"OK"}},"risks":[]} -->

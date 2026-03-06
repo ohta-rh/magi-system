@@ -1,0 +1,19 @@
+### Scores
+- Maintainability & Readability: 4 — Schema-first design improves API documentation
+- Testability: 3 — Testing tooling is less mature than REST equivalents
+- Operability & Observability: 4 — Apollo Studio provides solid observability
+- Team Impact: 3 — Significant onboarding cost for unfamiliar team members
+
+### Overall Analysis
+The onboarding cost is the most significant sustainability risk. Testing tooling maturity lags behind REST equivalents.
+
+### Verdict
+Conditional Approval (Team needs GraphQL training before full adoption)
+
+### Risks and Concerns
+- Team onboarding cost may slow initial velocity
+- Testing tooling maturity gap compared to REST ecosystem
+
+### Structured Output
+
+<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"Conditional Approval","conditions":"Team needs GraphQL training before full adoption","scores":{"maintainability_readability":{"score":4,"rationale":"Schema-first design improves API documentation and contract clarity"},"testability":{"score":3,"rationale":"Testing tooling is less mature than REST equivalents"},"operability_observability":{"score":4,"rationale":"Apollo Studio provides solid observability; caching requires careful configuration"},"team_impact":{"score":3,"rationale":"Significant onboarding cost for team members unfamiliar with GraphQL"}},"risks":["Team onboarding cost may slow initial velocity","Testing tooling maturity gap compared to REST ecosystem"]} -->

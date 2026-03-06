@@ -9,7 +9,7 @@ A Claude Code plugin that implements the MAGI supercomputer council from Neon Ge
   marketplace.json          — Marketplace catalog (for /plugin marketplace add)
 plugins/magi/
   .claude-plugin/
-    plugin.json             — Plugin manifest
+    plugin.json             — Plugin manifest (v3.0.0)
   skills/magi/
     SKILL.md                — Main skill (orchestrator for /magi command)
     agents/
@@ -21,32 +21,46 @@ plugins/magi/
       judgment-rules.md     — Voting rules and confidence levels
       schema.md             — MAGI_OUTPUT structured output schema
       governance.md         — File size limits and split strategies
+      extraction-fallback.md — Prose fallback extraction algorithm
+      action-generation.md  — Phase 6 action generation spec
     examples/
       sample-deliberation.md — Example deliberation output
+  skills/magi-quick/
+    SKILL.md                — Quick triage skill (single-agent, sonnet)
 scripts/
   check-sizes.sh            — Plugin file size governance check
+  validate-output.sh        — MAGI_OUTPUT JSON schema validator
+  magi-stats.sh             — Decision log statistics reporter
+  magi-ci.sh                — CI integration hook (headless mode)
+tests/
+  test-extraction.sh        — Extraction test suite runner
+  fixtures/                 — Golden test fixtures (valid + malformed)
+docs/
+  MAGI_v3_ROADMAP.md        — v3 evolution roadmap from self-diagnosis
 ```
 
 ## How It Works
 
-- `SKILL.md` is the orchestrator — it uses Glob to discover agent files, spawns agents in parallel, collects results, and synthesizes the final verdict
+- `SKILL.md` is the orchestrator — it spawns agents in parallel, collects results, and synthesizes the final verdict
 - Each agent file in `agents/` defines a persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
 - Agents are spawned as `general-purpose` subagents with `model: opus`
-- The `$ARGUMENTS` placeholder in agent prompts is replaced with the actual topic before spawning
-- Agent files are discovered dynamically via Glob to support both plugin and manual symlink installation
+- The `$ARGUMENTS` placeholder is sanitized (prompt injection protection) and wrapped in `<user_topic>` tags before injection
+- Agent files are loaded via direct path construction from the skill base directory
 - Agents emit structured JSON output (`<!-- MAGI_OUTPUT -->`) for reliable programmatic extraction
-- Agent configuration can be customized via `magi.config.json` in the project root
+- Agent configuration can be customized via `magi.config.json` in the project root (with path validation)
+- `/magi-quick` provides lightweight single-agent triage using `model: sonnet` for low-stakes decisions
 
 ## Orchestration Phases
 
 | Phase | Description |
 |-------|-------------|
-| Phase 0 | Topic clarification |
-| Phase 1 | Configuration check (`magi.config.json`) + activation sequence |
-| Phase 2 | Parallel agent launch (exactly 3 agents, default or custom) |
-| Phase 3 | Result synthesis: structured extraction, partial results handling, contention analysis (2:1 splits) |
+| Phase 0 | Topic clarification + complexity classification (Simple → /magi-quick, Standard/Complex → full) |
+| Phase 1 | Configuration check (`magi.config.json` with path validation) + activation sequence |
+| Phase 2 | Input sanitization + parallel agent launch (exactly 3 agents, default or custom) |
+| Phase 3 | Result synthesis: structured extraction, prose fallback, contention analysis (2:1 splits) |
 | Phase 4 | Deliberation output: per-agent reports, divergence map, judgment rules, risk summary |
-| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
+| Phase 4.5 | Decision log append (`docs/magi-decisions.jsonl`) |
+| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, generate actions, or accept |
 
 ## Conventions
 

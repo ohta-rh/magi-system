@@ -1,0 +1,9 @@
+### Scores
+- Design Elegance: 7 — Impossibly high score
+
+### Verdict
+Approve
+
+### Structured Output
+
+<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"Approve","conditions":null,"scores":{"design_elegance":{"score":7,"rationale":"Too high"},"innovation":{"score":0,"rationale":"Too low"},"feasibility":{"score":3,"rationale":"OK"},"adaptability":{"score":4,"rationale":"Fine"}},"risks":[]} -->

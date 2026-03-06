@@ -1,0 +1,20 @@
+### Comparison Analysis: REST vs GraphQL
+
+#### Option A: REST API
+- Correctness & Rigor: 4 — Mature, well-understood patterns
+- Performance & Efficiency: 3 — Over-fetching is inherent
+- Security: 5 — Battle-tested security model
+- Technical Consistency: 4 — Aligns with current architecture
+
+#### Option B: GraphQL
+- Correctness & Rigor: 5 — Schema-enforced contracts
+- Performance & Efficiency: 4 — Precise data fetching, N+1 risk manageable
+- Security: 4 — Requires introspection controls
+- Technical Consistency: 5 — Aligns with TypeScript codebase
+
+### Recommendation
+GraphQL — superior type safety and developer experience outweigh migration cost.
+
+### Structured Output
+
+<!-- MAGI_OUTPUT {"schema_version":"1.1","mode":"comparison","recommendation":"GraphQL","recommendation_rationale":"Superior type safety and schema-enforced contracts align with TypeScript codebase","options":[{"name":"REST","verdict":"Approve","conditions":null,"scores":{"correctness_rigor":{"score":4,"rationale":"Mature patterns"},"performance_efficiency":{"score":3,"rationale":"Over-fetching inherent"},"security":{"score":5,"rationale":"Battle-tested"},"technical_consistency":{"score":4,"rationale":"Current architecture"}},"risks":["Over-fetching leads to wasted bandwidth"]},{"name":"GraphQL","verdict":"Approve","conditions":null,"scores":{"correctness_rigor":{"score":5,"rationale":"Schema-enforced contracts"},"performance_efficiency":{"score":4,"rationale":"Precise fetching"},"security":{"score":4,"rationale":"Requires introspection controls"},"technical_consistency":{"score":5,"rationale":"TypeScript alignment"}},"risks":["N+1 query risk without dataloaders"]}]} -->
