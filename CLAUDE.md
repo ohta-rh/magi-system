@@ -22,7 +22,6 @@ plugins/magi/
       schema.md             — MAGI_OUTPUT structured output schema
       governance.md         — File size limits and split strategies
       extraction-fallback.md — Prose fallback extraction algorithm
-      action-generation.md  — Phase 6 action generation spec
     examples/
       sample-deliberation.md — Example deliberation output
   skills/magi-quick/
@@ -30,13 +29,9 @@ plugins/magi/
 scripts/
   check-sizes.sh            — Plugin file size governance check
   validate-output.sh        — MAGI_OUTPUT JSON schema validator
-  magi-stats.sh             — Decision log statistics reporter
-  magi-ci.sh                — CI integration hook (headless mode)
 tests/
   test-extraction.sh        — Extraction test suite runner
   fixtures/                 — Golden test fixtures (valid + malformed)
-docs/
-  MAGI_v3_ROADMAP.md        — v3 evolution roadmap from self-diagnosis
 ```
 
 ## How It Works
@@ -54,13 +49,12 @@ docs/
 
 | Phase | Description |
 |-------|-------------|
-| Phase 0 | Topic clarification + complexity classification (Simple → /magi-quick, Standard/Complex → full) |
+| Phase 0 | Topic clarification |
 | Phase 1 | Configuration check (`magi.config.json` with path validation) + activation sequence |
 | Phase 2 | Input sanitization + parallel agent launch (exactly 3 agents, default or custom) |
 | Phase 3 | Result synthesis: structured extraction, prose fallback, contention analysis (2:1 splits) |
 | Phase 4 | Deliberation output: per-agent reports, divergence map, judgment rules, risk summary |
-| Phase 4.5 | Decision log append (`docs/magi-decisions.jsonl`) |
-| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, generate actions, or accept |
+| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
 
 ## Conventions
 

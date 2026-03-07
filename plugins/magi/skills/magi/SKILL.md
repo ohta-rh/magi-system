@@ -58,16 +58,6 @@ Proceed to Phase 1 if ALL of the following are met:
 
 **When in doubt, ask with AskUserQuestion.** Maximum 2 questions, each with 2-4 options.
 
-### Topic Complexity Classification
-
-After confirming the topic is clear, classify its complexity to guide the user:
-
-- **Simple** (yes/no, single dimension, low stakes): Suggest `/magi-quick` for rapid single-agent triage instead of full deliberation
-- **Standard** (multi-dimensional, clear scope): Proceed to full deliberation (default)
-- **Complex** (cross-cutting, organizational impact, high stakes): Proceed to full deliberation with extended research
-
-If the topic is classified as Simple, inform the user: "This topic may be suited for `/magi-quick` (single-agent rapid triage). Proceed with full MAGI deliberation?" via AskUserQuestion with options "Full MAGI (recommended for this topic)" and "Switch to /magi-quick". If the user chooses quick mode, instruct them to run `/magi-quick {topic}` and end the skill.
-
 ## Phase 1: Activation Sequence
 
 ### Step 0: Configuration Check
@@ -284,16 +274,6 @@ Apply the judgment rules defined in [references/judgment-rules.md](references/ju
 
 For comparison mode, follow the comparison output format in [references/comparison-format.md](references/comparison-format.md) instead. Apply the comparison recommendation tally rules from [references/judgment-rules.md](references/judgment-rules.md).
 
-### Phase 4.5: Decision Log
-
-After producing the Phase 4 output, append a summary record to the decision log file `docs/magi-decisions.jsonl` (create the file if it does not exist). Use Bash to append a single JSON line:
-
-```json
-{"timestamp":"ISO-8601","topic":"...","verdicts":{"MELCHIOR":"...","BALTHASAR":"...","CASPAR":"..."},"overall":"...","confidence":"...","conditions":["..."],"scores_summary":{"MELCHIOR_avg":N,"BALTHASAR_avg":N,"CASPAR_avg":N}}
-```
-
-Compute each agent's average from their 4 axis scores. Truncate the topic to 200 characters. This log enables trend analysis via `scripts/magi-stats.sh`.
-
 ## Phase 5: Interactive Drill-Down (Optional)
 
 After the verdict is delivered, offer the user a follow-up action using AskUserQuestion.
@@ -322,12 +302,7 @@ Present the following choices via AskUserQuestion:
    - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
    - Re-run the full deliberation (Phase 1 through Phase 4) with the amended topic
 
-3. **"Generate action items"** — Available when Recommended Actions exist. If selected:
-   - Convert each Recommended Action into a GitHub Issue via `gh issue create` with the `magi-action` label
-   - See [references/action-generation.md](references/action-generation.md) for the issue template and workflow
-   - After generation, return to Phase 5 options (minus this option)
-
-4. **"Accept verdict"** — Always available. This is the default option. If selected:
+3. **"Accept verdict"** — Always available. This is the default option. If selected:
    - End the session with no further action
 
 ### Implementation Notes
