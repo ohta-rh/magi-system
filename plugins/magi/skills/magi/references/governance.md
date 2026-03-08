@@ -6,11 +6,13 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 
 | File Category | Max Lines | Current | Rationale |
 |--------------|-----------|---------|-----------|
-| SKILL.md (orchestrator) | 500 | 323 | Anthropic official: SKILL.md body under 500 lines |
+| SKILL.md (orchestrator) | 500 | 367 | Anthropic official: SKILL.md body under 500 lines |
 | Agent files (`agents/*.md`) | 130 | 101 | Self-contained persona + output format; 130 allows axis expansion |
-| Reference files (`references/*.md`) | 100 | 18-65 | Focused single-concern documents |
+| Reference files (`references/*.md`) | 100 | 21-81 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 68 | Illustrative, not normative |
 | comparison-format.md | 100 | 59 | Comparison prompt template + Phase 4 format |
+| voting-engine.md | 100 | 40 | Parameterized N-agent voting logic |
+| dialectic-format.md | 100 | 81 | Inter-agent dialogue and adversarial mode |
 
 ## When Limits Are Approached (80%+)
 

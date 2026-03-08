@@ -19,7 +19,9 @@ plugins/magi/
     references/
       output-format.md      — Phase 4 output templates (NERV aesthetic)
       judgment-rules.md     — Voting rules and confidence levels
-      schema.md             — MAGI_OUTPUT structured output schema
+      voting-engine.md      — Parameterized N-agent voting logic
+      dialectic-format.md   — Inter-agent dialogue and adversarial mode
+      schema.md             — MAGI_OUTPUT structured output schema + config schema
       governance.md         — File size limits and split strategies
       extraction-fallback.md — Prose fallback extraction algorithm
     examples/
@@ -51,10 +53,12 @@ tests/
 |-------|-------------|
 | Phase 0 | Topic clarification |
 | Phase 1 | Configuration check (`magi.config.json` with path validation) + activation sequence |
-| Phase 2 | Input sanitization + parallel agent launch (exactly 3 agents, default or custom) |
-| Phase 3 | Result synthesis: structured extraction, prose fallback, contention analysis (2:1 splits) |
-| Phase 4 | Deliberation output: per-agent reports, divergence map, judgment rules, risk summary |
-| Phase 5 | Interactive drill-down (optional): deep dive, re-evaluate, or accept |
+| Phase 2 | Input sanitization + parallel agent launch (voting + advisory agents) |
+| Phase 3 | Result synthesis: structured extraction, prose fallback, contention analysis |
+| Phase 3.7 | Dialectic round (optional): inter-agent rebuttals and score revision |
+| Phase 3.8 | Adversarial challenge (optional): devil's advocate stress-test |
+| Phase 4 | Deliberation output: per-agent reports, advisory analysis, judgment, risk summary |
+| Phase 5 | Interactive drill-down (optional): deep dive, dialectic, adversarial, re-evaluate, accept |
 
 ## Conventions
 
@@ -64,9 +68,11 @@ tests/
 - Agents include a `<!-- MAGI_OUTPUT {...} -->` structured block at the end of their response
 - Overall Analysis is 4-6 lines, leading with the most important deliberation finding
 - Verdicts are: Approve / Reject / Conditional Approval
-- Final judgment follows majority rule (2:1 or 3:0)
-- Partial results: 2/3 = warning + capped confidence; 1/3 or 0/3 = no verdict
-- Custom agent configs (`magi.config.json`) must define exactly 3 agents — voting logic requires a 3-member council
+- Final judgment follows parameterized majority rule (N-agent voting engine)
+- Partial results: (N-1)/N = warning + capped confidence; < ceil(N/2) = no verdict
+- Custom configs (`magi.config.json`) must have odd N >= 3 voting agents. Advisory agents (non-voting) are unlimited
+- Dialectic mode (`--dialectic` or config) enables inter-agent rebuttals after initial evaluation
+- Adversarial mode (`--adversarial` or config) stress-tests the consensus with a devil's advocate
 
 ## Plugin Health Governance
 

@@ -69,10 +69,16 @@ Before activation, check for a custom agent configuration file in the project ro
    ```json
    {
      "agents": [
-       { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "opus" }
-     ]
+       { "name": "AGENT-NAME", "persona": "description", "file": "path/to/agent.md", "model": "opus" },
+       { "name": "SPECIALIST", "persona": "description", "file": "path/to/specialist.md", "model": "sonnet", "role": "advisory" }
+     ],
+     "dialectic": false,
+     "adversarial": false
    }
    ```
+   - `role`: Optional. `"voting"` (default) or `"advisory"` (non-voting, analysis only)
+   - `dialectic`: Optional. Enables inter-agent dialogue round (Phase 3.7)
+   - `adversarial`: Optional. Enables devil's advocate challenge after verdict
 3. **If the file does not exist**: Use the default three agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) with default paths and `model: opus`. No warning needed.
 4. **If the file exists but is malformed**: Output a visible warning and fall back to defaults:
    ```
@@ -81,13 +87,15 @@ Before activation, check for a custom agent configuration file in the project ro
    Common validation errors to detect:
    - JSON parse failure (syntax error)
    - Missing `agents` array
-   - Agent count is not exactly 3 (voting logic requires 3 agents)
+   - Voting agent count is not odd, or fewer than 3 (voting logic requires odd N >= 3)
    - Agent entry missing required `name` or `file` field
    - Agent `file` path does not exist (check with Glob)
    - Agent `file` path contains `..` (directory traversal attempt)
    - Agent `file` path is absolute and outside the project root
 
-Store the resolved agent list for use in Phase 2.
+Agents with `"role": "advisory"` are non-voting — their analysis is included in the report but does not affect the verdict. See [references/voting-engine.md](references/voting-engine.md) for full rules.
+
+Store the resolved agent list (voting + advisory) for use in Phase 2.
 
 ### Step 1: Output Activation Banner
 
@@ -167,7 +175,7 @@ Agent:
   prompt: (contents of agents/caspar.md with $ARGUMENTS replaced by the topic)
 ```
 
-**Custom config mode** iterates over the agent list and launches each with the configured `name` and `model`:
+**Custom config mode** iterates over the agent list and launches all agents (voting + advisory) simultaneously:
 
 ```
 For each agent in config.agents:
@@ -179,15 +187,20 @@ For each agent in config.agents:
     prompt: (contents of agent.file with $ARGUMENTS replaced by the topic)
 ```
 
+Advisory agents use the same prompt format as voting agents. Their role distinction is handled in Phase 3-4, not at launch time.
+
 ## Phase 3: Result Synthesis
+
+Apply the voting rules from [references/voting-engine.md](references/voting-engine.md) for generalized N-agent judgment. Advisory agents are extracted but excluded from the vote tally.
 
 ### Step 1: Collect Responses and Handle Partial Results
 
-Once the parallel agent calls return, classify the results:
+Once the parallel agent calls return, classify the results. Let N = number of voting agents (default 3):
 
-- **3/3 agents responded with valid output**: Proceed to normal synthesis (Step 2)
-- **2/3 agents responded**: Synthesize with a warning. Confidence is capped at Medium regardless of vote alignment. Note the missing agent in the output
-- **1/3 or 0/3 agents responded**: Report failure. Do NOT issue a verdict. Output an error message and suggest the user retry
+- **N/N voting agents responded with valid output**: Proceed to normal synthesis (Step 2)
+- **(N-1)/N voting agents responded**: Synthesize with a warning. Confidence capped at Medium. Note the missing agent
+- **< ceil(N/2) voting agents responded**: Report failure. Do NOT issue a verdict. Suggest the user retry
+- Advisory agent failures do not affect verdict — note the missing advisory agent but proceed
 
 **Valid output** means the agent's response contains:
 1. A `<!-- MAGI_OUTPUT {...} -->` block with parseable JSON, OR
@@ -266,11 +279,32 @@ In comparison mode, contention is based on **recommendation disagreement** rathe
 - **2:1 recommendation split**: Identify the dissenter, quote their recommendation rationale and key differentiator. Format matches the standard contention summary but replaces "Verdict" with "Recommendation"
 - **1:1:1 split** (3+ options): No majority. Present all recommendations. Confidence: Low
 
+### Phase 3.7: Dialectic Round (Optional)
+
+**Activation**: Only when `--dialectic` flag is in the topic OR `"dialectic": true` in config. Skip otherwise.
+
+When active, after Phase 3.5 contention analysis, launch a rebuttal round. See [references/dialectic-format.md](references/dialectic-format.md) for the full protocol:
+
+1. Build cross-agent briefings (other agents' verdicts, averages, and Overall Analysis)
+2. Re-spawn all voting agents in parallel with rebuttal prompts
+3. Apply score revisions (+/- 1 max per axis) and verdict changes
+4. Re-run voting engine with updated results
+
+The dialectic round adds one additional tool-call round. Output includes a `Dialectic Round` section showing each agent's rebuttal before the Final Judgment.
+
+### Phase 3.8: Adversarial Challenge (Optional)
+
+**Activation**: Only when `--adversarial` flag is in the topic OR `"adversarial": true` in config. Skip otherwise.
+
+When active, after voting is finalized, re-spawn one agent as devil's advocate to argue against the consensus. See [references/dialectic-format.md](references/dialectic-format.md) for selection rules and prompt format. The adversarial challenge is displayed after Final Judgment but does NOT change the verdict.
+
 ## Phase 4: Deliberation Output
 
 Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
 
-Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
+If advisory agents are present, display their analysis after voting agents under a `### Advisory Analysis` section. Advisory scores are shown but marked `(non-voting)`.
+
+Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) and [references/voting-engine.md](references/voting-engine.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
 
 For comparison mode, follow the comparison output format in [references/comparison-format.md](references/comparison-format.md) instead. Apply the comparison recommendation tally rules from [references/judgment-rules.md](references/judgment-rules.md).
 
@@ -302,7 +336,9 @@ Present the following choices via AskUserQuestion:
    - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
    - Re-run the full deliberation (Phase 1 through Phase 4) with the amended topic
 
-3. **"Accept verdict"** — Always available. This is the default option. If selected:
+3. **"Run dialectic round"** — Available if dialectic mode was NOT already active. If selected, run Phase 3.7 dialectic round on the existing results and re-output Phase 4.
+4. **"Run adversarial challenge"** — Available if adversarial mode was NOT already active. If selected, run Phase 3.8 on the existing verdict.
+5. **"Accept verdict"** — Always available. This is the default option. If selected:
    - End the session with no further action
 
 ### Implementation Notes

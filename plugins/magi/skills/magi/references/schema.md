@@ -62,3 +62,19 @@ When agents evaluate multiple options (comparison mode), they emit this schema i
 - `recommendation_rationale`: Non-empty string explaining the recommendation.
 - `options`: Array with 2-4 entries. Each entry follows the same `verdict`/`conditions`/`scores`/`risks` rules as v1.0.
 - v1.0 root-level fields (`verdict`, `conditions`, `scores`, `risks`) are NOT present in v1.1 — they exist inside each `options[]` entry.
+
+## magi.config.json Agent Schema
+
+```json
+{
+  "name": "string — required, agent display name",
+  "persona": "string — optional, persona description",
+  "file": "string — required, path to agent .md file (relative to project root)",
+  "model": "string — optional, default 'opus'. Model to use for this agent",
+  "role": "string — optional, 'voting' (default) or 'advisory' (non-voting)"
+}
+```
+
+Config-level options:
+- `dialectic`: boolean — enable dialectic round (Phase 3.7). Default: false
+- `adversarial`: boolean — enable adversarial challenge (Phase 3.8). Default: false

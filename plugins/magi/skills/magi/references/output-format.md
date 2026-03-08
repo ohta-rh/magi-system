@@ -43,7 +43,21 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 > (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
+- If advisory agents are present, add after voting agents:
+
+### Advisory Analysis
+
+#### {AGENT-NAME} [{persona}] (non-voting)
+
+| Axis | Score |
+|------|-------|
+| (agent's 4 axes) | (1-5) |
+
+> (3-5 line summary)
+
 - If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
+- If Phase 3.7 dialectic was performed, insert rebuttal summaries after contention and before Final Judgment
+- If Phase 3.8 adversarial challenge was performed, insert after Final Judgment
 
 ```
 ━━━ Final Judgment ━━━
