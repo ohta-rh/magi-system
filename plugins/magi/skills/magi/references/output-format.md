@@ -19,7 +19,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Security | (1-5) |
 | Technical Consistency | (1-5) |
 
-> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
+> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 ### BALTHASAR-2 [Mother] — Verdict: (verdict)
 
@@ -30,7 +30,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Operability | (1-5) |
 | Team Impact | (1-5) |
 
-> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
+> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 ### CASPAR-3 [Woman] — Verdict: (verdict)
 
@@ -41,7 +41,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 | Feasibility | (1-5) |
 | Adaptability | (1-5) |
 
-> (3-5 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
+> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
 
 - If advisory agents are present, add after voting agents:
 
@@ -53,7 +53,7 @@ Report the results in the following format (use Markdown tables for scores, keep
 |------|-------|
 | (agent's 4 axes) | (1-5) |
 
-> (3-5 line summary)
+> (2-3 line summary)
 
 - If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
 - If Phase 3.7 dialectic was performed, insert rebuttal summaries after contention and before Final Judgment

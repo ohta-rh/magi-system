@@ -15,7 +15,7 @@
 | Security | 4 |
 | Technical Consistency | 5 |
 
-> The core technical claim — that GraphQL's type system provides superior contract enforcement over REST — is substantiated by formal schema validation guarantees. N+1 query risk is the primary performance concern, but dataloader patterns mitigate this effectively. Schema introspection should be disabled in production to avoid information leakage. The existing TypeScript codebase aligns well with GraphQL's strong typing model.
+> GraphQL's type system provides superior contract enforcement over REST, substantiated by formal schema validation guarantees. N+1 query risk is the primary performance concern, but dataloader patterns mitigate this. The existing TypeScript codebase aligns well with GraphQL's strong typing model.
 
 ### BALTHASAR-2 [Mother] — Verdict: Conditional Approval
 
@@ -26,7 +26,7 @@
 | Operability | 4 |
 | Team Impact | 3 |
 
-> The onboarding cost is the most significant sustainability risk — at the 6-month horizon, team members unfamiliar with GraphQL will struggle to debug resolver chains during incidents. Testing tooling maturity lags behind REST equivalents, particularly for integration testing of nested queries. However, schema-first design improves long-term API documentation quality. Recommend a training program before full adoption to prevent a bus-factor-1 situation with GraphQL expertise.
+> オンボーディングコストが最大のリスク — 6ヶ月後にGraphQL未経験者がresolver chainデバッグに苦しむ。テストツールの成熟度はREST比で劣る。Training program必須。
 
 ### CASPAR-3 [Woman] — Verdict: Approve
 
@@ -37,7 +37,7 @@
 | Feasibility | 4 |
 | Adaptability | 4 |
 
-> The declarative query API is genuinely elegant — clients request exactly what they need, eliminating over-fetching by design. Industry momentum is unmistakable; major platforms have adopted GraphQL and the ecosystem is maturing rapidly. Frontend teams gain meaningful autonomy from backend release cycles. The opportunity cost of staying on REST is growing as tooling and community investment increasingly favor GraphQL.
+> Declarative query APIの美しさ — clientは必要なものだけを要求し、over-fetchingを設計レベルで排除。業界の勢いは明白で、RESTに留まる機会費用は増大している。
 
 > ━━━ Final Judgment ━━━
 

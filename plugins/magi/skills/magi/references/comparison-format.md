@@ -20,9 +20,9 @@ After all options: state your Recommendation (the option you endorse) with ratio
 
 Agents detect this mode by "Comparison Mode — Evaluate ALL options below" in Topic. For each option, output Scores (4 axes), Analysis (3-4 lines), Verdict, and Risks. After all options, output Recommendation with rationale and Key Differentiator. Structured output uses schema v1.1 — see [schema.md](schema.md).
 
-## Phase 4: Comparison Output
+## Phase 4: Comparison Output (Score Matrix Format)
 
-Use per-agent sections matching standard mode ([output-format.md](output-format.md)), with sub-sections per option:
+Use a unified Score Matrix to present all agents' evaluations. This eliminates per-agent × per-option section repetition.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -31,17 +31,33 @@ Use per-agent sections matching standard mode ([output-format.md](output-format.
 ```
 **Topic:** (original question)
 
-### [AGENT] [Persona]
-#### [Option A] — Verdict: (verdict)
-| Axis | Score |
-|------|-------|
-| (agent's 4 axes with scores) |
-> (3-5 line summary)
-#### [Option B] — Verdict: (verdict)
-(same table and summary)
-**Recommendation:** [Option] — (1-line rationale)
+### Score Matrix
 
-(Repeat for all 3 agents. Insert contention analysis before Final Recommendation if 2:1 or 1:1:1.)
+| Agent | Axis | [Option A] | [Option B] |
+|-------|------|:---:|:---:|
+| MELCHIOR | Correctness/Rigor | (1-5) | (1-5) |
+| | Performance | (1-5) | (1-5) |
+| | Security | (1-5) | (1-5) |
+| | Technical Consistency | (1-5) | (1-5) |
+| BALTHASAR | Maintainability | (1-5) | (1-5) |
+| | Testability | (1-5) | (1-5) |
+| | Operability | (1-5) | (1-5) |
+| | Team Impact | (1-5) | (1-5) |
+| CASPAR | Design Elegance | (1-5) | (1-5) |
+| | Innovation | (1-5) | (1-5) |
+| | Feasibility | (1-5) | (1-5) |
+| | Adaptability | (1-5) | (1-5) |
+| **Average** | | (avg) | (avg) |
+
+### Agent Recommendations
+
+> **MELCHIOR-1 [Scientist]:** Recommends [Option] — (1-2 line rationale with key differentiator from technical perspective)
+
+> **BALTHASAR-2 [Mother]:** Recommends [Option] — (1-2 line rationale with key differentiator from sustainability perspective)
+
+> **CASPAR-3 [Woman]:** Recommends [Option] — (1-2 line rationale with key differentiator from aesthetic/pragmatic perspective)
+
+(Insert contention analysis before Final Recommendation if 2:1 or 1:1:1.)
 
 ```
 ━━━ Final Recommendation ━━━
