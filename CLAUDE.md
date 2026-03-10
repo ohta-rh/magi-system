@@ -62,6 +62,7 @@ tests/
 
 ## Conventions
 
+- **All plugin files (skills, agents, references, examples) MUST be written entirely in English.** No Japanese or other non-English content in any plugin files, including examples and sample outputs
 - All skill and agent files are written in English
 - Each agent has a Cognitive Framework (persona-specific reasoning approach) and Internal Deliberation Protocol (structured thinking steps before scoring)
 - Agent output uses a numeric 1-5 scoring scale (5 = best, 1 = worst)

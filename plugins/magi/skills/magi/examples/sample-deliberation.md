@@ -26,7 +26,7 @@
 | Operability | 4 |
 | Team Impact | 3 |
 
-> オンボーディングコストが最大のリスク — 6ヶ月後にGraphQL未経験者がresolver chainデバッグに苦しむ。テストツールの成熟度はREST比で劣る。Training program必須。
+> Onboarding cost is the most significant risk — at the 6-month horizon, team members unfamiliar with GraphQL will struggle to debug resolver chains. Testing tooling maturity lags behind REST. Training program required.
 
 ### CASPAR-3 [Woman] — Verdict: Approve
 
@@ -37,7 +37,7 @@
 | Feasibility | 4 |
 | Adaptability | 4 |
 
-> Declarative query APIの美しさ — clientは必要なものだけを要求し、over-fetchingを設計レベルで排除。業界の勢いは明白で、RESTに留まる機会費用は増大している。
+> The declarative query API is genuinely elegant — clients request exactly what they need, eliminating over-fetching by design. Industry momentum is clear; the opportunity cost of staying on REST is growing.
 
 > ━━━ Final Judgment ━━━
 
