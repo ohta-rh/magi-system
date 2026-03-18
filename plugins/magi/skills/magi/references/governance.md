@@ -6,8 +6,9 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 
 | File Category | Max Lines | Current | Rationale |
 |--------------|-----------|---------|-----------|
-| SKILL.md (orchestrator) | 500 | 367 | Anthropic official: SKILL.md body under 500 lines |
-| Agent files (`agents/*.md`) | 130 | 101 | Self-contained persona + output format; 130 allows axis expansion |
+| SKILL.md (orchestrator) | 500 | 339 | Anthropic official: SKILL.md body under 500 lines |
+| Meta-agent (`agents/magi-core.md`) | 160 | 149 | Synthesis agent: embeds extraction, voting, bias detection, output format |
+| Persona agents (`agents/{melchior,balthasar,caspar}.md`) | 130 | 102 | Self-contained persona + output format; 130 allows axis expansion |
 | Reference files (`references/*.md`) | 100 | 21-81 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 68 | Illustrative, not normative |
 | comparison-format.md | 100 | 59 | Comparison prompt template + Phase 4 format |
@@ -17,8 +18,9 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 ## When Limits Are Approached (80%+)
 
 1. **SKILL.md > 400 lines**: Extract the largest Phase section into `references/phase-N-detail.md` with a 1-line link from SKILL.md
-2. **Agent file > 104 lines**: Review for redundancy with `references/schema.md`; compress Structured Output section first
-3. **Reference file > 80 lines**: Split by concern (e.g., separate output-format from judgment-rules — already done)
+2. **magi-core.md > 128 lines**: Review for redundancy; compress Output Format section first
+3. **Persona agent file > 104 lines**: Review for redundancy with `references/schema.md`; compress Structured Output section first
+4. **Reference file > 80 lines**: Split by concern (e.g., separate output-format from judgment-rules — already done)
 
 ## Structural Rules
 

@@ -7,7 +7,7 @@ allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
 
 # MAGI SYSTEM — Engineering Decision Support System
 
-You are the integrated operator of the MAGI System. Launch 3 Agents in parallel, have them evaluate the topic from multiple dimensions, and synthesize the results into a unified report. Each MAGI evaluates from its unique engineering perspective, performing deep analysis with ultrathink.
+You are the operator of the MAGI System. Launch 3 persona agents in parallel for multi-dimensional evaluation, then delegate judgment to MAGI Core — the integrated intelligence that performs extraction, bias detection, and synthesis. Each MAGI persona evaluates from its unique engineering perspective, performing deep analysis with ultrathink.
 
 ## The Three Evaluation Domains
 
@@ -103,7 +103,7 @@ Output the following:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MAGI SYSTEM ver.3 ACTIVATED
+  MAGI SYSTEM ver.4 ACTIVATED
   NERV Headquarters — Central Dogma
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -131,10 +131,11 @@ Issue ALL of these tool calls in a **single message**:
 2. **Read** `{base_dir}/agents/melchior.md`
 3. **Read** `{base_dir}/agents/balthasar.md`
 4. **Read** `{base_dir}/agents/caspar.md`
+5. **Read** `{base_dir}/agents/magi-core.md`
 
 `{base_dir}` is the skill base directory from the activation context. Construct absolute paths directly — do NOT use Glob for agent file discovery.
 
-**Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all 3 custom agent files in a single parallel batch.
+**Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all custom agent files AND `magi-core.md` in a single parallel batch.
 
 ### Round 2: Banner + Simultaneous Agent Launch (single message)
 
@@ -187,130 +188,101 @@ For each agent in config.agents:
     prompt: (contents of agent.file with $ARGUMENTS replaced by the topic)
 ```
 
-Advisory agents use the same prompt format as voting agents. Their role distinction is handled in Phase 3-4, not at launch time.
+Advisory agents use the same prompt format as voting agents. Their role distinction is handled by MAGI Core, not at launch time.
 
-## Phase 3: Result Synthesis
+## Phase 3: Judgment via MAGI Core
 
-Apply the voting rules from [references/voting-engine.md](references/voting-engine.md) for generalized N-agent judgment. Advisory agents are extracted but excluded from the vote tally.
+Judgment, synthesis, and output formatting are delegated to the MAGI Core agent — the integrated intelligence of the MAGI System. This ensures true encapsulation: the orchestrator does not perform judgment; it only coordinates.
 
-### Step 1: Collect Responses and Handle Partial Results
+### Step 1: Classify Responses
 
-Once the parallel agent calls return, classify the results. Let N = number of voting agents (default 3):
+Once all persona agent calls return, classify the results. Let N = number of voting agents (default 3):
 
-- **N/N voting agents responded with valid output**: Proceed to normal synthesis (Step 2)
-- **(N-1)/N voting agents responded**: Synthesize with a warning. Confidence capped at Medium. Note the missing agent
-- **< ceil(N/2) voting agents responded**: Report failure. Do NOT issue a verdict. Suggest the user retry
-- Advisory agent failures do not affect verdict — note the missing advisory agent but proceed
+- **N/N voting agents responded**: Proceed to Step 2
+- **(N-1)/N voting agents responded**: Proceed with warning. Note the missing agent.
+- **< ceil(N/2) voting agents responded**: Report failure. Do NOT proceed. Suggest the user retry.
+- Advisory agent failures: Note but proceed.
 
-**Valid output** means the agent's response contains:
-1. A `<!-- MAGI_OUTPUT {...} -->` block with parseable JSON, OR
-2. At minimum, a clearly stated Verdict line and numeric scores for all 4 axes
+A response is valid if the agent produced any substantive content. MAGI Core handles extraction and malformed output detection.
 
-If an agent responds but its output is malformed, treat it as a missing response.
+### Step 2: Build MAGI Core Input
 
-### Step 2: Structured Result Extraction
-
-For each agent that returned valid output, extract data from the `<!-- MAGI_OUTPUT {...} -->` block:
-
-1. Find the `<!-- MAGI_OUTPUT` marker in the agent's response
-2. Extract the JSON between the markers
-3. Parse the following fields:
-   - `verdict`: string ("Approve", "Reject", or "Conditional Approval")
-   - `conditions`: string or null
-   - `scores`: object with axis keys, each containing `score` (number) and `rationale` (string)
-   - `risks`: array of strings
-   - `schema_version`: string (expected "1.0")
-
-If the structured block is missing but the agent produced human-readable scores and verdict, fall back to extracting from prose using the algorithm in [references/extraction-fallback.md](references/extraction-fallback.md). Prefer the structured block when available. When prose fallback is used, cap confidence at Medium and add "⚠ Prose extraction used" to the output.
-
-Scores use a 5-point scale (5 = best, 1 = worst).
-
-### Step 2a: Comparison Mode Extraction
-
-When the topic was detected as comparative (Phase 0), extract comparison-specific data from the `<!-- MAGI_OUTPUT {...} -->` block:
-
-1. Check `schema_version` is `"1.1"` and `mode` is `"comparison"`
-2. Extract `recommendation` and `recommendation_rationale` from each agent
-3. Extract per-option `verdict`, `scores`, and `risks` from the `options` array
-4. If an agent returned v1.0 format despite comparison mode, treat as partial result with warning
-
-Build the Score Matrix and Per-Agent Recommendations table from the extracted data. Tally recommendations across agents to determine consensus (3:0, 2:1, or 1:1:1).
-
-If 2+ options receive identical recommendation counts, compare average scores across recommending agents to break the tie.
-
-### MAGI_OUTPUT Schema Definition
-
-See [references/schema.md](references/schema.md) for the authoritative schema definition and field rules.
-
-### Phase 3.5: Cross-Agent Contention Analysis
-
-**This phase is triggered ONLY on a 2:1 split verdict.** Skip if unanimous (3:0) or indeterminate (1:1:1).
-
-When a 2:1 split is detected:
-
-1. **Identify the dissenter** — the single agent whose verdict differs from the majority
-2. **Compare per-agent average scores** — compute the mean of each agent's 4 axis scores. Flag if the dissenter's average diverges by ≥ 1.0 from the majority agents' averages. Note: each agent evaluates different axes, so individual axis scores are NOT comparable across agents
-3. **Identify the dissenter's weakest axis** — find the dissenter's lowest-scoring axis as the primary concern driving their verdict
-4. **Quote the dissenter's rationale** — extract the dissenter's Overall Analysis and the rationale for their lowest-scoring axis
-5. **Produce a contention summary** in this format:
+Construct the input data block to replace `$AGENT_RESULTS` in `magi-core.md`:
 
 ```
-### Contention Analysis (2:1 Split)
+### Topic
+(the sanitized topic from Phase 2)
 
-**Dissenter:** (agent name) — Verdict: (verdict)
+### Agent Configuration
+| Agent | Persona | Role |
+|-------|---------|------|
+| (name) | (persona) | voting/advisory |
 
-**Score Averages:**
-- (agent1): (avg) / (agent2): (avg) / (agent3): (avg)
+### Agent Responses
 
-**Dissenter's Weakest Axis:**
-- (axis name): (score) — (rationale)
+#### [AGENT-NAME-1]
+(full raw response from agent)
 
-**Dissenter's Core Argument:**
-> (quoted rationale from dissenter's overall analysis)
+#### [AGENT-NAME-2]
+(full raw response from agent)
+
+#### [AGENT-NAME-3]
+(full raw response from agent)
 ```
 
-This contention summary is included in the Phase 4 output (before Final Judgment).
+### Step 3: Launch MAGI Core
 
-### Comparison Mode Contention
+Replace `$AGENT_RESULTS` in the loaded `magi-core.md` with the input data block from Step 2.
 
-In comparison mode, contention is based on **recommendation disagreement** rather than verdict splits:
+```
+Agent:
+  subagent_type: general-purpose
+  name: MAGI-CORE
+  model: opus
+  description: "MAGI Core integrated judgment"
+  prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
+```
 
-- **3:0 recommendation**: All agents recommend the same option. No contention analysis needed
-- **2:1 recommendation split**: Identify the dissenter, quote their recommendation rationale and key differentiator. Format matches the standard contention summary but replaces "Verdict" with "Recommendation"
-- **1:1:1 split** (3+ options): No majority. Present all recommendations. Confidence: Low
+### Step 4: Display and Parse Judgment
+
+Display the MAGI Core agent's response directly — it IS the deliberation report.
+
+Extract the `<!-- MAGI_JUDGMENT {...} -->` block from the response. Parse:
+- `overall_verdict`: for Phase 5 trigger decisions
+- `vote_tally`: for Phase 5 options
+- `confidence`: for display
+- `bias_flags`: for Phase 5 considerations
+- `agents[]`: for dialectic briefings and dissenter identification
 
 ### Phase 3.7: Dialectic Round (Optional)
 
 **Activation**: Only when `--dialectic` flag is in the topic OR `"dialectic": true` in config. Skip otherwise.
 
-When active, after Phase 3.5 contention analysis, launch a rebuttal round. See [references/dialectic-format.md](references/dialectic-format.md) for the full protocol:
+After MAGI Core returns, if dialectic is active:
 
-1. Build cross-agent briefings (other agents' verdicts, averages, and Overall Analysis)
-2. Re-spawn all voting agents in parallel with rebuttal prompts
-3. Apply score revisions (+/- 1 max per axis) and verdict changes
-4. Re-run voting engine with updated results
-
-The dialectic round adds one additional tool-call round. Output includes a `Dialectic Round` section showing each agent's rebuttal before the Final Judgment.
+1. Parse `<!-- MAGI_JUDGMENT -->` for each agent's verdict, avg_score, and summary
+2. Build cross-agent briefings per [references/dialectic-format.md](references/dialectic-format.md)
+3. Re-spawn all voting agents in parallel with rebuttal prompts (same model as initial round)
+4. Collect rebuttal responses
+5. Re-invoke MAGI Core: append a `### Dialectic Rebuttals` section to the input data with each agent's rebuttal text
+6. Display the updated MAGI Core output (replaces initial output)
 
 ### Phase 3.8: Adversarial Challenge (Optional)
 
 **Activation**: Only when `--adversarial` flag is in the topic OR `"adversarial": true` in config. Skip otherwise.
 
-When active, after voting is finalized, re-spawn one agent as devil's advocate to argue against the consensus. See [references/dialectic-format.md](references/dialectic-format.md) for selection rules and prompt format. The adversarial challenge is displayed after Final Judgment but does NOT change the verdict.
+After voting is finalized (post-dialectic if applicable):
 
-## Phase 4: Deliberation Output
-
-Follow the output format defined in [references/output-format.md](references/output-format.md). This includes per-agent score tables, Final Judgment table, and Recommended Actions — all using the NERV aesthetic (━━━ headers).
-
-If advisory agents are present, display their analysis after voting agents under a `### Advisory Analysis` section. Advisory scores are shown but marked `(non-voting)`.
-
-Apply the judgment rules defined in [references/judgment-rules.md](references/judgment-rules.md) and [references/voting-engine.md](references/voting-engine.md) to determine the Overall Verdict, Confidence level, and Risk Summary.
-
-For comparison mode, follow the comparison output format in [references/comparison-format.md](references/comparison-format.md) instead. Apply the comparison recommendation tally rules from [references/judgment-rules.md](references/judgment-rules.md).
+1. Parse `<!-- MAGI_JUDGMENT -->` to determine consensus
+2. Select devil's advocate per [references/dialectic-format.md](references/dialectic-format.md) selection rules
+3. Re-spawn selected agent with adversarial prompt
+4. Display adversarial analysis after the deliberation report
 
 ## Phase 5: Interactive Drill-Down (Optional)
 
 After the verdict is delivered, offer the user a follow-up action using AskUserQuestion.
+
+Use the `<!-- MAGI_JUDGMENT -->` block parsed in Phase 3 Step 4 to determine the verdict outcome and dissenter identity.
 
 ### Trigger
 
@@ -318,7 +290,7 @@ Phase 5 is conditionally offered based on the verdict outcome:
 
 | Verdict Outcome | Phase 5 Action |
 |----------------|----------------|
-| 3:0 Unanimous Approve | **Skip** — Session ends after Phase 4 |
+| 3:0 Unanimous Approve | **Skip** — Session ends after MAGI Core output |
 | 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
 | Any Conditional Approval | **Trigger** — Offer re-evaluate + accept |
 | 1:1:1 Indeterminate | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
@@ -334,17 +306,17 @@ Present the following choices via AskUserQuestion:
 
 2. **"Re-evaluate with amended proposal"** — Always available. If selected:
    - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
-   - Re-run the full deliberation (Phase 1 through Phase 4) with the amended topic
+   - Re-run the full deliberation (Phase 1 through Phase 3) with the amended topic
 
-3. **"Run dialectic round"** — Available if dialectic mode was NOT already active. If selected, run Phase 3.7 dialectic round on the existing results and re-output Phase 4.
+3. **"Run dialectic round"** — Available if dialectic mode was NOT already active. If selected, run Phase 3.7 dialectic round on the existing results and re-invoke MAGI Core for updated judgment.
 4. **"Run adversarial challenge"** — Available if adversarial mode was NOT already active. If selected, run Phase 3.8 on the existing verdict.
 5. **"Accept verdict"** — Always available. This is the default option. If selected:
    - End the session with no further action
 
 ### Implementation Notes
 
-- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after Phase 4 with a brief closing note.
-- **2:1 Split**: Option 1 uses the dissenter identified in Phase 3.5. Re-spawn with focused elaboration prompt.
+- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after MAGI Core output with a brief closing note.
+- **2:1 Split**: Option 1 uses the dissenter identified in `MAGI_JUDGMENT.agents[]`. Re-spawn with focused elaboration prompt.
 - **1:1:1 Indeterminate**: Replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts.
 - **3:0 Unanimous Reject**: Omit option 1 (no dissenter). Offer re-evaluate to let the user amend their proposal.
 - **Conditional Approval (any split)**: Always offer re-evaluate so the user can address conditions.
@@ -356,7 +328,7 @@ For comparison topics, Phase 5 trigger and options differ:
 
 | Recommendation Outcome | Phase 5 Action |
 |----------------------|----------------|
-| 3:0 Unanimous | **Skip** — Session ends after Phase 4 |
+| 3:0 Unanimous | **Skip** — Session ends after MAGI Core output |
 | 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
 | 1:1:1 Split | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
 

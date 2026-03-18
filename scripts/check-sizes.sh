@@ -36,9 +36,13 @@ echo ""
 # SKILL.md
 check_file "$PLUGIN_DIR/SKILL.md" 500 "SKILL.md (orchestrator)"
 
-# Agent files
+# Meta-agent (MAGI Core)
+check_file "$PLUGIN_DIR/agents/magi-core.md" 160 "magi-core.md (meta-agent)"
+
+# Persona agent files
 for agent in "$PLUGIN_DIR"/agents/*.md; do
-  check_file "$agent" 130 "$(basename "$agent") (agent)"
+  [ "$(basename "$agent")" = "magi-core.md" ] && continue
+  check_file "$agent" 130 "$(basename "$agent") (persona agent)"
 done
 
 # Reference files
