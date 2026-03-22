@@ -27,9 +27,9 @@ MAGI supports comparison topics (A vs B, or A vs B vs C) in a single deliberatio
 
 **Detection heuristics** — flag the topic as comparative if it matches any of:
 - Explicit "A vs B", "A or B", "A versus B" framing
-- "Which is better/preferred", "compare X and Y", "X と Y の比較"
+- "Which is better/preferred", "compare X and Y", "comparison of X and Y"
 - Two or more named alternatives presented for selection
-- "Should we use X or Y", "X にすべきか Y にすべきか"
+- "Should we use X or Y", "should we go with X or Y"
 
 **When a comparative topic is detected:**
 
