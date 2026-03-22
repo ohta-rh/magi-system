@@ -20,13 +20,8 @@ else
   INPUT=$(cat)
 fi
 
-# Step 1: Extract <!-- MAGI_OUTPUT {...} --> block
-MAGI_BLOCK=$(echo "$INPUT" | grep -oP '<!-- MAGI_OUTPUT \K\{.*?\}(?= -->)' 2>/dev/null || true)
-
-if [ -z "$MAGI_BLOCK" ]; then
-  # Try multiline extraction (some outputs may have newlines)
-  MAGI_BLOCK=$(echo "$INPUT" | sed -n 's/.*<!-- MAGI_OUTPUT \(.*\) -->.*/\1/p' | head -1)
-fi
+# Step 1: Extract <!-- MAGI_OUTPUT {...} --> block (macOS compatible — no grep -oP)
+MAGI_BLOCK=$(echo "$INPUT" | sed -n 's/.*<!-- MAGI_OUTPUT \(.*\) -->.*/\1/p' | head -1)
 
 if [ -z "$MAGI_BLOCK" ]; then
   fail "No <!-- MAGI_OUTPUT {...} --> block found"
