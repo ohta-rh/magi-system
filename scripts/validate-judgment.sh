@@ -69,6 +69,16 @@ case "$CONFIDENCE" in
 esac
 pass "confidence: $CONFIDENCE"
 
+# Step 5.5: Check reversibility (optional — backward compatible)
+REVERSIBILITY=$(echo "$MAGI_BLOCK" | jq -r '.reversibility // empty')
+if [ -n "$REVERSIBILITY" ]; then
+  case "$REVERSIBILITY" in
+    High|Medium|Low) ;;
+    *) fail "Invalid reversibility: $REVERSIBILITY (expected High/Medium/Low)" ;;
+  esac
+  pass "reversibility: $REVERSIBILITY"
+fi
+
 # Step 6: Check bias_flags (must be array)
 BIAS_TYPE=$(echo "$MAGI_BLOCK" | jq -r '.bias_flags | type')
 if [ "$BIAS_TYPE" != "array" ]; then

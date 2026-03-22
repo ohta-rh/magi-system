@@ -13,7 +13,7 @@ This is the authoritative schema for the structured output block emitted by each
       "rationale": "string — one-line justification"
     }
   },
-  "risks": ["string — each a distinct risk or concern. Empty array if none"]
+  "risks": ["string — each a distinct risk or concern. Empty array if none. Also accepts {severity, description} objects (see below)"]
 }
 ```
 
@@ -25,7 +25,10 @@ This is the authoritative schema for the structured output block emitted by each
 - `scores`: Object with agent-specific axis keys. Each agent has exactly 4 axes. Keys must match the agent's defined evaluation axes.
 - `scores.*.score`: Integer from 1 to 5 inclusive.
 - `scores.*.rationale`: Non-empty string.
-- `risks`: Array of strings. Use `[]` (empty array) if no risks identified.
+- `risks`: Array of strings OR objects. Persona agents emit strings; MAGI Core classifies severity during synthesis. Object form: `{"severity": "critical|moderate|informational", "description": "string"}`. Use `[]` if no risks.
+  - `critical`: Blocks deployment or causes outage
+  - `moderate`: Degrades quality or increases cost
+  - `informational`: Awareness item, no immediate action needed
 - The entire JSON block MUST be valid JSON enclosed in `<!-- MAGI_OUTPUT ... -->` HTML comment markers.
 
 ## Schema v1.1 — Comparison Mode

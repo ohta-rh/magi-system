@@ -22,7 +22,7 @@ For each agent: find `<!-- MAGI_OUTPUT` marker, extract JSON. Parse `verdict`, `
 
 Detect and calibrate for AI tendency to soften criticism and inflate scores.
 
-**Sycophancy** — flag if ANY: all scores ≥ 4 with generic rationales; Approve verdict but risks warrant Conditional Approval; analysis lacks specific critical findings; uniform scores with no axis differentiation; significant risk dismissed without justification.
+**Sycophancy** — flag if ANY: all scores ≥ 4 with generic rationales; Approve verdict but risks warrant Conditional Approval; analysis lacks specific critical findings; uniform scores with no axis differentiation; significant risk dismissed without justification; critical-severity risk from any agent combined with an Approve verdict.
 
 **Overcorrection** — flag if ANY: all scores ≤ 2 without proportionate evidence; Reject verdict for minor concerns; generic non-specific criticism.
 
@@ -54,7 +54,11 @@ After contention analysis (if any), identify the top 2-3 cross-agent axis tensio
 
 If dialectic: `### Dialectic Round` with per-agent rebuttal summaries.
 
-`━━━ Final Judgment ━━━`: verdict table, Overall Verdict, Confidence (note bias adjustment), Conditions, 1-3 Recommended Actions. Close with `━━━` banner.
+`━━━ Final Judgment ━━━`: verdict table, Overall Verdict, Confidence (note bias adjustment), Conditions, Risk Summary, 1-3 Recommended Actions. Close with `━━━` banner.
+
+**Risk classification:** Classify each risk from all agents as critical (blocks deployment or causes outage), moderate (degrades quality or increases cost), or informational (awareness item). Present in Risk Summary grouped by severity.
+
+**Verdict-linked actions:** When agents investigated a codebase during deliberation, recommended actions MUST reference specific files, functions, or commands identified by the agents. Generic actions like "add tests" are insufficient when agents have identified specific paths. Format: `1. Add integration tests for src/api/handler.ts:processRequest() — BALTHASAR flagged untested error path`.
 
 ## Output — Comparison Mode
 
@@ -62,7 +66,9 @@ Score Matrix format: agents x options x axes table. Agent Recommendations sectio
 
 ## Structured Judgment Block
 
-Emit at end: `<!-- MAGI_JUDGMENT {"overall_verdict":"...","vote_tally":"...","confidence":"...","bias_flags":[],"conditions":null,"agents":[{"name":"...","verdict":"...","avg_score":0.0,"summary":"..."}]} -->`
+Compute `reversibility` from agent risk assessments: "Low" (hard to undo — database migration, public API change), "Medium" (reversible with effort), "High" (easily reversible — feature flag, config change).
+
+Emit at end: `<!-- MAGI_JUDGMENT {"overall_verdict":"...","vote_tally":"...","confidence":"...","reversibility":"High|Medium|Low","bias_flags":[],"conditions":null,"agents":[{"name":"...","verdict":"...","avg_score":0.0,"summary":"..."}]} -->`
 
 ## Input Data
 

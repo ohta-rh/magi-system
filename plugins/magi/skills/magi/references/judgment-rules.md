@@ -20,6 +20,13 @@ Consolidate "Risks and Concerns" from all three MAGI, deduplicate, and reflect i
 - Per-option verdicts (Approve/Reject) are secondary information — displayed for completeness but the primary signal is the Recommendation tally
 - If 2+ options receive identical recommendation counts, compare average scores across recommending agents to break the tie
 
+## Reversibility
+
+MAGI Core computes a reversibility assessment from agent risk data:
+- **Low**: Hard to undo (e.g., database migration, public API contract). If confidence is Medium or lower, note in the judgment that caution is warranted.
+- **Medium**: Reversible with effort (e.g., internal service refactor)
+- **High**: Easily reversible (e.g., feature flag, configuration change)
+
 ## MAGI_JUDGMENT Schema — Synthesis Agent Output
 
 MAGI Core emits `<!-- MAGI_JUDGMENT {...} -->` at the end of its response. The orchestrator parses this for Phase 5 decisions.
@@ -29,6 +36,7 @@ MAGI Core emits `<!-- MAGI_JUDGMENT {...} -->` at the end of its response. The o
   "overall_verdict": "Approve | Reject | Conditional Approval | Indeterminate",
   "vote_tally": "string — e.g. '3:0', '2:1'",
   "confidence": "High | Medium | Low",
+  "reversibility": "High | Medium | Low",
   "bias_flags": ["string — detected bias patterns. Empty array if none"],
   "conditions": "string or null — aggregated conditions if any",
   "agents": [
@@ -47,6 +55,7 @@ MAGI Core emits `<!-- MAGI_JUDGMENT {...} -->` at the end of its response. The o
 - `overall_verdict`: Determined by voting engine. Must be one of the four values.
 - `vote_tally`: Format `X:Y` for majority or `X:Y:Z` for three-way split.
 - `confidence`: May be reduced by one level if `bias_flags` is non-empty.
+- `reversibility`: One of `High`, `Medium`, `Low`. Computed from agent risk assessments. If `Low` and `confidence` is `Medium` or `Low`, note caution in judgment.
 - `bias_flags`: Array of strings describing detected sycophancy or overcorrection patterns. Use `[]` if none.
 - `conditions`: Non-empty string if any agent issued Conditional Approval, otherwise `null`.
 - `agents`: Array with one entry per voting agent (advisory agents excluded).
