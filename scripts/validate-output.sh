@@ -132,12 +132,28 @@ else
   done
   pass "All scores valid (1-5 range with rationales)"
 
-  # Check risks array
+  # Check risks array (accepts strings or {severity, description} objects)
   RISKS_TYPE=$(echo "$MAGI_BLOCK" | jq -r '.risks | type')
   if [ "$RISKS_TYPE" != "array" ]; then
     fail "risks must be an array (got: $RISKS_TYPE)"
   fi
-  pass "risks is array"
+  # Validate each risk entry is string or valid severity object
+  RISK_COUNT=$(echo "$MAGI_BLOCK" | jq '.risks | length')
+  for i in $([ "$RISK_COUNT" -gt 0 ] && seq 0 $((RISK_COUNT - 1))); do
+    RISK_TYPE=$(echo "$MAGI_BLOCK" | jq -r ".risks[$i] | type")
+    if [ "$RISK_TYPE" = "object" ]; then
+      SEV=$(echo "$MAGI_BLOCK" | jq -r ".risks[$i].severity // empty")
+      case "$SEV" in
+        critical|moderate|informational) ;;
+        *) fail "risks[$i] invalid severity: $SEV (expected critical/moderate/informational)" ;;
+      esac
+      DESC=$(echo "$MAGI_BLOCK" | jq -r ".risks[$i].description // empty")
+      [ -n "$DESC" ] || fail "risks[$i] missing description"
+    elif [ "$RISK_TYPE" != "string" ]; then
+      fail "risks[$i] must be string or object (got: $RISK_TYPE)"
+    fi
+  done
+  pass "risks is valid array ($RISK_COUNT entries)"
 fi
 
 echo ""

@@ -205,6 +205,8 @@ Once all persona agent calls return, classify the results. Let N = number of vot
 
 A response is valid if the agent produced any substantive content. MAGI Core handles extraction and malformed output detection.
 
+**Retry on extraction failure:** If a voting agent responded but produced no parseable `<!-- MAGI_OUTPUT -->` block and no readable prose scores, re-spawn that agent ONCE with the original prompt plus: `IMPORTANT: Your previous response did not include a valid <!-- MAGI_OUTPUT --> block. You MUST emit the structured output block at the end of your response.` If the retry also fails, treat as missing response. Maximum one retry per agent.
+
 ### Step 2: Build MAGI Core Input
 
 Construct the input data block to replace `$AGENT_RESULTS` in `magi-core.md`:
@@ -238,10 +240,12 @@ Replace `$AGENT_RESULTS` in the loaded `magi-core.md` with the input data block 
 Agent:
   subagent_type: general-purpose
   name: MAGI-CORE
-  model: opus
+  model: sonnet
   description: "MAGI Core integrated judgment"
   prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
 ```
+
+<!-- MAGI Core uses sonnet: its task is synthesis/extraction/formatting, not deep reasoning. Opus reasoning is reserved for persona agents. -->
 
 ### Step 4: Display and Parse Judgment
 
@@ -253,6 +257,16 @@ Extract the `<!-- MAGI_JUDGMENT {...} -->` block from the response. Parse:
 - `confidence`: for display
 - `bias_flags`: for Phase 5 considerations
 - `agents[]`: for dialectic briefings and dissenter identification
+
+### Step 5: Micro-Dialectic (Automatic on 2:1 Split)
+
+If the vote is a 2:1 split AND dialectic mode is NOT already active, automatically re-spawn the dissenting agent with a micro-rebuttal prompt:
+
+```
+You are {dissenter name}. The majority of the council disagrees with your verdict of {dissenter verdict}. Their average score is {majority avg} vs your {dissenter avg}. State in 2-3 lines whether you maintain your position and why. No MAGI_OUTPUT block needed.
+```
+
+Launch with the same model as the initial round. Display the micro-rebuttal after the deliberation report under `### Dissenter Response`. This does NOT change the verdict — it gives the dissenter a voice without a full dialectic round.
 
 ### Phase 3.7: Dialectic Round (Optional)
 

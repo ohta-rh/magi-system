@@ -30,11 +30,19 @@ plugins/magi/
       sample-deliberation.md — Example deliberation output
   skills/magi-quick/
     SKILL.md                — Quick triage skill (single-agent, sonnet)
+  skills/magi-review/
+    SKILL.md                — Git diff-aware code review skill
+  skills/magi-premortem/
+    SKILL.md                — Pre-mortem failure analysis skill
+.githooks/
+  pre-commit                — Runs governance + extraction checks on plugin changes
 scripts/
   check-sizes.sh            — Plugin file size governance check
   validate-output.sh        — MAGI_OUTPUT JSON schema validator
+  validate-judgment.sh      — MAGI_JUDGMENT JSON schema validator
 tests/
   test-extraction.sh        — Extraction test suite runner
+  test-e2e.sh               — E2E integration test (extraction + voting + dissenter ID)
   fixtures/                 — Golden test fixtures (valid + malformed)
 ```
 
@@ -85,3 +93,4 @@ tests/
 - File size limits and split strategies are defined in `plugins/magi/skills/magi/references/governance.md`
 - Before committing plugin changes, run `bash scripts/check-sizes.sh` to verify all files are within limits
 - SKILL.md must stay under 500 lines; agent files under 130 lines; reference/example files under 100 lines
+- Configure pre-commit hook for automatic checks: `git config core.hooksPath .githooks`
