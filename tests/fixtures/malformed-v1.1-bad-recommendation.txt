@@ -1,0 +1,20 @@
+### Comparison Analysis: Microservices vs Monolith
+
+#### Option A: Microservices
+- Correctness & Rigor: 4 — Well-defined service boundaries
+- Performance & Efficiency: 3 — Network overhead between services
+- Security: 4 — Isolated blast radius per service
+- Technical Consistency: 3 — Requires distributed systems expertise
+
+#### Option B: Monolith
+- Correctness & Rigor: 4 — Simpler to reason about
+- Performance & Efficiency: 5 — No network overhead
+- Security: 3 — Single point of failure
+- Technical Consistency: 5 — Matches current team expertise
+
+### Recommendation
+Serverless — cloud-native approach eliminates infrastructure concerns.
+
+### Structured Output
+
+<!-- MAGI_OUTPUT {"schema_version":"1.1","mode":"comparison","recommendation":"Serverless","recommendation_rationale":"Cloud-native approach eliminates infrastructure concerns","options":[{"name":"Microservices","verdict":"Approve","conditions":null,"scores":{"correctness_rigor":{"score":4,"rationale":"Well-defined boundaries"},"performance_efficiency":{"score":3,"rationale":"Network overhead"},"security":{"score":4,"rationale":"Isolated blast radius"},"technical_consistency":{"score":3,"rationale":"Requires distributed expertise"}},"risks":["Network latency between services"]},{"name":"Monolith","verdict":"Approve","conditions":null,"scores":{"correctness_rigor":{"score":4,"rationale":"Simpler reasoning"},"performance_efficiency":{"score":5,"rationale":"No network overhead"},"security":{"score":3,"rationale":"Single point of failure"},"technical_consistency":{"score":5,"rationale":"Matches team expertise"}},"risks":["Scaling limitations"]}]} -->

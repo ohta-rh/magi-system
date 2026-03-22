@@ -61,5 +61,76 @@ if [ "$ERRORS" -gt 0 ]; then
   exit 1
 else
   echo "RESULT: All files within limits."
-  exit 0
 fi
+
+# Governance verification: compare governance.md "Current" values with actual counts
+GOVERNANCE="$PLUGIN_DIR/references/governance.md"
+if [ -f "$GOVERNANCE" ]; then
+  echo ""
+  echo "━━━ Governance Current-Value Verification ━━━"
+  echo ""
+  GOV_WARNS=0
+
+  verify_governance() {
+    local file="$1"
+    local label="$2"
+    local gov_value="$3"
+
+    if [ ! -f "$file" ]; then
+      return
+    fi
+
+    local actual
+    actual=$(wc -l < "$file" | tr -d ' ')
+
+    if [ "$actual" != "$gov_value" ]; then
+      echo "WARN  $label: governance.md says $gov_value, actual is $actual"
+      GOV_WARNS=$((GOV_WARNS + 1))
+    else
+      echo "  OK  $label: governance.md matches ($actual)"
+    fi
+  }
+
+  # Parse "Current" column values from governance.md table rows
+  # Table format: | File Category | Max Lines | Current | Rationale |
+  while IFS='|' read -r _ category _ current _; do
+    # Trim whitespace
+    category=$(echo "$category" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    current=$(echo "$current" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+    # Skip header/separator rows
+    [ -z "$current" ] && continue
+    echo "$current" | grep -qE '^[0-9]' || continue
+
+    case "$category" in
+      *SKILL.md*)
+        verify_governance "$PLUGIN_DIR/SKILL.md" "SKILL.md" "$current"
+        ;;
+      *magi-core.md*)
+        verify_governance "$PLUGIN_DIR/agents/magi-core.md" "magi-core.md" "$current"
+        ;;
+      *comparison-format.md*)
+        verify_governance "$PLUGIN_DIR/references/comparison-format.md" "comparison-format.md" "$current"
+        ;;
+      *voting-engine.md*)
+        verify_governance "$PLUGIN_DIR/references/voting-engine.md" "voting-engine.md" "$current"
+        ;;
+      *dialectic-format.md*)
+        verify_governance "$PLUGIN_DIR/references/dialectic-format.md" "dialectic-format.md" "$current"
+        ;;
+      *sample-deliberation*)
+        verify_governance "$PLUGIN_DIR/examples/sample-deliberation.md" "sample-deliberation.md" "$current"
+        ;;
+    esac
+  done < "$GOVERNANCE"
+
+  if [ "$GOV_WARNS" -gt 0 ]; then
+    echo ""
+    echo "WARN: $GOV_WARNS governance.md Current value(s) out of date. Update governance.md."
+  else
+    echo ""
+    echo "All governance.md Current values match actual file sizes."
+  fi
+fi
+
+exit 0
