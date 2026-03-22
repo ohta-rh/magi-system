@@ -23,6 +23,7 @@ plugins/magi/
       voting-engine.md      — Parameterized N-agent voting logic
       dialectic-format.md   — Inter-agent dialogue and adversarial mode
       schema.md             — MAGI_OUTPUT + MAGI_JUDGMENT structured output schemas
+      comparison-format.md  — Comparison prompt template + Phase 4 format
       governance.md         — File size limits and split strategies
       extraction-fallback.md — Prose fallback extraction algorithm
     examples/

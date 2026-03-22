@@ -2,7 +2,7 @@
 name: magi-quick
 description: "MAGI Quick Triage. Lightweight single-agent assessment for low-stakes decisions. Use when full MAGI deliberation would be overkill. Triggered by 'quick magi', 'magi quick', 'magi triage'."
 argument-hint: "[question or proposal]"
-allowed-tools: Agent, Read, Glob, Grep, WebSearch, WebFetch
+allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
 ---
 
 # MAGI Quick Triage — Single-Agent Rapid Assessment

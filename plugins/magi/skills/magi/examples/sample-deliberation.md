@@ -1,5 +1,7 @@
 # Sample Deliberation Output
 
+This is the output rendered by MAGI Core (the integrated judgment agent), not the orchestrator.
+
 > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 > MAGI SYSTEM — Deliberation Results
 > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -39,6 +41,10 @@
 
 > The declarative query API is genuinely elegant — clients request exactly what they need, eliminating over-fetching by design. Industry momentum is clear; the opportunity cost of staying on REST is growing.
 
+### Calibration Notes
+
+No bias detected. All agents provided specific evidence for their scores.
+
 > ━━━ Final Judgment ━━━
 
 | | MELCHIOR | BALTHASAR | CASPAR |
@@ -66,3 +72,7 @@ BALTHASAR-2:
 
 CASPAR-3:
 <!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"Approve","conditions":null,"scores":{"design_elegance":{"score":5,"rationale":"Declarative query API is beautiful; clients get exactly what they need"},"innovation_competitiveness":{"score":5,"rationale":"Industry momentum is clear; major platforms have adopted GraphQL"},"feasibility":{"score":4,"rationale":"Incremental adoption is possible via schema stitching with existing REST endpoints"},"adaptability_extensibility":{"score":4,"rationale":"Schema evolution with deprecation directives is more graceful than REST versioning"}},"risks":["Over-fetching prevention requires disciplined schema design"]} -->
+
+## MAGI Core Judgment Block
+
+<!-- MAGI_JUDGMENT {"overall_verdict":"Approve","vote_tally":"3:0","confidence":"High","bias_flags":[],"conditions":"Team training before full adoption; testing tooling maturity to be verified","agents":[{"name":"MELCHIOR-1","verdict":"Approve","avg_score":4.5,"summary":"Strong type safety alignment with TypeScript codebase; N+1 risk manageable"},{"name":"BALTHASAR-2","verdict":"Conditional Approval","avg_score":3.5,"summary":"Onboarding cost and testing tooling gaps require mitigation"},{"name":"CASPAR-3","verdict":"Approve","avg_score":4.5,"summary":"Elegant declarative API with clear industry momentum"}]} -->

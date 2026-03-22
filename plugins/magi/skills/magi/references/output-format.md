@@ -55,9 +55,11 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 > (2-3 line summary)
 
-- If Phase 3.5 contention analysis was performed, insert it here (before Final Judgment)
+- If contention analysis was performed (by MAGI Core), insert it here (before Final Judgment)
 - If Phase 3.7 dialectic was performed, insert rebuttal summaries after contention and before Final Judgment
 - If Phase 3.8 adversarial challenge was performed, insert after Final Judgment
+
+Note: This output format is rendered by the MAGI Core agent, not the orchestrator directly.
 
 ```
 ━━━ Final Judgment ━━━
