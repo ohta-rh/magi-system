@@ -1,5 +1,7 @@
 # Phase 4: Deliberation Output Format
 
+> **Note:** This file is a human-readable reference for the output format. The authoritative runtime source for output formatting is `agents/magi-core.md`, which MAGI Core uses during synthesis. If the two diverge, `magi-core.md` takes precedence.
+
 Report the results in the following format (use Markdown tables for scores, keep ━━━ headers for NERV aesthetic):
 
 ```
