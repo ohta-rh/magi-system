@@ -12,7 +12,7 @@ Dialectic mode is opt-in. It activates when ANY of these conditions are met:
 
 ## Dialectic Round (Phase 3.7)
 
-After Phase 3.5 (contention analysis), if dialectic mode is active:
+After MAGI Core performs contention analysis, if dialectic mode is active:
 
 ### Step 1: Prepare Cross-Agent Briefing
 

@@ -79,6 +79,6 @@ Config-level options:
 - `dialectic`: boolean — enable dialectic round (Phase 3.7). Default: false
 - `adversarial`: boolean — enable adversarial challenge (Phase 3.8). Default: false
 
-## MAGI_JUDGMENT Schema — Synthesis Agent Output
+## MAGI_JUDGMENT Schema
 
-MAGI Core emits `<!-- MAGI_JUDGMENT {...} -->` at the end of its response. Fields: `overall_verdict` (Approve/Reject/Conditional Approval/Indeterminate), `vote_tally` (e.g. "3:0"), `confidence` (High/Medium/Low), `bias_flags` (array of detected bias patterns), `conditions` (string or null), `agents` (array of `{name, verdict, avg_score, summary}`).
+See [judgment-rules.md](judgment-rules.md) for the full MAGI_JUDGMENT schema definition.
