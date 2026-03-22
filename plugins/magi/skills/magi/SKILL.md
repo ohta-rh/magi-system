@@ -238,10 +238,12 @@ Replace `$AGENT_RESULTS` in the loaded `magi-core.md` with the input data block 
 Agent:
   subagent_type: general-purpose
   name: MAGI-CORE
-  model: opus
+  model: sonnet
   description: "MAGI Core integrated judgment"
   prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
 ```
+
+<!-- MAGI Core uses sonnet: its task is synthesis/extraction/formatting, not deep reasoning. Opus reasoning is reserved for persona agents. -->
 
 ### Step 4: Display and Parse Judgment
 

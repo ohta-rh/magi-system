@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# MAGI pre-commit hook
+# Runs governance checks and extraction tests when plugin files are modified.
+# Install: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+# Check if any staged files touch the MAGI plugin
+STAGED=$(git diff --cached --name-only)
+if ! echo "$STAGED" | grep -q '^plugins/magi/'; then
+  exit 0
+fi
+
+echo "MAGI plugin files changed — running governance checks..."
+
+echo ""
+bash scripts/check-sizes.sh
+echo ""
+bash tests/test-extraction.sh
+
+echo ""
+echo "MAGI pre-commit checks passed."

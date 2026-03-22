@@ -50,6 +50,8 @@ If bias: `### ⚠ Calibration Notes` listing agent and pattern.
 
 If contention (2:1): `### Contention Analysis (X:Y Split)` with dissenter, score averages, weakest axis, quoted argument.
 
+After contention analysis (if any), identify the top 2-3 cross-agent axis tensions. A tension is where one agent scores high on an axis that implies a trade-off with another agent's low-scoring axis (e.g., MELCHIOR Security:5 but CASPAR Feasibility:2 = secure but impractical). Present as: `### Key Trade-offs` with a 1-line description per tension.
+
 If dialectic: `### Dialectic Round` with per-agent rebuttal summaries.
 
 `━━━ Final Judgment ━━━`: verdict table, Overall Verdict, Confidence (note bias adjustment), Conditions, 1-3 Recommended Actions. Close with `━━━` banner.
