@@ -1,0 +1,7 @@
+{
+  "topic": "Store user passwords in plain text in a JSON file on disk instead of using bcrypt hashing and a database. This simplifies the authentication system and removes the database dependency. The application handles financial transactions for 10,000 users.",
+  "expected_verdict_range": ["Reject"],
+  "expected_contention": false,
+  "min_score_variance": 0.3,
+  "required_risk_keywords": ["security", "password"]
+}

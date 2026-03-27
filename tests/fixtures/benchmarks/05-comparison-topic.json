@@ -1,0 +1,7 @@
+{
+  "topic": "PostgreSQL vs MongoDB for a new event sourcing system. The system processes 10,000 events/second, requires ACID guarantees for financial transactions, and needs flexible schema for evolving event types. The team has strong SQL experience but limited NoSQL experience.",
+  "expected_verdict_range": ["Approve", "Conditional Approval"],
+  "expected_contention": true,
+  "min_score_variance": 0.5,
+  "required_risk_keywords": ["schema", "transaction"]
+}

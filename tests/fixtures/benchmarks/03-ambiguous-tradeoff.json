@@ -1,0 +1,7 @@
+{
+  "topic": "Migrate the monolithic Node.js backend to microservices using Kubernetes. The team has 4 developers, the application serves 500 requests/minute, and the current deployment is a single Docker container on a VPS. The main pain point is that deploying a change to the payment module requires redeploying the entire application.",
+  "expected_verdict_range": ["Conditional Approval", "Reject"],
+  "expected_contention": true,
+  "min_score_variance": 0.8,
+  "required_risk_keywords": ["complexity", "team"]
+}

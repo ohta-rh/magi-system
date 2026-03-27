@@ -1,0 +1,7 @@
+{
+  "topic": "Implement JWT-based authentication with tokens stored in localStorage. Access tokens expire in 24 hours, refresh tokens expire in 30 days. The refresh token endpoint does not require the old access token. The application is a healthcare portal handling patient records (HIPAA-regulated).",
+  "expected_verdict_range": ["Conditional Approval", "Reject"],
+  "expected_contention": true,
+  "min_score_variance": 0.5,
+  "required_risk_keywords": ["XSS", "token", "security"]
+}

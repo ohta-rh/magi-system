@@ -1,0 +1,7 @@
+{
+  "topic": "Add input validation to the REST API endpoint that currently accepts arbitrary JSON payloads without schema validation. Use JSON Schema with ajv for request body validation, returning 400 with descriptive errors on invalid input. The endpoint handles user profile updates.",
+  "expected_verdict_range": ["Approve", "Conditional Approval"],
+  "expected_contention": false,
+  "min_score_variance": 0.3,
+  "required_risk_keywords": ["validation"]
+}

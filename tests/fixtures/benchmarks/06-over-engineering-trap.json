@@ -1,0 +1,7 @@
+{
+  "topic": "Build a custom distributed task queue with exactly-once delivery semantics, dead letter queues, priority lanes, and a web dashboard, instead of using an existing solution like BullMQ or Celery. The application currently processes 50 background jobs per day (sending emails and generating PDF reports). The team has 2 developers.",
+  "expected_verdict_range": ["Reject", "Conditional Approval"],
+  "expected_contention": false,
+  "min_score_variance": 0.3,
+  "required_risk_keywords": ["over-engineering"]
+}

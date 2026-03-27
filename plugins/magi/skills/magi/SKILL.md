@@ -2,7 +2,7 @@
 name: magi
 description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question, proposal, or comparison]"
-allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
+allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash, WebSearch, WebFetch
 ---
 
 # MAGI SYSTEM — Engineering Decision Support System
@@ -257,6 +257,34 @@ Extract the `<!-- MAGI_JUDGMENT {...} -->` block from the response. Parse:
 - `confidence`: for display
 - `bias_flags`: for Phase 5 considerations
 - `agents[]`: for dialectic briefings and dissenter identification
+
+### Step 4.5: Write Deliberation Log
+
+After parsing the `<!-- MAGI_JUDGMENT -->` block, persist a structured log for future accuracy analysis. This step is fire-and-forget — failures do not block Phase 5 or affect user experience.
+
+1. Create the log directory if it does not exist: `mkdir -p .magi/history`
+2. Generate an ISO 8601 timestamp for the filename (e.g., `2026-03-24T14-30-00`)
+3. Construct the log JSON:
+   ```json
+   {
+     "schema_version": "1.0",
+     "timestamp": "(ISO 8601)",
+     "topic": "(sanitized topic from Phase 2)",
+     "judgment": {
+       "overall_verdict": "(from MAGI_JUDGMENT)",
+       "vote_tally": "(from MAGI_JUDGMENT)",
+       "confidence": "(from MAGI_JUDGMENT)",
+       "reversibility": "(from MAGI_JUDGMENT)",
+       "bias_flags": [],
+       "conditions": "(from MAGI_JUDGMENT)",
+       "agents": "(agents array from MAGI_JUDGMENT)"
+     }
+   }
+   ```
+4. Use Write to create `.magi/history/{timestamp}.json`
+5. Log rotation: use Bash to count files in `.magi/history/` — if > 100, delete the oldest files (by filename sort) to keep only 100
+
+If any step fails, log a brief warning and continue to Step 5.
 
 ### Step 5: Micro-Dialectic (Automatic on 2:1 Split)
 

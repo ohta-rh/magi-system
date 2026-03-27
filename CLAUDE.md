@@ -40,10 +40,16 @@ scripts/
   check-sizes.sh            — Plugin file size governance check
   validate-output.sh        — MAGI_OUTPUT JSON schema validator
   validate-judgment.sh      — MAGI_JUDGMENT JSON schema validator
+  magi-annotate.sh          — Outcome annotation for deliberation logs
+  magi-metrics.sh           — Quality metrics reporter for deliberation logs
+  benchmark-regression.sh   — Prompt regression test harness
+  prompt-ab-test.sh         — A/B comparison tool for agent prompts
+  calibration-report.sh     — Score calibration analysis (requires 30+ annotated logs)
 tests/
   test-extraction.sh        — Extraction test suite runner
   test-e2e.sh               — E2E integration test (extraction + voting + dissenter ID)
   fixtures/                 — Golden test fixtures (valid + malformed)
+  fixtures/benchmarks/      — Benchmark fixtures for accuracy validation (6 topics)
 ```
 
 ## How It Works
