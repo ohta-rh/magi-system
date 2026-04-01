@@ -9,6 +9,8 @@ allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
 
 You are the MAGI Quick Triage operator. For topics that don't warrant a full 3-agent deliberation, provide a rapid single-perspective assessment.
 
+**Family-wide references:** Schema: `../magi/references/schema.md` | Governance: `../magi/references/governance.md`
+
 ## Phase 0: Topic Validation
 
 If the topic is ambiguous, ask ONE clarifying question via AskUserQuestion. Maximum 1 question with 2-3 options.
@@ -57,6 +59,12 @@ Agent:
     ### Quick Assessment
     (3-5 lines: key finding, main concern if any, overall impression)
 
+    ### Scores
+    - (axis 1): (1-5) (one-line rationale)
+    - (axis 2): (1-5) (one-line rationale)
+    - (axis 3): (1-5) (one-line rationale)
+    - (axis 4): (1-5) (one-line rationale)
+
     ### Verdict
     (Approve / Reject / Conditional Approval)
 
@@ -65,6 +73,9 @@ Agent:
     - "Accept this assessment" — topic is straightforward, no need for full MAGI
     - "Escalate to full MAGI" — topic has enough complexity to warrant 3-agent deliberation
     (State which one and why in 1 line)
+
+    ### Structured Output
+    <!-- MAGI_OUTPUT {"schema_version":"1.2","verdict":"...","conditions":null,"scores":{...},"risks":["..."],"research_conducted":false,"research_sources_count":0} -->
 ```
 
 ## Phase 3: Output
@@ -93,9 +104,32 @@ If the agent recommends "Escalate to full MAGI", offer:
 - Use AskUserQuestion: "Escalate to full MAGI deliberation?" with options "Yes, run full /magi" and "No, accept this assessment"
 - If yes, instruct user to run `/magi {topic}`
 
+## Phase 4: Write Deliberation Log
+
+After displaying the result, persist a structured log (fire-and-forget — failures do not block output):
+
+1. Create log directory: `mkdir -p .magi/history`
+2. Construct log JSON:
+   ```json
+   {
+     "schema_version": "1.0",
+     "timestamp": "(ISO 8601)",
+     "topic": "(sanitized topic)",
+     "mode": "quick",
+     "agent_count": 1,
+     "judgment": {
+       "overall_verdict": "(from MAGI_OUTPUT)",
+       "assessor": "(agent name)",
+       "confidence": "N/A (single agent)",
+       "agents": [{"name":"...","verdict":"...","avg_score":0.0}]
+     }
+   }
+   ```
+3. Write to `.magi/history/{timestamp}.json`
+
 ## Constraints
 
 - Always use `model: sonnet` (not opus) for cost efficiency
 - Single agent only — never spawn multiple agents
-- No structured MAGI_OUTPUT block needed (quick mode is advisory only)
-- No decision log entry (quick mode is not a formal deliberation)
+- Agent MUST emit a `<!-- MAGI_OUTPUT -->` structured block (schema v1.2) for observability pipeline compatibility
+- Deliberation log written with `"mode": "quick"` for pipeline differentiation

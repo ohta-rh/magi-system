@@ -98,5 +98,6 @@ what evidence would change your verdict.)
 
 After your human-readable analysis above, emit a machine-readable block at the very end. Use your 4 axis keys (`design_elegance`, `innovation_competitiveness`, `feasibility`, `adaptability_extensibility`) as score fields. See [references/schema.md](../references/schema.md) for full field requirements. Do NOT wrap in fenced code blocks — emit the raw HTML comment directly.
 - If verdict is Conditional Approval, set `conditions` to your condition string (not null).
+- Set `research_conducted` to `true` if you used WebSearch or WebFetch. Set `research_sources_count` to the number of distinct external sources consulted.
 
-<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"...","conditions":null,"scores":{"design_elegance":{"score":N,"rationale":"..."},"innovation_competitiveness":{"score":N,"rationale":"..."},"feasibility":{"score":N,"rationale":"..."},"adaptability_extensibility":{"score":N,"rationale":"..."}},"risks":["..."]} -->
+<!-- MAGI_OUTPUT {"schema_version":"1.2","verdict":"...","conditions":null,"scores":{"design_elegance":{"score":N,"rationale":"..."},"innovation_competitiveness":{"score":N,"rationale":"..."},"feasibility":{"score":N,"rationale":"..."},"adaptability_extensibility":{"score":N,"rationale":"..."}},"risks":["..."],"research_conducted":false,"research_sources_count":0} -->

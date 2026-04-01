@@ -4,7 +4,7 @@ This is the authoritative schema for the structured output block emitted by each
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "1.2",
   "verdict": "Approve | Reject | Conditional Approval",
   "conditions": "string or null — required if verdict is Conditional Approval",
   "scores": {
@@ -13,13 +13,15 @@ This is the authoritative schema for the structured output block emitted by each
       "rationale": "string — one-line justification"
     }
   },
-  "risks": ["string — each a distinct risk or concern. Empty array if none. Also accepts {severity, description} objects (see below)"]
+  "risks": ["string — each a distinct risk or concern. Empty array if none. Also accepts {severity, description} objects (see below)"],
+  "research_conducted": "boolean — true if WebSearch/WebFetch was used (not Glob/Grep/Read)",
+  "research_sources_count": "integer — number of external sources consulted via WebSearch/WebFetch. 0 if no research"
 }
 ```
 
 ## Field Rules
 
-- `schema_version`: Must be `"1.0"`. Future versions will increment this field.
+- `schema_version`: Must be `"1.2"`. Future versions will increment this field.
 - `verdict`: Exactly one of the three values. No other values are valid.
 - `conditions`: Must be a non-empty string if verdict is `"Conditional Approval"`, otherwise `null`.
 - `scores`: Object with agent-specific axis keys. Each agent has exactly 4 axes. Keys must match the agent's defined evaluation axes.
@@ -29,6 +31,8 @@ This is the authoritative schema for the structured output block emitted by each
   - `critical`: Blocks deployment or causes outage
   - `moderate`: Degrades quality or increases cost
   - `informational`: Awareness item, no immediate action needed
+- `research_conducted`: Boolean. `true` if WebSearch or WebFetch was used during evaluation. Glob/Grep/Read do not count as research.
+- `research_sources_count`: Integer >= 0. Number of distinct external sources consulted via WebSearch/WebFetch. Must be 0 if `research_conducted` is `false`.
 - The entire JSON block MUST be valid JSON enclosed in `<!-- MAGI_OUTPUT ... -->` HTML comment markers.
 
 ## Schema v1.1 — Comparison Mode

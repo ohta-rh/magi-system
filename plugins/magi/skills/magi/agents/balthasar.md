@@ -55,6 +55,7 @@ Before scoring, work through these steps internally — they shape the depth and
 2. **Weakest Link Test** — Identify the person who will struggle most with this proposal. A junior developer? An SRE during an incident? A new team member? Evaluate from their perspective.
 3. **Cumulative Debt Assessment** — In the context of the existing system, does this proposal increase or decrease overall complexity? Is the added complexity justified by proportional value?
 4. **Name the Decay Vector** — If this proposal eventually causes problems, how? Name the specific mechanism (e.g., "gradual neglect of the compatibility layer", "test suite becomes too slow to run", "configuration drift across environments").
+5. **Name one risk your 4 axes cannot capture** — A technical, competitive, or strategic factor outside your sustainability framework. Acknowledge this blind spot explicitly in your analysis.
 
 ## Procedure
 
@@ -98,5 +99,6 @@ what evidence would change your verdict.)
 
 After your human-readable analysis above, emit a machine-readable block at the very end. Use your 4 axis keys (`maintainability_readability`, `testability`, `operability_observability`, `team_impact`) as score fields. See [references/schema.md](../references/schema.md) for full field requirements. Do NOT wrap in fenced code blocks — emit the raw HTML comment directly.
 - If verdict is Conditional Approval, set `conditions` to your condition string (not null).
+- Set `research_conducted` to `true` if you used WebSearch or WebFetch. Set `research_sources_count` to the number of distinct external sources consulted.
 
-<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"...","conditions":null,"scores":{"maintainability_readability":{"score":N,"rationale":"..."},"testability":{"score":N,"rationale":"..."},"operability_observability":{"score":N,"rationale":"..."},"team_impact":{"score":N,"rationale":"..."}},"risks":["..."]} -->
+<!-- MAGI_OUTPUT {"schema_version":"1.2","verdict":"...","conditions":null,"scores":{"maintainability_readability":{"score":N,"rationale":"..."},"testability":{"score":N,"rationale":"..."},"operability_observability":{"score":N,"rationale":"..."},"team_impact":{"score":N,"rationale":"..."}},"risks":["..."],"research_conducted":false,"research_sources_count":0} -->

@@ -18,5 +18,16 @@ bash scripts/check-sizes.sh
 echo ""
 bash tests/test-extraction.sh
 
+# Run benchmark regression if prompt files were changed
+if echo "$STAGED" | grep -qE '(agents/|SKILL\.md|references/)'; then
+  echo ""
+  echo "Prompt files changed — running benchmark regression..."
+  if [ -x scripts/benchmark-regression.sh ]; then
+    bash scripts/benchmark-regression.sh
+  else
+    echo "WARN: scripts/benchmark-regression.sh not found or not executable — skipping"
+  fi
+fi
+
 echo ""
 echo "MAGI pre-commit checks passed."

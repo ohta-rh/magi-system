@@ -12,50 +12,17 @@ Report the results in the following format (use Markdown tables for scores, keep
 
 **Topic:** (state the topic)
 
-### MELCHIOR-1 [Scientist] — Verdict: (verdict)
+Note: Individual agent reports are displayed in Phase 3.0 (before MAGI Core). MAGI Core output uses a compact Vote Tally Table instead of repeating per-agent details:
 
-| Axis | Score |
-|------|-------|
-| Correctness/Rigor | (1-5) |
-| Performance | (1-5) |
-| Security | (1-5) |
-| Technical Consistency | (1-5) |
+### Vote Tally
 
-> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
+| Agent | Persona | Verdict | Avg Score |
+|-------|---------|---------|-----------|
+| MELCHIOR-1 | Scientist | (verdict) | (avg) |
+| BALTHASAR-2 | Mother | (verdict) | (avg) |
+| CASPAR-3 | Woman | (verdict) | (avg) |
 
-### BALTHASAR-2 [Mother] — Verdict: (verdict)
-
-| Axis | Score |
-|------|-------|
-| Maintainability | (1-5) |
-| Testability | (1-5) |
-| Operability | (1-5) |
-| Team Impact | (1-5) |
-
-> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
-
-### CASPAR-3 [Woman] — Verdict: (verdict)
-
-| Axis | Score |
-|------|-------|
-| Design Elegance | (1-5) |
-| Innovation | (1-5) |
-| Feasibility | (1-5) |
-| Adaptability | (1-5) |
-
-> (2-3 line summary: lead with the most important finding, then key reasoning and conditions/concerns if any)
-
-- If advisory agents are present, add after voting agents:
-
-### Advisory Analysis
-
-#### {AGENT-NAME} [{persona}] (non-voting)
-
-| Axis | Score |
-|------|-------|
-| (agent's 4 axes) | (1-5) |
-
-> (2-3 line summary)
+Advisory agents appear below with `(advisory)` tag.
 
 - If contention analysis was performed (by MAGI Core), insert it here (before Final Judgment)
 - If Phase 3.7 dialectic was performed, insert rebuttal summaries after contention and before Final Judgment

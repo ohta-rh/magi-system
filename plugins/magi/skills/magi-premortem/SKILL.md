@@ -9,6 +9,8 @@ allowed-tools: Agent, Read, Glob, Grep, WebSearch, WebFetch, AskUserQuestion
 
 Assume the proposal was implemented and FAILED. Reason backward to explain why.
 
+**Family-wide references:** Schema: `../magi/references/schema.md` | Governance: `../magi/references/governance.md`
+
 ## Phase 0: Topic Clarification
 
 If ambiguous, ask ONE clarifying question via AskUserQuestion (max 2-3 options).
@@ -53,27 +55,64 @@ Output banner and launch all 3 agents in parallel with `model: opus`:
   Mode: Catastrophic Failure Retrospective (T+12 months)
 ```
 
-## Phase 3: Synthesize
+## Phase 3.0: Agent Report Display
 
-No MAGI Core needed (no voting). Collect responses and format:
+Display each agent's full failure narrative before synthesis (same pattern as `/magi` Phase 3.0):
+
+For each agent, display with separator:
+```
+━━━ [AGENT-NAME] [{Failure Domain}] ━━━
+```
+(full response)
+
+After all agents:
+```
+━━━ MAGI Core — Pre-Mortem Synthesis ━━━
+```
+
+## Phase 3: MAGI Core Synthesis
+
+Launch MAGI Core with pre-mortem mode instructions. Read `{base_dir}/../magi/agents/magi-core.md` and replace `$AGENT_RESULTS` with the collected failure narratives, prepended with:
+
+```
+PRE-MORTEM SYNTHESIS MODE: You are synthesizing failure narratives, not voting on a proposal. Do NOT use standard voting. Instead:
+1. Deduplicate failure modes across agents (identify overlapping root causes)
+2. Rank failure modes by likelihood × severity (critical/high/medium/low)
+3. Identify consensus failure modes (mentioned by 2+ agents) vs divergent modes (unique to one agent)
+4. Select the Most Likely Failure Mode with rationale
+```
+
+```
+Agent:
+  subagent_type: general-purpose
+  name: MAGI-CORE
+  model: opus
+  description: "MAGI Core pre-mortem synthesis"
+  prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
+```
+
+Display the MAGI Core output, which should include:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MAGI PRE-MORTEM — Failure Analysis Results
+  MAGI PRE-MORTEM — Synthesis Results
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### MELCHIOR-1 [Technical Failure]
-> (failure narrative)
+### Failure Mode Ranking
+| Rank | Failure Mode | Likelihood | Severity | Source(s) |
+|------|-------------|------------|----------|-----------|
+| (ranked by likelihood × severity) |
 
-### BALTHASAR-2 [Organizational Failure]
-> (failure narrative)
+### Consensus Failure Modes
+(Failure modes identified by 2+ agents — these are the most credible threats)
 
-### CASPAR-3 [Strategic Failure]
-> (failure narrative)
+### Divergent Failure Modes
+(Unique perspectives from individual agents worth noting)
 
 ### Most Likely Failure Mode
-Identify the most plausible scenario. Summarize in 2-3 lines: failure path, earliest warning sign, one mitigation.
+(2-3 lines: failure path, earliest warning sign, one mitigation)
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

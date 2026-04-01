@@ -190,6 +190,24 @@ For each agent in config.agents:
 
 Advisory agents use the same prompt format as voting agents. Their role distinction is handled by MAGI Core, not at launch time.
 
+## Phase 3.0: Agent Report Display
+
+Once all persona agents return, display each agent's full human-readable analysis to the user BEFORE invoking MAGI Core. This gives users transparency into each MAGI's unique perspective.
+
+For each agent (voting first, then advisory):
+
+1. Display the agent's response, stripping only the `<!-- MAGI_OUTPUT {...} -->` JSON block (keep all human-readable content: Scores, Overall Analysis, Verdict, Risks, References)
+2. Use a separator between agents:
+   ```
+   ━━━ [AGENT-NAME] [{Persona}] ━━━
+   ```
+3. After all agents are displayed, output:
+   ```
+   ━━━ MAGI Core — Integrated Judgment ━━━
+   ```
+
+Then proceed to Phase 3.
+
 ## Phase 3: Judgment via MAGI Core
 
 Judgment, synthesis, and output formatting are delegated to the MAGI Core agent — the integrated intelligence of the MAGI System. This ensures true encapsulation: the orchestrator does not perform judgment; it only coordinates.
@@ -240,12 +258,10 @@ Replace `$AGENT_RESULTS` in the loaded `magi-core.md` with the input data block 
 Agent:
   subagent_type: general-purpose
   name: MAGI-CORE
-  model: sonnet
+  model: opus
   description: "MAGI Core integrated judgment"
   prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
 ```
-
-<!-- MAGI Core uses sonnet: its task is synthesis/extraction/formatting, not deep reasoning. Opus reasoning is reserved for persona agents. -->
 
 ### Step 4: Display and Parse Judgment
 
@@ -332,7 +348,7 @@ Phase 5 is conditionally offered based on the verdict outcome:
 
 | Verdict Outcome | Phase 5 Action |
 |----------------|----------------|
-| 3:0 Unanimous Approve | **Skip** — Session ends after MAGI Core output |
+| 3:0 Unanimous Approve | **Trigger** — Offer follow-up question + accept |
 | 2:1 Split | **Trigger** — Offer dissenter deep-dive + re-evaluate + accept |
 | Any Conditional Approval | **Trigger** — Offer re-evaluate + accept |
 | 1:1:1 Indeterminate | **Trigger** — Offer all-agent deep-dive + re-evaluate + accept |
@@ -350,14 +366,20 @@ Present the following choices via AskUserQuestion:
    - Ask the user (via AskUserQuestion with a text-friendly prompt) what modifications they want to make to the original proposal
    - Re-run the full deliberation (Phase 1 through Phase 3) with the amended topic
 
-3. **"Run dialectic round"** — Available if dialectic mode was NOT already active. If selected, run Phase 3.7 dialectic round on the existing results and re-invoke MAGI Core for updated judgment.
-4. **"Run adversarial challenge"** — Available if adversarial mode was NOT already active. If selected, run Phase 3.8 on the existing verdict.
-5. **"Accept verdict"** — Always available. This is the default option. If selected:
+3. **"Ask [agent] to elaborate on [axis]"** — Always available. Present available agents and their axes. If selected, re-spawn the chosen agent with: "Elaborate on your [axis] evaluation. Provide deeper analysis, specific evidence, and concrete recommendations for this dimension." Display the expanded analysis.
+
+4. **"Ask a follow-up question"** — Always available. If selected, use AskUserQuestion to get the user's question, then re-spawn all agents with the follow-up context appended to the original topic.
+
+5. **"Export deliberation as markdown"** — Always available. If selected, compile the full deliberation (agent reports + MAGI Core judgment) into a single markdown file and write to `.magi/exports/{timestamp}.md` using Write. Confirm the file path to the user.
+
+6. **"Run dialectic round"** — Available if dialectic mode was NOT already active. If selected, run Phase 3.7 dialectic round on the existing results and re-invoke MAGI Core for updated judgment.
+7. **"Run adversarial challenge"** — Available if adversarial mode was NOT already active. If selected, run Phase 3.8 on the existing verdict.
+8. **"Accept verdict"** — Always available. This is the default option. If selected:
    - End the session with no further action
 
 ### Implementation Notes
 
-- **3:0 Unanimous Approve**: No drill-down needed — the decision is clear. End session after MAGI Core output with a brief closing note.
+- **3:0 Unanimous Approve**: Offer "Ask a follow-up question", "Export deliberation as markdown", and "Accept verdict". Users may want follow-up even on unanimous verdicts.
 - **2:1 Split**: Option 1 uses the dissenter identified in `MAGI_JUDGMENT.agents[]`. Re-spawn with focused elaboration prompt.
 - **1:1:1 Indeterminate**: Replace option 1 with "Deep dive into each agent's position" — re-spawn all three agents with focused elaboration prompts.
 - **3:0 Unanimous Reject**: Omit option 1 (no dissenter). Offer re-evaluate to let the user amend their proposal.

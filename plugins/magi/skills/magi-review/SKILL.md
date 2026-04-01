@@ -9,6 +9,8 @@ allowed-tools: Agent, Read, Glob, Grep, Bash
 
 You are the MAGI Review operator. Read the current git diff and invoke the full MAGI council.
 
+**Family-wide references:** Schema: `../magi/references/schema.md` | Governance: `../magi/references/governance.md`
+
 ## Phase 1: Gather Diff
 
 Run `git diff --staged` via Bash. If the staged diff is empty, fall back to `git diff HEAD~1`.

@@ -55,6 +55,7 @@ Before scoring, work through these steps internally — they shape the depth and
 2. **Collect and classify evidence** — Hard evidence (formal proofs, benchmarks, production data) / Soft evidence (expert opinion, analogies, theoretical arguments) / No evidence (unsubstantiated claims). Weight your analysis accordingly.
 3. **Attempt falsification** — For any axis where you would score 4-5, ask: "Under what realistic conditions would this fail?" If you cannot articulate failure conditions, your confidence may be unfounded.
 4. **Identify the single most important technical finding** — This becomes the opening line of your Overall Analysis. It should be the insight that, if the reader remembers nothing else, most changes their understanding.
+5. **Name one risk your 4 axes cannot capture** — A sustainability, political, or human factor outside your scientific framework. Acknowledge this blind spot explicitly in your analysis.
 
 ## Procedure
 
@@ -98,5 +99,6 @@ what evidence would change your verdict.)
 
 After your human-readable analysis above, emit a machine-readable block at the very end. Use your 4 axis keys (`correctness_rigor`, `performance_efficiency`, `security`, `technical_consistency`) as score fields. See [references/schema.md](../references/schema.md) for full field requirements. Do NOT wrap in fenced code blocks — emit the raw HTML comment directly.
 - If verdict is Conditional Approval, set `conditions` to your condition string (not null).
+- Set `research_conducted` to `true` if you used WebSearch or WebFetch. Set `research_sources_count` to the number of distinct external sources consulted.
 
-<!-- MAGI_OUTPUT {"schema_version":"1.0","verdict":"...","conditions":null,"scores":{"correctness_rigor":{"score":N,"rationale":"..."},"performance_efficiency":{"score":N,"rationale":"..."},"security":{"score":N,"rationale":"..."},"technical_consistency":{"score":N,"rationale":"..."}},"risks":["..."]} -->
+<!-- MAGI_OUTPUT {"schema_version":"1.2","verdict":"...","conditions":null,"scores":{"correctness_rigor":{"score":N,"rationale":"..."},"performance_efficiency":{"score":N,"rationale":"..."},"security":{"score":N,"rationale":"..."},"technical_consistency":{"score":N,"rationale":"..."}},"risks":["..."],"research_conducted":false,"research_sources_count":0} -->

@@ -6,9 +6,9 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 
 | File Category | Max Lines | Current | Rationale |
 |--------------|-----------|---------|-----------|
-| SKILL.md (orchestrator) | 500 | 381 | Anthropic official: SKILL.md body under 500 lines |
-| Meta-agent (`agents/magi-core.md`) | 160 | 75 | Synthesis agent: embeds extraction, voting, bias detection, output format |
-| Persona agents (`agents/{melchior,balthasar,caspar}.md`) | 130 | 102 | Self-contained persona + output format; 130 allows axis expansion |
+| SKILL.md (orchestrator) | 500 | 403 | Anthropic official: SKILL.md body under 500 lines |
+| Meta-agent (`agents/magi-core.md`) | 200 | 89 | Synthesis agent: embeds extraction, voting, bias detection, output format |
+| Persona agents (`agents/{melchior,balthasar,caspar}.md`) | 150 | 104 | Self-contained persona + output format; 150 allows blind spot + research tracking |
 | Reference files (`references/*.md`) | 100 | 38-87 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 78 | Illustrative, not normative |
 | comparison-format.md | 100 | 75 | Comparison prompt template + Phase 4 format |
@@ -18,8 +18,8 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 ## When Limits Are Approached (80%+)
 
 1. **SKILL.md > 400 lines**: Extract the largest Phase section into `references/phase-N-detail.md` with a 1-line link from SKILL.md
-2. **magi-core.md > 128 lines**: Review for redundancy; compress Output Format section first
-3. **Persona agent file > 104 lines**: Review for redundancy with `references/schema.md`; compress Structured Output section first
+2. **magi-core.md > 160 lines**: Review for redundancy; compress Output Format section first
+3. **Persona agent file > 120 lines**: Review for redundancy with `references/schema.md`; compress Structured Output section first
 4. **Reference file > 80 lines**: Split by concern (e.g., separate output-format from judgment-rules — already done)
 
 ## Structural Rules
@@ -37,6 +37,23 @@ bash scripts/check-sizes.sh
 ```
 
 This script checks all file sizes against the limits defined above and reports violations.
+
+## Shared vs Skill-Specific References
+
+References in `skills/magi/references/` are used across the MAGI skill family. Changes to these files affect all variants.
+
+| Reference | Scope | Used By |
+|-----------|-------|---------|
+| `schema.md` | Family-wide | `/magi`, `/magi-quick`, `/magi-review` |
+| `governance.md` | Family-wide | All skills, pre-commit hook |
+| `extraction-fallback.md` | Family-wide | `/magi` (MAGI Core), `/magi-review` |
+| `output-format.md` | `/magi` specific | `/magi` only |
+| `judgment-rules.md` | `/magi` specific | `/magi` only |
+| `voting-engine.md` | `/magi` specific | `/magi` only |
+| `dialectic-format.md` | `/magi` specific | `/magi` only |
+| `comparison-format.md` | `/magi` specific | `/magi` only |
+
+When modifying family-wide references, verify compatibility with all consuming skills.
 
 ## Review Cadence
 
