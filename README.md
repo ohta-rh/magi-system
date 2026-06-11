@@ -10,6 +10,8 @@
 
 # MAGI SYSTEM
 
+[![CI](https://github.com/ohta-rh/magi-system/actions/workflows/ci.yml/badge.svg)](https://github.com/ohta-rh/magi-system/actions/workflows/ci.yml)
+
 > *"One mind is a hypothesis. Three minds are a verdict."*
 
 A **Claude Code plugin** that brings the [MAGI supercomputer council](https://evangelion.fandom.com/wiki/MAGI) from [Neon Genesis Evangelion](https://en.wikipedia.org/wiki/Neon_Genesis_Evangelion) into your terminal. Three AI agents — each powered by Claude Opus — deliberate your engineering decisions in parallel, scoring **12 dimensions** simultaneously. A fourth agent, **MAGI Core**, synthesizes their evaluations with sycophancy detection and bias calibration.
@@ -186,6 +188,10 @@ MAGI Core surfaces trade-offs between agents' axes:
 ### Risk Severity & Reversibility
 
 Risks are classified as **critical** / **moderate** / **informational**. Each judgment includes a **reversibility** rating (Low/Medium/High). Low reversibility + Medium confidence triggers a caution warning.
+
+### Persistent Calibration Memory
+
+MAGI Core keeps an agent memory across deliberations (`~/.claude/agent-memory/magi-core/`). Observed bias patterns accumulate over time and sharpen Calibration Notes — but memory never alters scores or verdicts, only confidence.
 
 ### Comparison Mode
 
