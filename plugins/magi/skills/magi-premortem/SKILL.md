@@ -1,8 +1,8 @@
 ---
 name: magi-premortem
-description: "Pre-mortem analysis. Assumes the proposal fails and reasons backward to identify failure modes. Triggered by 'magi pre-mortem', 'magi premortem', 'failure analysis'."
+description: "Runs a pre-mortem failure analysis: assumes the proposal was implemented and failed, then the MAGI council reasons backward to identify failure modes, warning signs, and preventions. Use before committing to a risky plan, migration, or launch. Triggered by 'magi pre-mortem', 'magi premortem', 'failure analysis'."
 argument-hint: "[proposal or plan to stress-test]"
-allowed-tools: Agent, Read, Glob, Grep, WebSearch, WebFetch, AskUserQuestion
+allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep
 ---
 
 # MAGI Pre-Mortem — Prospective Failure Analysis

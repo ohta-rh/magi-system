@@ -1,8 +1,8 @@
 ---
 name: magi-quick
-description: "MAGI Quick Triage. Lightweight single-agent assessment for low-stakes decisions. Use when full MAGI deliberation would be overkill. Triggered by 'quick magi', 'magi quick', 'magi triage'."
+description: "Performs a rapid single-agent MAGI triage (one persona on Sonnet) for low-stakes engineering decisions. Use when a full three-agent MAGI deliberation would be overkill but a structured verdict is still wanted. Triggered by 'quick magi', 'magi quick', 'magi triage'."
 argument-hint: "[question or proposal]"
-allowed-tools: Agent, Read, AskUserQuestion, Glob, Grep, WebSearch, WebFetch
+allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash
 ---
 
 # MAGI Quick Triage — Single-Agent Rapid Assessment

@@ -1,6 +1,6 @@
 ---
 name: magi-review
-description: "MAGI code review. Reads git diff and evaluates changes through the MAGI council. Triggered by 'magi review', 'magi code review', 'review with magi'."
+description: "Reviews code changes through the MAGI council by reading the git diff (staged changes, or the latest commit as fallback) and composing a review topic. Use after writing or staging changes to get a multi-dimensional code review verdict. Triggered by 'magi review', 'magi code review', 'review with magi'."
 argument-hint: "[optional: specific focus area or concern]"
 allowed-tools: Agent, Read, Glob, Grep, Bash
 ---

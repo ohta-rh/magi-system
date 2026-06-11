@@ -1,8 +1,8 @@
 ---
 name: magi
-description: "MAGI System. A council of three supercomputers for collective decision-making. Use for multi-dimensional analysis of engineering topics: architecture design, technology selection, design principles, code review, refactoring strategies, etc. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
+description: "Runs the MAGI council: three persona agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) deliberate an engineering decision in parallel, then MAGI Core synthesizes a verdict with sycophancy detection. Use for high-stakes engineering decisions that need multi-dimensional analysis: architecture design, technology selection, design principles, refactoring strategies, and A-vs-B comparisons. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question, proposal, or comparison]"
-allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash, WebSearch, WebFetch
+allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash
 ---
 
 # MAGI SYSTEM — Engineering Decision Support System
