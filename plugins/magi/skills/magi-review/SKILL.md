@@ -11,11 +11,21 @@ You are the MAGI Review operator. Read the current git diff and invoke the full 
 
 **Family-wide references:** Schema: `../magi/references/schema.md` | Governance: `../magi/references/governance.md`
 
-## Phase 1: Gather Diff
+## Repository State (injected at invocation)
 
-Run `git diff --staged` via Bash. If the staged diff is empty, fall back to `git diff HEAD~1`.
+- Working tree status: !`git status --short`
+- Staged change overview: !`git diff --stat --staged`
+- Unstaged change overview: !`git diff --stat HEAD`
 
-If both are empty, inform the user: "No changes detected. Stage changes with `git add` or ensure there are recent commits to review." Exit without invoking MAGI.
+## Phase 1: Gather the Full Diff
+
+Pick the diff source from the injected state above — no extra probing rounds:
+
+1. Staged changes exist → run `git diff --staged` via Bash
+2. Else, unstaged changes exist → run `git diff HEAD` via Bash
+3. Else → run `git diff HEAD~1` via Bash (review the latest commit)
+
+If all are empty, inform the user: "No changes detected. Stage changes with `git add` or ensure there are recent commits to review." Exit without invoking MAGI.
 
 ## Phase 2: Summarize Changes
 
@@ -48,4 +58,4 @@ Agent:
   prompt: (topic summary from Phase 2)
 ```
 
-The MAGI skill handles all output. Display a closing note: `Review based on: git diff {--staged | HEAD~1}`
+The MAGI skill handles all output. Display a closing note: `Review based on: git diff {--staged | HEAD | HEAD~1}`
