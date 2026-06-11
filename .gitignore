@@ -2,6 +2,9 @@
 .magi/
 magi.config.json
 
+# Claude Code session artifacts
+.claude/worktrees/
+
 # OS files
 .DS_Store
 Thumbs.db
