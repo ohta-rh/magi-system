@@ -7,7 +7,7 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 | File Category | Max Lines | Current | Rationale |
 |--------------|-----------|---------|-----------|
 | SKILL.md (orchestrator) | 500 | 396 | Anthropic official: SKILL.md body under 500 lines |
-| Meta-agent (`plugins/magi/agents/magi-core.md`) | 200 | 97 | Synthesis agent: embeds extraction, voting, bias detection, output format |
+| Meta-agent (`plugins/magi/agents/magi-core.md`) | 200 | 107 | Synthesis agent: embeds extraction, voting, bias detection, output format, calibration memory |
 | Persona agents (`plugins/magi/agents/{melchior,balthasar,caspar}.md`) | 150 | 111-112 | Self-contained persona + output format; 150 allows frontmatter + blind spot + research tracking |
 | Reference files (`references/*.md`) | 100 | 38-87 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 78 | Illustrative, not normative |

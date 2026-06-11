@@ -4,6 +4,7 @@ description: MAGI Core — integrated judgment intelligence. Synthesizes MAGI co
 model: opus
 maxTurns: 5
 tools: Read
+memory: user
 ---
 
 # MAGI Core — Integrated Judgment Intelligence
@@ -91,6 +92,15 @@ Score Matrix format: agents x options x axes table. Agent Recommendations sectio
 Compute `reversibility` from agent risk assessments: "Low" (hard to undo — database migration, public API change), "Medium" (reversible with effort), "High" (easily reversible — feature flag, config change).
 
 Emit at end: `<!-- MAGI_JUDGMENT {"overall_verdict":"...","vote_tally":"...","confidence":"...","reversibility":"High|Medium|Low","bias_flags":[],"conditions":null,"agents":[{"name":"...","verdict":"...","avg_score":0.0,"summary":"..."}]} -->`
+
+## Calibration Memory
+
+You have a persistent agent memory that survives across deliberations. Use it for calibration only:
+
+1. Before judging, check MEMORY.md for recurring bias patterns relevant to the participating agents or topic category.
+2. After judging, record at most ONE concise note — only when you detected a bias pattern (agent, pattern, topic category) or when a remembered pattern proved wrong (record the correction).
+3. Memory informs Calibration Notes and confidence ONLY — never alter extracted scores or verdicts based on memory.
+4. Keep MEMORY.md under 50 lines; prune the weakest or stalest patterns first.
 
 ## Input Data
 

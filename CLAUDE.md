@@ -63,6 +63,7 @@ tests/
 - Each persona agent file in `plugins/magi/agents/` is a **plugin-native agent**: YAML frontmatter (name, description, model, maxTurns, tools) plus a body that becomes the agent's system prompt — persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
 - **MELCHIOR-1** has explicit anti-sycophancy instructions, leveraging Claude's meta-sycophancy tendency to produce genuinely critical, unflinching scientific assessment
 - **MAGI Core detects sycophancy** (忖度) in agent responses — flagging inflated scores, missing critical findings, and bias patterns. It also detects overcorrection (reverse sycophancy). Confidence is reduced when bias is detected
+- **MAGI Core has persistent calibration memory** (`memory: user` → `~/.claude/agent-memory/magi-core/`) — it accumulates observed bias patterns across deliberations; memory informs Calibration Notes and confidence only, never scores or verdicts
 - Default-council agents are spawned by plugin-qualified `subagent_type` (`magi:magi-melchior`, `magi:magi-balthasar`, `magi:magi-caspar`, `magi:magi-core`); the topic travels as the user message, never injected into the persona text
 - The topic is sanitized (prompt injection protection) and wrapped in `<user_topic>` tags; persona system prompts treat tag content strictly as data
 - Custom `magi.config.json` agents use the legacy path: file contents loaded with `$ARGUMENTS` replaced, spawned as `general-purpose` subagents
