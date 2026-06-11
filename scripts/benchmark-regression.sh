@@ -98,12 +98,12 @@ for file in "${FILES[@]}"; do
   echo "--- $name ---"
 
   if ! validate_fixture "$file"; then
-    ((FAIL++))
+    FAIL=$((FAIL + 1))
     continue
   fi
 
   if [[ "$DRY_RUN" == "true" ]]; then
-    ((PASS++))
+    PASS=$((PASS + 1))
     continue
   fi
 
@@ -120,7 +120,7 @@ for file in "${FILES[@]}"; do
 
   if [[ -z "$JUDGMENT" ]]; then
     echo "  FAIL [$name]: No MAGI_JUDGMENT block found in output"
-    ((FAIL++))
+    FAIL=$((FAIL + 1))
     continue
   fi
 
@@ -172,9 +172,9 @@ for file in "${FILES[@]}"; do
 
   if [[ "$fixture_pass" == "true" ]]; then
     echo "  PASS [$name]"
-    ((PASS++))
+    PASS=$((PASS + 1))
   else
-    ((FAIL++))
+    FAIL=$((FAIL + 1))
   fi
 
   echo ""
