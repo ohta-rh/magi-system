@@ -15,6 +15,10 @@ plugins/magi/
     melchior.md             — MELCHIOR-1: The Scientist (technical excellence, anti-sycophancy)
     balthasar.md            — BALTHASAR-2: The Mother (sustainability)
     caspar.md               — CASPAR-3: The Woman (pragmatic aesthetics)
+  hooks/
+    hooks.json              — Plugin-shipped PostToolUse hook (deliberation log validation)
+  scripts/
+    validate-log.sh         — Validates .magi/history/*.json writes, feeds errors back to Claude
   skills/magi/
     SKILL.md                — Main skill (thin orchestrator for /magi command)
     references/

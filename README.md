@@ -269,6 +269,8 @@ magi-system/
 │   │   ├── melchior.md              # The Scientist
 │   │   ├── balthasar.md             # The Mother
 │   │   └── caspar.md                # The Woman
+│   ├── hooks/hooks.json             # Plugin-shipped log validation hook
+│   ├── scripts/validate-log.sh      # Deliberation log schema check
 │   └── skills/
 │       ├── magi/                    # Full deliberation
 │       │   ├── SKILL.md             # Thin orchestrator
