@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  governance-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Size governance check
+        run: bash scripts/check-sizes.sh
+
+      - name: Extraction test suite
+        run: bash tests/test-extraction.sh
+
+      - name: E2E integration tests
+        run: bash tests/test-e2e.sh
+
+      - name: Benchmark fixture validation (dry run)
+        run: bash scripts/benchmark-regression.sh --dry-run
+
+      - name: Log validation hook smoke test
+        run: |
+          mkdir -p /tmp/.magi/history
+          echo '{"schema_version":"1.0","timestamp":"2026-06-11T00-00-00Z","topic":"x","judgment":{"overall_verdict":"Approve"}}' > /tmp/.magi/history/ok.json
+          echo '{"tool_input":{"file_path":"/tmp/.magi/history/ok.json"}}' | bash plugins/magi/scripts/validate-log.sh
+          echo '{"schema_version":"1.0"}' > /tmp/.magi/history/bad.json
+          if echo '{"tool_input":{"file_path":"/tmp/.magi/history/bad.json"}}' | bash plugins/magi/scripts/validate-log.sh 2>/dev/null; then
+            echo "expected non-zero exit for schema-violating log" >&2
+            exit 1
+          fi
+          echo "hook smoke test passed"
+
+  plugin-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate plugin manifest
+        run: claude plugin validate plugins/magi
