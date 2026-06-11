@@ -5,6 +5,7 @@
 set -euo pipefail
 
 PLUGIN_DIR="plugins/magi/skills/magi"
+AGENTS_DIR="plugins/magi/agents"
 ERRORS=0
 
 check_file() {
@@ -37,10 +38,10 @@ echo ""
 check_file "$PLUGIN_DIR/SKILL.md" 500 "SKILL.md (orchestrator)"
 
 # Meta-agent (MAGI Core)
-check_file "$PLUGIN_DIR/agents/magi-core.md" 200 "magi-core.md (meta-agent)"
+check_file "$AGENTS_DIR/magi-core.md" 200 "magi-core.md (meta-agent)"
 
 # Persona agent files
-for agent in "$PLUGIN_DIR"/agents/*.md; do
+for agent in "$AGENTS_DIR"/*.md; do
   [ "$(basename "$agent")" = "magi-core.md" ] && continue
   check_file "$agent" 150 "$(basename "$agent") (persona agent)"
 done
@@ -107,7 +108,7 @@ if [ -f "$GOVERNANCE" ]; then
         verify_governance "$PLUGIN_DIR/SKILL.md" "SKILL.md" "$current"
         ;;
       *magi-core.md*)
-        verify_governance "$PLUGIN_DIR/agents/magi-core.md" "magi-core.md" "$current"
+        verify_governance "$AGENTS_DIR/magi-core.md" "magi-core.md" "$current"
         ;;
       *comparison-format.md*)
         verify_governance "$PLUGIN_DIR/references/comparison-format.md" "comparison-format.md" "$current"

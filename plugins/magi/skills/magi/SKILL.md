@@ -11,11 +11,13 @@ You are the operator of the MAGI System. Launch 3 persona agents in parallel for
 
 ## The Three Evaluation Domains
 
-| MAGI | Persona | Evaluation Domain | Prompt |
-|------|---------|-------------------|--------|
-| MELCHIOR-1 | Scientist | Technical excellence (correctness, performance, security, consistency) | agents/melchior.md |
-| BALTHASAR-2 | Mother | Sustainability (maintainability, testing, operations, team) | agents/balthasar.md |
-| CASPAR-3 | Woman | Pragmatic aesthetics (design elegance, innovation, feasibility, adaptability) | agents/caspar.md |
+| MAGI | Persona | Evaluation Domain | Agent |
+|------|---------|-------------------|-------|
+| MELCHIOR-1 | Scientist | Technical excellence (correctness, performance, security, consistency) | `magi-melchior` |
+| BALTHASAR-2 | Mother | Sustainability (maintainability, testing, operations, team) | `magi-balthasar` |
+| CASPAR-3 | Woman | Pragmatic aesthetics (design elegance, innovation, feasibility, adaptability) | `magi-caspar` |
+
+The default personas and MAGI Core are **plugin-native agents** defined in `agents/` at the plugin root — their persona definition is the agent's system prompt, and the orchestrator addresses them by `subagent_type`.
 
 ## Phase 0: Topic Clarification
 
@@ -123,60 +125,48 @@ If a custom configuration was loaded, also output:
 
 **CRITICAL: Exactly 2 tool-call rounds from skill start to agent launch.**
 
-### Round 1: Config Check + Agent Load (single parallel batch)
+### Round 1: Config Check (single parallel batch)
 
-Issue ALL of these tool calls in a **single message**:
+Issue a single **Glob** for `magi.config.json` in the current working directory. Default personas are plugin-native agents — do NOT read any agent files in default mode.
 
-1. **Glob** for `magi.config.json` in the current working directory (config check)
-2. **Read** `{base_dir}/agents/melchior.md`
-3. **Read** `{base_dir}/agents/balthasar.md`
-4. **Read** `{base_dir}/agents/caspar.md`
-5. **Read** `{base_dir}/agents/magi-core.md`
-
-`{base_dir}` is the skill base directory from the activation context. Construct absolute paths directly — do NOT use Glob for agent file discovery.
-
-**Custom config mode:** If `magi.config.json` exists and is valid, read the config file AND all custom agent files AND `magi-core.md` in a single parallel batch.
+**Custom config mode only:** If `magi.config.json` exists and is valid, Read the config file AND all custom agent files in one parallel batch. Do NOT read magi-core — synthesis always uses the plugin-native `magi-core` agent.
 
 ### Round 2: Banner + Simultaneous Agent Launch (single message)
 
-Do NOT proceed to Round 2 until all Round 1 Read calls have returned successfully.
-
 In a **single response**, output the activation banner text AND launch all 3 Agent tools simultaneously. Do NOT output the banner in a separate message before launching agents — combine them.
 
-**Input Sanitization** — Before replacing `$ARGUMENTS`, sanitize the user's topic:
+**Input Sanitization** — Before building agent prompts, sanitize the user's topic:
 
 1. Strip any `<!-- MAGI_OUTPUT` patterns from the topic (prevents output spoofing)
 2. Strip lines that match agent section headers (`## Your Persona`, `## Procedure`, `## Output Format`)
 3. Wrap the sanitized topic in delimiters: `<user_topic>...</user_topic>`
 
-Replace `$ARGUMENTS` in the loaded prompts with the sanitized, wrapped topic. Do NOT create a Team.
+Do NOT create a Team.
 
-**Default mode** launches exactly 3 agents:
+**Default mode** launches exactly 3 agents, addressed by plugin-qualified subagent_type (no `model` parameter — each agent's frontmatter declares `opus`):
 
 ```
 Agent:
-  subagent_type: general-purpose
+  subagent_type: magi:magi-melchior
   name: MELCHIOR-1
-  model: opus
   description: "MELCHIOR-1 engineering analysis"
-  prompt: (contents of agents/melchior.md with $ARGUMENTS replaced by the topic)
+  prompt: |
+    Evaluate the following topic per your standard procedure. Emit your full
+    output format, ending with the MAGI_OUTPUT block.
 
-Agent:
-  subagent_type: general-purpose
-  name: BALTHASAR-2
-  model: opus
-  description: "BALTHASAR-2 engineering analysis"
-  prompt: (contents of agents/balthasar.md with $ARGUMENTS replaced by the topic)
+    <user_topic>
+    (sanitized topic)
+    </user_topic>
 
-Agent:
-  subagent_type: general-purpose
-  name: CASPAR-3
-  model: opus
-  description: "CASPAR-3 engineering analysis"
-  prompt: (contents of agents/caspar.md with $ARGUMENTS replaced by the topic)
+(identical calls for subagent_type: magi:magi-balthasar / name: BALTHASAR-2
+ and subagent_type: magi:magi-caspar / name: CASPAR-3)
 ```
 
-**Custom config mode** iterates over the agent list and launches all agents (voting + advisory) simultaneously:
+For comparison topics, the comparison prompt template from [references/comparison-format.md](references/comparison-format.md) becomes the user message, with the options/context inside the `<user_topic>` tags.
+
+**Fallback chain:** If `magi:magi-{name}` fails to resolve, try the unqualified `magi-{name}`. If both fail, Read `{plugin_root}/agents/{name}.md`, strip the YAML frontmatter, append `## Topic` + the `<user_topic>` block, and spawn as `subagent_type: general-purpose` with `model: opus`.
+
+**Custom config mode (legacy injection)** iterates over the agent list and launches all agents (voting + advisory) simultaneously:
 
 ```
 For each agent in config.agents:
@@ -185,10 +175,14 @@ For each agent in config.agents:
     name: (agent.name)
     model: (agent.model, default "opus")
     description: "(agent.name) engineering analysis"
-    prompt: (contents of agent.file with $ARGUMENTS replaced by the topic)
+    prompt: (contents of agent.file with $ARGUMENTS replaced by the sanitized topic;
+             if the file has no $ARGUMENTS placeholder, append a "## Topic" section
+             with the <user_topic> block instead)
 ```
 
 Advisory agents use the same prompt format as voting agents. Their role distinction is handled by MAGI Core, not at launch time.
+
+**Re-spawn rule (applies to ALL later phases):** Extraction retries, micro-dialectic, dialectic rebuttals, adversarial challenges, and Phase 5 drill-downs address personas the same way as the initial round — `subagent_type: magi:magi-*` with the directive as the user message in default mode; legacy general-purpose injection in custom config mode.
 
 ## Phase 3.0: Agent Report Display
 
@@ -252,16 +246,17 @@ Construct the input data block to replace `$AGENT_RESULTS` in `magi-core.md`:
 
 ### Step 3: Launch MAGI Core
 
-Replace `$AGENT_RESULTS` in the loaded `magi-core.md` with the input data block from Step 2.
+Send the input data block from Step 2 directly as the user message — no file read, no substitution:
 
 ```
 Agent:
-  subagent_type: general-purpose
+  subagent_type: magi:magi-core
   name: MAGI-CORE
-  model: opus
   description: "MAGI Core integrated judgment"
-  prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
+  prompt: (the input data block from Step 2)
 ```
+
+Fallback chain: if `magi:magi-core` fails to resolve, try `magi-core`; if both fail, Read `{plugin_root}/agents/magi-core.md`, strip the YAML frontmatter, append the input data block, and spawn as `general-purpose` with `model: opus`.
 
 ### Step 4: Display and Parse Judgment
 
@@ -304,13 +299,11 @@ If any step fails, log a brief warning and continue to Step 5.
 
 ### Step 5: Micro-Dialectic (Automatic on 2:1 Split)
 
-If the vote is a 2:1 split AND dialectic mode is NOT already active, automatically re-spawn the dissenting agent with a micro-rebuttal prompt:
+If the vote is a 2:1 split AND dialectic mode is NOT already active, automatically re-spawn the dissenting agent with a micro-rebuttal prompt (per the Phase 2 re-spawn rule):
 
 ```
-You are {dissenter name}. The majority of the council disagrees with your verdict of {dissenter verdict}. Their average score is {majority avg} vs your {dissenter avg}. State in 2-3 lines whether you maintain your position and why. No MAGI_OUTPUT block needed.
-```
-
-Launch with the same model as the initial round. Display the micro-rebuttal after the deliberation report under `### Dissenter Response`. This does NOT change the verdict — it gives the dissenter a voice without a full dialectic round.
+REBUTTAL CHECK: The majority of the council disagrees with your verdict of {dissenter verdict}. Their average score is {majority avg} vs your {dissenter avg}. State in 2-3 lines whether you maintain your position and why. No MAGI_OUTPUT block needed.
+``` Display the micro-rebuttal after the deliberation report under `### Dissenter Response`. This does NOT change the verdict — it gives the dissenter a voice without a full dialectic round.
 
 ### Phase 3.7: Dialectic Round (Optional)
 

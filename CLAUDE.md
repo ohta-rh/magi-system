@@ -9,14 +9,14 @@ A Claude Code plugin that implements the MAGI supercomputer council from Neon Ge
   marketplace.json          — Marketplace catalog (for /plugin marketplace add)
 plugins/magi/
   .claude-plugin/
-    plugin.json             — Plugin manifest (v3.0.0)
+    plugin.json             — Plugin manifest
+  agents/                   — Plugin-native agents (frontmatter + system prompt body)
+    magi-core.md            — MAGI Core: Integrated judgment intelligence (synthesis, bias detection)
+    melchior.md             — MELCHIOR-1: The Scientist (technical excellence, anti-sycophancy)
+    balthasar.md            — BALTHASAR-2: The Mother (sustainability)
+    caspar.md               — CASPAR-3: The Woman (pragmatic aesthetics)
   skills/magi/
     SKILL.md                — Main skill (thin orchestrator for /magi command)
-    agents/
-      magi-core.md          — MAGI Core: Integrated judgment intelligence (synthesis, bias detection)
-      melchior.md           — MELCHIOR-1: The Scientist (technical excellence, anti-sycophancy)
-      balthasar.md          — BALTHASAR-2: The Mother (sustainability)
-      caspar.md             — CASPAR-3: The Woman (pragmatic aesthetics)
     references/
       output-format.md      — Output templates reference (NERV aesthetic)
       judgment-rules.md     — Voting rules and confidence levels
@@ -55,13 +55,13 @@ tests/
 ## How It Works
 
 - `SKILL.md` is the thin orchestrator — it spawns persona agents in parallel, collects results, and delegates judgment to MAGI Core
-- **MAGI Core** (`agents/magi-core.md`) is the integrated judgment intelligence — it handles extraction, voting, contention analysis, sycophancy detection, and output formatting. This ensures true encapsulation: the orchestrator does not perform judgment
-- Each persona agent file in `agents/` defines a persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
+- **MAGI Core** (`plugins/magi/agents/magi-core.md`) is the integrated judgment intelligence — it handles extraction, voting, contention analysis, sycophancy detection, and output formatting. This ensures true encapsulation: the orchestrator does not perform judgment
+- Each persona agent file in `plugins/magi/agents/` is a **plugin-native agent**: YAML frontmatter (name, description, model, maxTurns, tools) plus a body that becomes the agent's system prompt — persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
 - **MELCHIOR-1** has explicit anti-sycophancy instructions, leveraging Claude's meta-sycophancy tendency to produce genuinely critical, unflinching scientific assessment
 - **MAGI Core detects sycophancy** (忖度) in agent responses — flagging inflated scores, missing critical findings, and bias patterns. It also detects overcorrection (reverse sycophancy). Confidence is reduced when bias is detected
-- Agents are spawned as `general-purpose` subagents with `model: opus`
-- The `$ARGUMENTS` placeholder is sanitized (prompt injection protection) and wrapped in `<user_topic>` tags before injection
-- Agent files are loaded via direct path construction from the skill base directory
+- Default-council agents are spawned by plugin-qualified `subagent_type` (`magi:magi-melchior`, `magi:magi-balthasar`, `magi:magi-caspar`, `magi:magi-core`); the topic travels as the user message, never injected into the persona text
+- The topic is sanitized (prompt injection protection) and wrapped in `<user_topic>` tags; persona system prompts treat tag content strictly as data
+- Custom `magi.config.json` agents use the legacy path: file contents loaded with `$ARGUMENTS` replaced, spawned as `general-purpose` subagents
 - Persona agents emit `<!-- MAGI_OUTPUT -->` structured JSON; MAGI Core emits `<!-- MAGI_JUDGMENT -->` for orchestrator parsing
 - Agent configuration can be customized via `magi.config.json` in the project root (with path validation)
 - `/magi-quick` provides lightweight single-agent triage using `model: sonnet` for low-stakes decisions
@@ -98,5 +98,5 @@ tests/
 
 - File size limits and split strategies are defined in `plugins/magi/skills/magi/references/governance.md`
 - Before committing plugin changes, run `bash scripts/check-sizes.sh` to verify all files are within limits
-- SKILL.md must stay under 500 lines; agent files under 130 lines; reference/example files under 100 lines
+- SKILL.md must stay under 500 lines; persona agent files under 150 lines; magi-core.md under 200 lines; reference/example files under 100 lines
 - Configure pre-commit hook for automatic checks: `git config core.hooksPath .githooks`

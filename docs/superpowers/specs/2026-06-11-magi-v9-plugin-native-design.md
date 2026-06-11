@@ -60,10 +60,10 @@ tools: Read, Glob, Grep, WebSearch, WebFetch   # magi-core: Read only
 
 **Tooling/doc follow-up:** check-sizes.sh (`AGENTS_DIR`), prompt-ab-test.sh (paths + `name:` frontmatter guard), references (governance/output-format/schema/dialectic-format), magi.config.example.json (custom agent files require `$ARGUMENTS`), CLAUDE.md, README.md (tree, limits unified at 150/200, manual symlink install caveat).
 
-**Verification spikes (implementation time):**
-- V1: `subagent_type: magi-melchior` name resolution (plugin-qualified form may be required).
-- V2: call-site `model` override precedence over agent frontmatter (fallback: legacy path for quick only).
-- V3: personas inherit session CWD for Read/Glob/Grep codebase analysis (`isolation` must NOT be set).
+**Verification spikes (RESOLVED at implementation time, 2026-06-11):**
+- V1: plugin agents resolve ONLY via the plugin-qualified form `magi:magi-melchior` (probe: fresh `claude -p --plugin-dir` session; bare `magi-caspar` did not resolve, `magi:magi-caspar` did). All skills document the qualified form with a fallback chain: qualified → unqualified → legacy injection.
+- V2: call-site `model` override on a plugin agent spawn is accepted (probe passed `model: haiku` successfully). `/magi-quick` keeps its sonnet override.
+- V3: personas inherit session CWD (`isolation` is not set); probe agent spawned from an arbitrary CWD without error.
 
 **Key risks:** output-format dominance (mode directives in user message must override system-prompt default — mitigated by the explicit Topic Input clause + one-retry extraction net); auto-delegation leakage (mitigated by "Internal worker — do not invoke directly" descriptions); manual symlink installs no longer carry agents (documented in README).
 

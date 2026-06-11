@@ -82,6 +82,8 @@ When agents evaluate multiple options (comparison mode), they emit this schema i
 }
 ```
 
+Custom agent files should contain a `$ARGUMENTS` placeholder where the sanitized topic is injected. If the placeholder is absent, the orchestrator appends a `## Topic` section with the `<user_topic>` block instead. The default council (MELCHIOR/BALTHASAR/CASPAR) needs no config — it uses the plugin-native agents in `plugins/magi/agents/`.
+
 Config-level options:
 - `dialectic`: boolean — enable dialectic round (Phase 3.7). Default: false
 - `adversarial`: boolean — enable adversarial challenge (Phase 3.8). Default: false

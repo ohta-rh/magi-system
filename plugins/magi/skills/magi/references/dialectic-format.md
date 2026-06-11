@@ -39,7 +39,7 @@ Write a brief rebuttal or concurrence (3-5 lines). You may revise your scores by
 Output your response as plain text — no MAGI_OUTPUT block needed.
 ```
 
-Launch all voting agents in parallel (same model as initial round).
+Launch all voting agents in parallel (same model as initial round). Addressing follows the `/magi` Phase 2 re-spawn rule: default-council agents receive the rebuttal prompt as a user message to their `magi:magi-*` subagent_type; custom-config agents use legacy general-purpose injection.
 
 ### Step 3: Apply Score Revisions
 

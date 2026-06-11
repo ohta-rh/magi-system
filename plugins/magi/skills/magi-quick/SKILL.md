@@ -37,24 +37,22 @@ Output the triage banner:
   Assessor: {selected agent name}
 ```
 
-Launch ONE Agent with:
+Launch ONE Agent addressed by the selected persona's plugin-native subagent_type — the persona definition is the agent's system prompt, so no persona text is needed in the prompt:
 ```
 Agent:
-  subagent_type: general-purpose
+  subagent_type: magi:magi-{melchior|balthasar|caspar}
   name: {selected agent name}
   model: sonnet
   description: "MAGI Quick Triage assessment"
   prompt: |
-    You are {agent name} of the MAGI System, performing a quick triage assessment.
+    QUICK TRIAGE MODE — rapid single-perspective assessment. Keep it brief.
+    Skip codebase investigation and web research unless absolutely essential.
 
-    {agent persona description — abbreviated to 3-4 lines from the full agent file}
-
-    ## Topic
     <user_topic>
     $ARGUMENTS
     </user_topic>
 
-    ## Output Format (Quick Triage — keep it brief)
+    ## Output Format (Quick Triage — overrides your default format)
 
     ### Quick Assessment
     (3-5 lines: key finding, main concern if any, overall impression)
@@ -129,7 +127,8 @@ After displaying the result, persist a structured log (fire-and-forget — failu
 
 ## Constraints
 
-- Always use `model: sonnet` (not opus) for cost efficiency
+- Always pass `model: sonnet` on the Agent call — it overrides the agent's frontmatter default (opus) for cost efficiency
+- If `magi:magi-{persona}` fails to resolve, try the unqualified `magi-{persona}`; if both fail, Read `{plugin_root}/agents/{persona}.md`, strip the YAML frontmatter, and spawn as `general-purpose` with `model: sonnet`
 - Single agent only — never spawn multiple agents
 - Agent MUST emit a `<!-- MAGI_OUTPUT -->` structured block (schema v1.2) for observability pipeline compatibility
 - Deliberation log written with `"mode": "quick"` for pipeline differentiation

@@ -22,7 +22,7 @@ BENCHMARK_DIR="tests/fixtures/benchmarks"
 usage() {
   echo "Usage: bash scripts/prompt-ab-test.sh <agent-file-A> <agent-file-B> [--fixture <fixture>]"
   echo ""
-  echo "  <agent-file-A>   Path to the baseline agent file (e.g., plugins/magi/skills/magi/agents/melchior.md)"
+  echo "  <agent-file-A>   Path to the baseline agent file (e.g., plugins/magi/agents/melchior.md)"
   echo "  <agent-file-B>   Path to the variant agent file (e.g., melchior-v2.md)"
   echo "  --fixture <file> Run against a specific fixture only (default: all in $BENCHMARK_DIR)"
   exit 1
@@ -74,10 +74,19 @@ fi
 
 # Determine target path for swapping
 TARGET_PATH=""
-if [[ "$AGENT_NAME" == "melchior" ]]; then TARGET_PATH="plugins/magi/skills/magi/agents/melchior.md"
-elif [[ "$AGENT_NAME" == "balthasar" ]]; then TARGET_PATH="plugins/magi/skills/magi/agents/balthasar.md"
-elif [[ "$AGENT_NAME" == "caspar" ]]; then TARGET_PATH="plugins/magi/skills/magi/agents/caspar.md"
+if [[ "$AGENT_NAME" == "melchior" ]]; then TARGET_PATH="plugins/magi/agents/melchior.md"
+elif [[ "$AGENT_NAME" == "balthasar" ]]; then TARGET_PATH="plugins/magi/agents/balthasar.md"
+elif [[ "$AGENT_NAME" == "caspar" ]]; then TARGET_PATH="plugins/magi/agents/caspar.md"
 fi
+
+# Plugin-native agents require YAML frontmatter with a name: field — a variant
+# without it would break agent resolution mid-test
+for f in "$FILE_A" "$FILE_B"; do
+  if ! head -10 "$f" | grep -q '^name: magi-'; then
+    echo "Error: $f is missing plugin agent frontmatter (name: magi-*). Variants must keep the frontmatter block." >&2
+    exit 1
+  fi
+done
 
 # Collect fixtures
 if [[ -n "$SPECIFIC_FIXTURE" ]]; then

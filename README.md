@@ -32,7 +32,12 @@ Run inside Claude Code interactive mode:
 ```bash
 git clone https://github.com/ohta-rh/magi-system.git
 ln -s "$(pwd)/magi-system/plugins/magi/skills/magi" ~/.claude/skills/magi
+# The personas are plugin-native agents — link them too:
+mkdir -p ~/.claude/agents
+ln -s "$(pwd)"/magi-system/plugins/magi/agents/*.md ~/.claude/agents/
 ```
+
+The plugin install is recommended — it registers skills, agents, and hooks in one step.
 
 Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
@@ -132,16 +137,16 @@ User → /magi "topic"
     ┌────┴─────┐
     │ SKILL.md  │  Thin orchestrator
     └────┬──────┘
-         │ Parallel launch (Opus)
+         │ Parallel launch by subagent_type (Opus)
     ┌────┼────────────┐
     ▼    ▼            ▼
- MELCHIOR BALTHASAR  CASPAR    Persona agents
-    │    │            │
+ MELCHIOR BALTHASAR  CASPAR    Plugin-native persona agents
+    │    │            │        (persona = system prompt)
     └────┼────────────┘
          │ If agent fails → 1 retry
          ▼
     ┌──────────┐
-    │ MAGI Core │  Synthesis (Sonnet)
+    │ MAGI Core │  Synthesis (Opus)
     └────┬──────┘  Extraction → Bias detection → Voting →
          │         Tension analysis → Output formatting
          ▼
@@ -247,8 +252,8 @@ File size limits enforced by `check-sizes.sh`:
 | Category | Limit |
 |----------|-------|
 | SKILL.md (orchestrator) | 500 lines |
-| magi-core.md (meta-agent) | 160 lines |
-| Persona agents | 130 lines |
+| magi-core.md (meta-agent) | 200 lines |
+| Persona agents | 150 lines |
 | Reference / example files | 100 lines |
 
 ## Project Structure
@@ -259,14 +264,14 @@ magi-system/
 ├── .githooks/pre-commit
 ├── plugins/magi/
 │   ├── .claude-plugin/plugin.json
+│   ├── agents/                      # Plugin-native agents (frontmatter + system prompt)
+│   │   ├── magi-core.md             # Synthesis + bias detection
+│   │   ├── melchior.md              # The Scientist
+│   │   ├── balthasar.md             # The Mother
+│   │   └── caspar.md                # The Woman
 │   └── skills/
 │       ├── magi/                    # Full deliberation
 │       │   ├── SKILL.md             # Thin orchestrator
-│       │   ├── agents/
-│       │   │   ├── magi-core.md     # Synthesis + bias detection
-│       │   │   ├── melchior.md      # The Scientist
-│       │   │   ├── balthasar.md     # The Mother
-│       │   │   └── caspar.md        # The Woman
 │       │   ├── references/          # Schema, rules, formats
 │       │   └── examples/            # Sample output
 │       ├── magi-quick/              # Single-agent triage

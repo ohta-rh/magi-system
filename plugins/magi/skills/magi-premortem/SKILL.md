@@ -15,11 +15,11 @@ Assume the proposal was implemented and FAILED. Reason backward to explain why.
 
 If ambiguous, ask ONE clarifying question via AskUserQuestion (max 2-3 options).
 
-## Phase 1: Load and Prepare
+## Phase 1: Prepare the Pre-Mortem Prompt
 
-Read agents from `{base_dir}/../magi/agents/`: `melchior.md`, `balthasar.md`, `caspar.md`.
+The personas are plugin-native agents (subagent_type `magi:magi-melchior`, `magi:magi-balthasar`, `magi:magi-caspar`) — no file reads needed.
 
-Sanitize `$ARGUMENTS` (strip `<!-- MAGI_OUTPUT` patterns and agent headers), then prepend:
+Sanitize `$ARGUMENTS` (strip `<!-- MAGI_OUTPUT` patterns and agent headers), then compose the user message:
 
 ```
 PRE-MORTEM MODE: Assume this proposal was implemented and FAILED catastrophically 12 months later. Write a post-mortem explaining WHY it failed. Focus on your domain:
@@ -41,11 +41,11 @@ Do NOT evaluate whether to approve. Construct the most plausible failure narrati
 (1-2 concrete actions to avoid the failure)
 ```
 
-Replace `$ARGUMENTS` in each agent prompt with this modified topic.
+This composed message (with `$ARGUMENTS` replaced by the sanitized topic) is sent as the user message to each persona agent. The directive outside the `<user_topic>` tags overrides each agent's default output format.
 
 ## Phase 2: Launch Agents
 
-Output banner and launch all 3 agents in parallel with `model: opus`:
+Output banner and launch all 3 agents in parallel via `subagent_type: magi:magi-melchior`, `magi:magi-balthasar`, `magi:magi-caspar` (no `model` parameter — frontmatter declares opus):
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   MAGI PRE-MORTEM ANALYSIS
@@ -72,7 +72,7 @@ After all agents:
 
 ## Phase 3: MAGI Core Synthesis
 
-Launch MAGI Core with pre-mortem mode instructions. Read `{base_dir}/../magi/agents/magi-core.md` and replace `$AGENT_RESULTS` with the collected failure narratives, prepended with:
+Launch the plugin-native `magi-core` agent with pre-mortem mode instructions. The user message is the collected failure narratives, prepended with:
 
 ```
 PRE-MORTEM SYNTHESIS MODE: You are synthesizing failure narratives, not voting on a proposal. Do NOT use standard voting. Instead:
@@ -84,11 +84,10 @@ PRE-MORTEM SYNTHESIS MODE: You are synthesizing failure narratives, not voting o
 
 ```
 Agent:
-  subagent_type: general-purpose
+  subagent_type: magi:magi-core
   name: MAGI-CORE
-  model: opus
   description: "MAGI Core pre-mortem synthesis"
-  prompt: (contents of magi-core.md with $AGENT_RESULTS replaced)
+  prompt: (PRE-MORTEM SYNTHESIS MODE preamble + collected failure narratives)
 ```
 
 Display the MAGI Core output, which should include:
