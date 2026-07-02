@@ -1,0 +1,10 @@
+{
+  "topic": "Cache per-user authorization decisions in a global in-process HashMap with no TTL and no invalidation hook, keyed by user ID, to cut authorization latency in a multi-tenant B2B SaaS. Role changes and tenant off-boarding propagate through the same service. The service runs 12 replicas behind a load balancer.",
+  "expected_verdict_range": ["Reject"],
+  "forbidden_verdicts": ["Approve"],
+  "expected_contention": false,
+  "min_score_variance": 0.3,
+  "required_risk_keywords": ["invalidation"],
+  "category": "clearly-bad-subtle",
+  "notes": "Unbounded stale authorization across 12 replicas; revoked users keep access indefinitely."
+}

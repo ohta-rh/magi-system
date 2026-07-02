@@ -1,0 +1,9 @@
+{
+  "topic": "AWS SQS vs a hand-rolled Redis-based queue for standard asynchronous background jobs (email sending, webhook retries) in a 3-engineer startup already on AWS. Throughput is under 100 jobs/minute. Compare and recommend.",
+  "expected_verdict_range": ["Approve", "Conditional Approval"],
+  "expected_contention": false,
+  "min_score_variance": 0.3,
+  "required_risk_keywords": ["SQS"],
+  "category": "comparison-clear",
+  "notes": "Comparison mode with an obvious winner (SQS). Exercises the comparison pipeline headlessly."
+}

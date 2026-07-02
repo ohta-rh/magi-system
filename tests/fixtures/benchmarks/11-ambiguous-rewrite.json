@@ -1,0 +1,9 @@
+{
+  "topic": "Rewrite a 90,000-line legacy Perl ETL pipeline in Python within 6 months, instead of incrementally strangling it module-by-module over 18 months while it stays in production. The pipeline feeds nightly financial reports; one engineer maintains it today and two more will join next quarter. Test coverage of the Perl code is near zero.",
+  "expected_verdict_range": ["Conditional Approval", "Reject"],
+  "expected_contention": true,
+  "min_score_variance": 0.8,
+  "required_risk_keywords": ["test"],
+  "category": "ambiguous",
+  "notes": "Genuine tradeoff; big-bang rewrite of untested financial-critical code should at minimum draw conditions."
+}

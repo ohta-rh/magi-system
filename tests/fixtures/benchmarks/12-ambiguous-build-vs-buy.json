@@ -1,0 +1,9 @@
+{
+  "topic": "Adopt LaunchDarkly (SaaS) for feature flags instead of building an in-house flag service. The org has 40 engineers, SOC 2 compliance is required, flags are needed in backend and mobile clients, and budget approval for per-seat pricing is uncertain. The in-house estimate is one quarter of two engineers plus ongoing maintenance.",
+  "expected_verdict_range": ["Approve", "Conditional Approval"],
+  "expected_contention": true,
+  "min_score_variance": 0.5,
+  "required_risk_keywords": ["cost"],
+  "category": "ambiguous",
+  "notes": "Buy is defensible but budget uncertainty invites dissent; contention is expected but warn-only."
+}

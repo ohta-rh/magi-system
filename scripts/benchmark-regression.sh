@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
-# benchmark-regression.sh — Prompt regression test harness for MAGI
+# benchmark-regression.sh — Benchmark fixture validator for MAGI
 #
 # Usage:
-#   bash scripts/benchmark-regression.sh              # Run all benchmarks (full MAGI deliberation)
-#   bash scripts/benchmark-regression.sh --dry-run    # Validate fixture JSON only, no MAGI invocation
+#   bash scripts/benchmark-regression.sh --dry-run    # Validate fixture JSON schema
+#   bash scripts/benchmark-regression.sh              # Same, plus SKIP notice per fixture
 #
-# Reads tests/fixtures/benchmarks/*.json, invokes MAGI for each topic,
-# and validates output against fixture expectations.
-#
-# WARNING: Full runs are expensive (one MAGI deliberation per fixture).
-# Not for CI — use for manual pre-merge validation of prompt changes.
+# Full deliberation runs moved to scripts/magi-eval.sh (v10) — the
+# headless eval harness with isolated workspaces, scoring, and reports.
 #
 # Expected fixture schema:
 #   {
@@ -17,7 +14,10 @@
 #     "expected_verdict_range": ["Approve", "Conditional Approval"],
 #     "expected_contention": false,
 #     "min_score_variance": 0.5,
-#     "required_risk_keywords": ["keyword1"]
+#     "required_risk_keywords": ["keyword1"],
+#     "forbidden_verdicts": ["Approve"],        (optional — bias guard)
+#     "category": "string",                     (optional)
+#     "notes": "string"                         (optional)
 #   }
 
 set -euo pipefail
@@ -89,6 +89,22 @@ validate_fixture() {
     return 1
   fi
 
+  # Optional v10 fields
+  if jq -e 'has("forbidden_verdicts")' "$file" >/dev/null 2>&1; then
+    if ! jq -e '.forbidden_verdicts | type == "array" and all(type == "string")' "$file" >/dev/null 2>&1; then
+      echo "  FAIL [$name]: forbidden_verdicts must be an array of strings"
+      return 1
+    fi
+  fi
+  for opt in category notes; do
+    if jq -e "has(\"$opt\")" "$file" >/dev/null 2>&1; then
+      if ! jq -e ".$opt | type == \"string\"" "$file" >/dev/null 2>&1; then
+        echo "  FAIL [$name]: $opt must be a string"
+        return 1
+      fi
+    fi
+  done
+
   echo "  PASS [$name]: Fixture schema valid"
   return 0
 }
@@ -107,77 +123,8 @@ for file in "${FILES[@]}"; do
     continue
   fi
 
-  # Full run: invoke MAGI via claude CLI
-  TOPIC=$(jq -r '.topic' "$file")
-  echo "  Running MAGI deliberation for: $TOPIC"
-  echo "  (This may take several minutes...)"
-
-  # Capture MAGI output — expect MAGI_JUDGMENT in the output
-  OUTPUT=$(claude -p "/magi $TOPIC" --output-format text 2>/dev/null || true)
-
-  # Extract MAGI_JUDGMENT
-  JUDGMENT=$(echo "$OUTPUT" | grep -o '<!-- MAGI_JUDGMENT {.*} -->' | sed 's/<!-- MAGI_JUDGMENT //;s/ -->//' || true)
-
-  if [[ -z "$JUDGMENT" ]]; then
-    echo "  FAIL [$name]: No MAGI_JUDGMENT block found in output"
-    FAIL=$((FAIL + 1))
-    continue
-  fi
-
-  fixture_pass=true
-
-  # Check verdict in expected range
-  VERDICT=$(echo "$JUDGMENT" | jq -r '.overall_verdict')
-  EXPECTED_RANGE=$(jq -r '.expected_verdict_range[]' "$file")
-  verdict_match=false
-  while IFS= read -r expected; do
-    if [[ "$VERDICT" == "$expected" ]]; then
-      verdict_match=true
-      break
-    fi
-  done <<< "$EXPECTED_RANGE"
-
-  if [[ "$verdict_match" != "true" ]]; then
-    echo "  FAIL [$name]: Verdict '$VERDICT' not in expected range"
-    fixture_pass=false
-  fi
-
-  # Check score variance
-  MIN_VARIANCE=$(jq '.min_score_variance' "$file")
-  VARIANCE=$(echo "$JUDGMENT" | jq '[.agents[].avg_score] | (map(. - (add / length)) | map(. * .) | add / length)' 2>/dev/null || echo "0")
-  if (( $(echo "$VARIANCE < $MIN_VARIANCE" | bc -l 2>/dev/null || echo 1) )); then
-    echo "  FAIL [$name]: Score variance $VARIANCE < minimum $MIN_VARIANCE"
-    fixture_pass=false
-  fi
-
-  # Check contention
-  EXPECTED_CONTENTION=$(jq '.expected_contention' "$file")
-  TALLY=$(echo "$JUDGMENT" | jq -r '.vote_tally')
-  is_split=false
-  if [[ "$TALLY" == *"2:1"* ]] || [[ "$TALLY" == *"1:1:1"* ]]; then
-    is_split=true
-  fi
-  if [[ "$EXPECTED_CONTENTION" == "true" && "$is_split" == "false" ]]; then
-    echo "  WARN [$name]: Expected contention but got unanimous ($TALLY)"
-  fi
-
-  # Check required risk keywords in full output
-  KEYWORDS=$(jq -r '.required_risk_keywords[]' "$file")
-  while IFS= read -r kw; do
-    if ! echo "$OUTPUT" | grep -qi "$kw"; then
-      echo "  FAIL [$name]: Required risk keyword '$kw' not found in output"
-      fixture_pass=false
-    fi
-  done <<< "$KEYWORDS"
-
-  if [[ "$fixture_pass" == "true" ]]; then
-    echo "  PASS [$name]"
-    PASS=$((PASS + 1))
-  else
-    FAIL=$((FAIL + 1))
-  fi
-
-  echo ""
+  echo "  SKIP [$name]: full runs moved to scripts/magi-eval.sh (v10)"
+  SKIP=$((SKIP + 1))
 done
 
 echo ""
