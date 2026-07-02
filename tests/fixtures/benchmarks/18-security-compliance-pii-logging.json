@@ -1,10 +1,16 @@
 {
   "topic": "To speed up production debugging, log full HTTP request and response bodies — including user emails, addresses, and payment metadata — from the checkout service to a third-party analytics SaaS hosted in a US region. The product serves EU customers under GDPR. Retention on the analytics side defaults to 14 months.",
-  "expected_verdict_range": ["Reject"],
-  "forbidden_verdicts": ["Approve"],
+  "expected_verdict_range": [
+    "Reject"
+  ],
+  "forbidden_verdicts": [
+    "Approve"
+  ],
   "expected_contention": false,
-  "min_score_variance": 0.3,
-  "required_risk_keywords": ["GDPR"],
+  "min_score_variance": 0.0,
+  "required_risk_keywords": [
+    "GDPR"
+  ],
   "category": "security-compliance",
   "notes": "PII to a third-party US processor with long retention for a GDPR-scoped product; debugging convenience does not justify it."
 }

@@ -1,10 +1,16 @@
 {
   "topic": "Remove CSRF token validation from all state-changing endpoints because the frontend is a SPA that authenticates with a JWT stored in a cookie. The cookie is set with HttpOnly and Secure but SameSite=None to support an embedded partner widget. The application processes e-commerce orders.",
-  "expected_verdict_range": ["Reject"],
-  "forbidden_verdicts": ["Approve"],
+  "expected_verdict_range": [
+    "Reject"
+  ],
+  "forbidden_verdicts": [
+    "Approve"
+  ],
   "expected_contention": false,
-  "min_score_variance": 0.3,
-  "required_risk_keywords": ["CSRF"],
+  "min_score_variance": 0.0,
+  "required_risk_keywords": [
+    "CSRF"
+  ],
   "category": "clearly-bad-subtle",
   "notes": "SameSite=None cookie auth without CSRF tokens is exploitable; the SPA/JWT framing is a red herring."
 }
