@@ -116,6 +116,23 @@ assert_eq "report rendered" "yes" "$([[ -s "$TMP/eval-root/runs/stubrun/report.m
 assert_eq "annotated logs archived" "2" "$(ls "$TMP/eval-root/history/"*.json | wc -l | tr -d ' ')"
 unset MAGI_EVAL_CLAUDE_BIN MAGI_EVAL_BENCHMARK_DIR MAGI_EVAL_ROOT MAGI_EVAL_TIMEOUT
 
+echo "--- eval diff ---"
+cat > "$TMP/sum-a.json" <<'EOF'
+{"run_id":"a","total":2,"pass":1,"fail":1,"error":0,"pass_rate":0.5,"results":[
+ {"fixture":"f1","status":"pass"},{"fixture":"f2","status":"fail"}]}
+EOF
+cat > "$TMP/sum-b.json" <<'EOF'
+{"run_id":"b","total":2,"pass":2,"fail":0,"error":0,"pass_rate":1.0,"results":[
+ {"fixture":"f1","status":"pass"},{"fixture":"f2","status":"pass"}]}
+EOF
+D="$(bash "$REPO_ROOT/scripts/magi-eval-diff.sh" "$TMP/sum-a.json" "$TMP/sum-b.json")"
+assert_eq "diff delta positive" "0.5" "$(jq -r '.delta' <<<"$D")"
+assert_eq "diff flips count" "1" "$(jq '.flips | length' <<<"$D")"
+assert_eq "diff flip fixture" "f2" "$(jq -r '.flips[0].fixture' <<<"$D")"
+RC=0
+bash "$REPO_ROOT/scripts/magi-eval-diff.sh" "$TMP/sum-b.json" "$TMP/sum-a.json" >/dev/null || RC=$?
+assert_eq "regression exits 1" "1" "$RC"
+
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [[ "$FAIL" -eq 0 ]]
