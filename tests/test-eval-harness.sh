@@ -82,6 +82,18 @@ R="$(score_fixture "$TMP/fx.json" "$TMP/log-reject.json" "$TMP/stdout.txt")"
 assert_eq "contention mismatch stays pass" "pass" "$(jq -r '.status' <<<"$R")"
 assert_eq "contention mismatch warns" "1" "$(jq '.warnings | length' <<<"$R")"
 
+cat > "$TMP/log-comparison.json" <<'EOF'
+{"schema_version":"1.0","timestamp":"2026-01-01T00:00:00Z","topic":"t","judgment":{
+ "overall_verdict":"Approve","vote_tally":"3:0 PostgreSQL","confidence":"High","reversibility":"Medium",
+ "bias_flags":[],"conditions":null,"agents":[
+  {"name":"MELCHIOR-1","verdict":"Approve","recommendation":"PostgreSQL"},
+  {"name":"BALTHASAR-2","verdict":"Approve","recommendation":"PostgreSQL"},
+  {"name":"CASPAR-3","verdict":"Approve","recommendation":"PostgreSQL"}]}}
+EOF
+fx '{"topic":"t","expected_verdict_range":["Approve"],"expected_contention":false,"min_score_variance":0.0,"required_risk_keywords":["security"]}'
+R="$(score_fixture "$TMP/fx.json" "$TMP/log-comparison.json" "$TMP/stdout.txt")"
+assert_eq "zero floor skips variance on scoreless comparison log" "pass" "$(jq -r '.status' <<<"$R")"
+
 echo "--- derive_contention ---"
 assert_eq "unanimous reject: no-split" "no-split" "$(derive_contention "$TMP/log-reject.json")"
 assert_eq "approve+CA group together: no-split" "no-split" "$(derive_contention "$TMP/log-approve-flat.json")"

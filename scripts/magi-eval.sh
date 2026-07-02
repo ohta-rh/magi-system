@@ -64,17 +64,21 @@ score_fixture() {
     reasons="$(jq -c --arg r "verdict '$verdict' is forbidden for this fixture (bias guard)" '. + [$r]' <<<"$reasons")"
   fi
 
-  # `|| echo false` — a malformed agents array (e.g. empty → divide by zero)
-  # must degrade to a scoring failure, not crash the whole background job
+  # Variance applies only when the fixture demands a floor > 0 — comparison
+  # mode logs carry per-option averages instead of avg_score, so computing
+  # variance there divides by null. `|| echo false` — a malformed agents
+  # array must degrade to a scoring failure, not crash the background job
   # and silently drop this fixture's result.json from the aggregate.
-  local variance_ok
-  variance_ok="$(jq --slurpfile fx "$fixture_file" '
-    [.judgment.agents[].avg_score] as $s
-    | ($s | add / length) as $m
-    | ($s | map((. - $m) * (. - $m)) | add / length) >= $fx[0].min_score_variance
-  ' "$log_file" 2>/dev/null || echo false)"
-  if [[ "$variance_ok" != "true" ]]; then
-    reasons="$(jq -c '. + ["score variance below fixture minimum"]' <<<"$reasons")"
+  if [[ "$(jq '.min_score_variance > 0' "$fixture_file")" == "true" ]]; then
+    local variance_ok
+    variance_ok="$(jq --slurpfile fx "$fixture_file" '
+      [.judgment.agents[].avg_score] as $s
+      | ($s | add / length) as $m
+      | ($s | map((. - $m) * (. - $m)) | add / length) >= $fx[0].min_score_variance
+    ' "$log_file" 2>/dev/null || echo false)"
+    if [[ "$variance_ok" != "true" ]]; then
+      reasons="$(jq -c '. + ["score variance below fixture minimum"]' <<<"$reasons")"
+    fi
   fi
 
   local kw
