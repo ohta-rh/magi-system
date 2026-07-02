@@ -19,6 +19,16 @@ You are the operator of the MAGI System. Launch 3 persona agents in parallel for
 
 The default personas and MAGI Core are **plugin-native agents** defined in `agents/` at the plugin root — their persona definition is the agent's system prompt, and the orchestrator addresses them by `subagent_type`.
 
+## Non-Interactive Mode
+
+If the user message contains the `--non-interactive` flag, strip it from the topic and run without user interaction:
+
+- Never call AskUserQuestion. If Phase 0 would ask for clarification, proceed with the literal topic as-is instead.
+- Skip the Phase 5 offer entirely — the deliberation ends after the log write (Phase 3 Step 4.5).
+- All other phases run unchanged (micro-dialectic included).
+
+This mode supports scripted invocations such as the eval harness (`scripts/magi-eval.sh`).
+
 ## Phase 0: Topic Clarification
 
 Before consulting the MAGI, determine whether the topic has sufficient clarity for engineering deliberation.
