@@ -136,13 +136,18 @@ run_one() {
   mkdir -p "$workdir"
   printf '/magi %s --non-interactive\n' "$topic" > "$workdir/prompt.txt"
 
+  # stream-json (not text): -p text mode returns ONLY the final message,
+  # leaving the full persona reports invisible to the keyword check. The
+  # event stream carries every agent report as JSON-escaped text, which
+  # single-word grep still matches.
   (
     cd "$workdir"
     "$CLAUDE_BIN" -p \
       --plugin-dir "$PLUGIN_DIR" \
       --allowedTools="$ALLOWED_TOOLS" \
       --max-turns 50 \
-      --output-format text \
+      --verbose \
+      --output-format stream-json \
       < prompt.txt > stdout.txt 2> stderr.txt
   ) &
   local pid=$!
@@ -151,8 +156,11 @@ run_one() {
   wait "$pid" || rc=$?
   kill "$watchdog" 2>/dev/null || true
 
+  # Newest by mtime, NOT by filename: sessions have been observed writing
+  # logs with hallucinated (earlier) timestamps in the filename, which
+  # makes name-sort pick a stale log in re-used workdirs.
   local log_file
-  log_file="$(ls -1 "$workdir/.magi/history/"*.json 2>/dev/null | sort | tail -1 || true)"
+  log_file="$(ls -1t "$workdir/.magi/history/"*.json 2>/dev/null | head -1 || true)"
 
   local result
   result="$(score_fixture "$fixture_file" "${log_file:-/dev/null}" "$workdir/stdout.txt")"
