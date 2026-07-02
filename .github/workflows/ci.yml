@@ -40,6 +40,11 @@ jobs:
             echo "expected non-zero exit for schema-violating log" >&2
             exit 1
           fi
+          echo '{"schema_version":"1.0","timestamp":"2026-06-11T00-00-00Z","topic":"x","judgment":{"overall_verdict":"Approve (with conditions)"}}' > /tmp/.magi/history/bad-enum.json
+          if echo '{"tool_input":{"file_path":"/tmp/.magi/history/bad-enum.json"}}' | bash plugins/magi/scripts/validate-log.sh 2>/dev/null; then
+            echo "expected non-zero exit for non-canonical verdict" >&2
+            exit 1
+          fi
           echo "hook smoke test passed"
 
   plugin-validate:
