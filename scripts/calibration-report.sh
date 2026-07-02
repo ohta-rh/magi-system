@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # calibration-report.sh — Score calibration analysis for MAGI agents
 #
-# Usage: bash scripts/calibration-report.sh
+# Usage: bash scripts/calibration-report.sh [history-dir]
+#   history-dir  Directory of deliberation logs (default: .magi/history).
+#                Pass .magi/eval/history for benchmark-annotated eval logs.
 #
 # Analyzes outcome-annotated deliberation logs to identify systematic
 # scoring biases per agent. Produces a human-readable report.
@@ -16,7 +18,7 @@
 
 set -euo pipefail
 
-HISTORY_DIR=".magi/history"
+HISTORY_DIR="${1:-.magi/history}"
 MIN_ANNOTATED=30
 
 if ! command -v jq &>/dev/null; then

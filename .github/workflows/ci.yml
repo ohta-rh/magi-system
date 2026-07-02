@@ -24,6 +24,12 @@ jobs:
       - name: Benchmark fixture validation (dry run)
         run: bash scripts/benchmark-regression.sh --dry-run
 
+      - name: Eval harness syntax check
+        run: bash -n scripts/magi-eval.sh scripts/magi-eval-diff.sh
+
+      - name: Eval harness offline tests
+        run: bash tests/test-eval-harness.sh
+
       - name: Log validation hook smoke test
         run: |
           mkdir -p /tmp/.magi/history
