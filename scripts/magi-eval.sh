@@ -127,6 +127,141 @@ annotate_log() {
     "$log_file" > "$dest_dir/${fixture_name}-$(date -u +%Y%m%dT%H%M%S)-$$-$RANDOM.json"
 }
 
+# run_one <fixture_file> <workdir>
+# One headless deliberation; always writes <workdir>/result.json.
+run_one() {
+  local fixture_file="$1" workdir="$2"
+  local topic rc=0
+  topic="$(jq -r '.topic' "$fixture_file")"
+  mkdir -p "$workdir"
+  printf '/magi %s --non-interactive\n' "$topic" > "$workdir/prompt.txt"
+
+  (
+    cd "$workdir"
+    "$CLAUDE_BIN" -p \
+      --plugin-dir "$PLUGIN_DIR" \
+      --allowedTools="$ALLOWED_TOOLS" \
+      --max-turns 50 \
+      --output-format text \
+      < prompt.txt > stdout.txt 2> stderr.txt
+  ) &
+  local pid=$!
+  ( sleep "$TIMEOUT_SECS"; kill -TERM "$pid" 2>/dev/null ) &
+  local watchdog=$!
+  wait "$pid" || rc=$?
+  kill "$watchdog" 2>/dev/null || true
+
+  local log_file
+  log_file="$(ls -1 "$workdir/.magi/history/"*.json 2>/dev/null | sort | tail -1 || true)"
+
+  local result
+  result="$(score_fixture "$fixture_file" "${log_file:-/dev/null}" "$workdir/stdout.txt")"
+  result="$(jq -c --argjson rc "$rc" '. + {exit_code: $rc}' <<<"$result")"
+  printf '%s\n' "$result" > "$workdir/result.json"
+
+  if [[ -n "$log_file" ]]; then
+    annotate_log "$log_file" "$fixture_file" "$EVAL_ROOT/history"
+  fi
+}
+
+# run_one_with_retry <fixture_file> <workdir>
+# One retry on harness/model error (no usable log), not on scoring fail.
+run_one_with_retry() {
+  local fixture_file="$1" workdir="$2"
+  run_one "$fixture_file" "$workdir"
+  if [[ "$(jq -r '.status' "$workdir/result.json")" == "error" ]]; then
+    echo "  [retry] $(basename "$fixture_file" .json)" >&2
+    run_one "$fixture_file" "${workdir}-retry"
+    cp "${workdir}-retry/result.json" "$workdir/result.json"
+  fi
+}
+
+# render_report <summary_file>
+render_report() {
+  local summary="$1"
+  echo "# MAGI Eval Report"
+  echo ""
+  jq -r '
+    "Run: `\(.run_id)` — total \(.total), pass \(.pass), fail \(.fail), error \(.error), pass rate \((.pass_rate * 100 | floor))%\n",
+    "| Fixture | Status | Verdict | Reasons | Warnings |",
+    "|---------|--------|---------|---------|----------|",
+    (.results[] | "| \(.fixture) | \(.status) | \(.verdict // "—") | \(.reasons | join("; ") | if . == "" then "—" else . end) | \(.warnings | join("; ") | if . == "" then "—" else . end) |")
+  ' "$summary"
+}
+
+main() {
+  local run_id="" pattern="" runs=1 concurrency=3
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --run-id) run_id="$2"; shift 2 ;;
+      --fixtures) pattern="$2"; shift 2 ;;
+      --runs) runs="$2"; shift 2 ;;
+      --concurrency) concurrency="$2"; shift 2 ;;
+      *) echo "Unknown option: $1" >&2; exit 1 ;;
+    esac
+  done
+  if [[ -z "$run_id" ]]; then
+    run_id="$(date -u +%Y%m%dT%H%M%S)"
+  fi
+
+  command -v jq >/dev/null 2>&1 || { echo "Error: jq is required." >&2; exit 1; }
+  command -v "$CLAUDE_BIN" >/dev/null 2>&1 || { echo "Error: claude CLI not found: $CLAUDE_BIN" >&2; exit 1; }
+
+  local run_dir="$EVAL_ROOT/runs/$run_id"
+  mkdir -p "$run_dir"
+
+  local fixtures=() f
+  for f in "$BENCHMARK_DIR"/${pattern}*.json; do
+    [[ -f "$f" ]] && fixtures+=("$f")
+  done
+  if [[ ${#fixtures[@]} -eq 0 ]]; then
+    echo "Error: no fixtures match '${pattern}*' in $BENCHMARK_DIR" >&2
+    exit 1
+  fi
+
+  echo "MAGI eval run: $run_id — ${#fixtures[@]} fixture(s) x $runs run(s), concurrency $concurrency"
+
+  local r workdir
+  for f in "${fixtures[@]}"; do
+    for r in $(seq 1 "$runs"); do
+      workdir="$run_dir/$(basename "$f" .json)"
+      if [[ "$runs" -gt 1 ]]; then
+        workdir="$workdir-r$r"
+      fi
+      while [[ "$(jobs -rp | wc -l)" -ge "$concurrency" ]]; do sleep 5; done
+      echo "  [start] $(basename "$f" .json) (run $r)"
+      run_one_with_retry "$f" "$workdir" &
+    done
+  done
+  wait
+
+  find "$run_dir" -name result.json -not -path '*-retry/*' | sort | xargs cat \
+    | jq -s --arg rid "$run_id" '{
+        run_id: $rid,
+        total: length,
+        pass: ([.[] | select(.status == "pass")] | length),
+        fail: ([.[] | select(.status == "fail")] | length),
+        error: ([.[] | select(.status == "error")] | length),
+        pass_rate: (if length > 0 then ([.[] | select(.status == "pass")] | length) / length else 0 end),
+        results: .
+      }' > "$run_dir/summary.json"
+
+  render_report "$run_dir/summary.json" > "$run_dir/report.md"
+
+  echo ""
+  jq -r '"Results: \(.pass)/\(.total) pass, \(.fail) fail, \(.error) error — pass rate \((.pass_rate * 100 | floor))%"' "$run_dir/summary.json"
+  echo "Report: $run_dir/report.md"
+
+  if [[ "$(jq '.error' "$run_dir/summary.json")" -ge 3 ]]; then
+    echo "3+ fixtures errored — environment problem, not a prompt problem. Aborting." >&2
+    exit 2
+  fi
+  if [[ "$(jq '.fail + .error' "$run_dir/summary.json")" -gt 0 ]]; then
+    exit 1
+  fi
+  exit 0
+}
+
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   main "$@"
 fi

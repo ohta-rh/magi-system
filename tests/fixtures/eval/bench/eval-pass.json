@@ -1,0 +1,7 @@
+{
+  "topic": "stub topic that should pass",
+  "expected_verdict_range": ["Reject"],
+  "expected_contention": false,
+  "min_score_variance": 0.1,
+  "required_risk_keywords": ["security"]
+}

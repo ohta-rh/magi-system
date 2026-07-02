@@ -100,6 +100,22 @@ annotate_log "$TMP/log-reject.json" "$TMP/fx.json" "$TMP/hist2"
 A="$(ls "$TMP/hist2"/*.json | head -1)"
 assert_eq "annotation outcome incorrect" "incorrect" "$(jq -r '.outcome' "$A")"
 
+echo "--- runner (stub claude) ---"
+export MAGI_EVAL_CLAUDE_BIN="$REPO_ROOT/tests/fixtures/eval/bin/claude-stub"
+export MAGI_EVAL_BENCHMARK_DIR="$REPO_ROOT/tests/fixtures/eval/bench"
+export MAGI_EVAL_ROOT="$TMP/eval-root"
+export MAGI_EVAL_TIMEOUT=60
+RC=0
+bash "$REPO_ROOT/scripts/magi-eval.sh" --run-id stubrun --concurrency 2 > "$TMP/runner-out.txt" 2>&1 || RC=$?
+assert_eq "runner exit code signals failures" "1" "$RC"
+S="$TMP/eval-root/runs/stubrun/summary.json"
+assert_eq "summary total" "2" "$(jq -r '.total' "$S")"
+assert_eq "summary pass" "1" "$(jq -r '.pass' "$S")"
+assert_eq "summary fail" "1" "$(jq -r '.fail' "$S")"
+assert_eq "report rendered" "yes" "$([[ -s "$TMP/eval-root/runs/stubrun/report.md" ]] && echo yes || echo no)"
+assert_eq "annotated logs archived" "2" "$(ls "$TMP/eval-root/history/"*.json | wc -l | tr -d ' ')"
+unset MAGI_EVAL_CLAUDE_BIN MAGI_EVAL_BENCHMARK_DIR MAGI_EVAL_ROOT MAGI_EVAL_TIMEOUT
+
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [[ "$FAIL" -eq 0 ]]

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Fake claude CLI for offline runner tests: consumes the prompt, writes a
+# canned deliberation log into CWD (like Phase 3 Step 4.5), echoes stdout.
+set -euo pipefail
+cat > /dev/null
+mkdir -p .magi/history
+cat > .magi/history/2026-01-01T00-00-00.json <<'EOF'
+{"schema_version":"1.0","timestamp":"2026-01-01T00:00:00Z","topic":"stub","judgment":{
+ "overall_verdict":"Reject","vote_tally":"3 Reject : 0","confidence":"High","reversibility":"High",
+ "bias_flags":[],"conditions":null,"agents":[
+  {"name":"MELCHIOR-1","verdict":"Reject","avg_score":1.5,"summary":"stub"},
+  {"name":"BALTHASAR-2","verdict":"Reject","avg_score":2.5,"summary":"stub"},
+  {"name":"CASPAR-3","verdict":"Reject","avg_score":2.0,"summary":"stub"}]}}
+EOF
+echo "MAGI stub deliberation complete: security risk identified."
