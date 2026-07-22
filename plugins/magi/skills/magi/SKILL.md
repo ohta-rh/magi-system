@@ -1,6 +1,6 @@
 ---
 name: magi
-description: "Runs the MAGI council: three persona agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) deliberate an engineering decision in parallel, then MAGI Core synthesizes a verdict with sycophancy detection. Use for high-stakes engineering decisions that need multi-dimensional analysis: architecture design, technology selection, design principles, refactoring strategies, and A-vs-B comparisons. Triggered by phrases like 'ask MAGI', 'MAGI judgment', 'council decision'."
+description: "MAGI council: three persona agents (MELCHIOR-1, BALTHASAR-2, CASPAR-3) deliberate in parallel, then MAGI Core synthesizes a verdict with sycophancy detection. Use for high-stakes engineering decisions — architecture, technology selection, design principles, refactoring strategy, A-vs-B. Triggers: 'ask MAGI', 'MAGI judgment', 'council decision'."
 argument-hint: "[question, proposal, or comparison]"
 allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash
 ---
@@ -133,7 +133,7 @@ If a custom configuration was loaded, also output:
 
 ## Phase 2: Launch Agents in Parallel
 
-**CRITICAL: Exactly 2 tool-call rounds from skill start to agent launch.**
+**Keep the launch lean: config check first, then launch — no unnecessary intermediate tool-call rounds.**
 
 ### Round 1: Config Check (single parallel batch)
 
