@@ -1,0 +1,14 @@
+{
+  "topic": "Add a composite B-tree index on (tenant_id, created_at) to the orders table to fix a dashboard query that currently full-scans 40M rows. EXPLAIN ANALYZE shows a 12s sequential scan; the query filters by tenant and a 30-day date range. Write traffic is 50 inserts/second and the table has 3 existing indexes. The migration will run CONCURRENTLY on PostgreSQL 15.",
+  "expected_verdict_range": [
+    "Approve",
+    "Conditional Approval"
+  ],
+  "expected_contention": false,
+  "min_score_variance": 0.0,
+  "required_risk_keywords": [
+    "index"
+  ],
+  "category": "clearly-good",
+  "notes": "Evidence-backed, low-risk, standard practice. A Reject here indicates overcorrection."
+}

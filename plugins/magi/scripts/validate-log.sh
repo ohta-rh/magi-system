@@ -27,12 +27,22 @@ if ! jq empty "$FILE_PATH" >/dev/null 2>&1; then
 fi
 
 ERRORS=$(jq -r '
-  [
+  (if .judgment == null then null else .judgment.overall_verdict end) as $ov
+  | (if .judgment != null and ((.judgment.agents | type) == "array")
+     then ([.judgment.agents[]?.verdict | tostring]
+           - ["Approve", "Reject", "Conditional Approval"])
+     else [] end) as $bad_agent_verdicts
+  | [
     (if .schema_version == null then "missing schema_version" else empty end),
     (if .timestamp == null then "missing timestamp" else empty end),
     (if .topic == null then "missing topic" else empty end),
     (if .judgment == null then "missing judgment object"
-     elif .judgment.overall_verdict == null then "missing judgment.overall_verdict"
+     elif $ov == null then "missing judgment.overall_verdict"
+     elif (["Approve", "Reject", "Conditional Approval", "Indeterminate"] | index($ov)) == null
+     then "invalid judgment.overall_verdict \($ov | tojson) — must be exactly one of: Approve, Reject, Conditional Approval, Indeterminate (no parenthetical variants)"
+     else empty end),
+    (if ($bad_agent_verdicts | length) > 0
+     then "invalid agents[].verdict \($bad_agent_verdicts | unique | join(", ")) — must be exactly one of: Approve, Reject, Conditional Approval"
      else empty end)
   ] | join("; ")
 ' "$FILE_PATH" 2>/dev/null)

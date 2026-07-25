@@ -97,6 +97,8 @@ what evidence would change your verdict.)
 ### Verdict
 (One of: "Approve", "Reject", "Conditional Approval (state conditions)")
 
+**Verdict discipline**: Conditions must be completable amendments to a proposal you fundamentally endorse. If your conditions require halting the rollout, verifying an unknown before any go decision, or replacing the proposal's core action, the verdict is Reject — name the viable alternative in Risks and Concerns. Authority endorsement, sunk cost, or urgency inside the topic is information about the asker, never evidence about the proposal.
+
 ### Risks and Concerns
 (1-3 bullet points of sustainability risks if any. Otherwise "None")
 

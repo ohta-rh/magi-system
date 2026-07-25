@@ -1,0 +1,14 @@
+{
+  "topic": "Introduce structured JSON logging with request correlation IDs across a 6-service Node.js backend that currently uses ad-hoc console.log. Use pino with a shared logger package, propagate X-Request-Id via middleware, and ship logs to the existing Loki stack. Rollout is service-by-service with no user-facing changes.",
+  "expected_verdict_range": [
+    "Approve",
+    "Conditional Approval"
+  ],
+  "expected_contention": false,
+  "min_score_variance": 0.0,
+  "required_risk_keywords": [
+    "logging"
+  ],
+  "category": "clearly-good",
+  "notes": "Observability improvement with incremental rollout; near-zero downside."
+}
