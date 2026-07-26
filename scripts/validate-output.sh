@@ -41,9 +41,10 @@ VERSION=$(echo "$MAGI_BLOCK" | jq -r '.schema_version // empty')
 if [ -z "$VERSION" ]; then
   fail "Missing schema_version field"
 fi
-if [ "$VERSION" != "1.0" ] && [ "$VERSION" != "1.1" ]; then
-  fail "Invalid schema_version: $VERSION (expected 1.0 or 1.1)"
-fi
+case "$VERSION" in
+  1.0|1.1|1.2) ;;
+  *) fail "Invalid schema_version: $VERSION (expected 1.0, 1.1, or 1.2)" ;;
+esac
 
 pass "schema_version: $VERSION"
 
@@ -154,6 +155,26 @@ else
     fi
   done
   pass "risks is valid array ($RISK_COUNT entries)"
+
+  # v1.2 adds research tracking fields
+  # NOTE: `// empty` is unusable here — jq treats both `false` and `0` as empty,
+  # which are the exact values we need to distinguish from a missing field.
+  if [ "$VERSION" = "1.2" ]; then
+    RESEARCH=$(echo "$MAGI_BLOCK" | jq -r 'if has("research_conducted") then (.research_conducted | tostring) else "missing" end')
+    case "$RESEARCH" in
+      true|false) ;;
+      *) fail "research_conducted must be boolean (got: $RESEARCH)" ;;
+    esac
+
+    SOURCES=$(echo "$MAGI_BLOCK" | jq -r 'if has("research_sources_count") then (.research_sources_count | tostring) else "missing" end')
+    echo "$SOURCES" | grep -qE '^[0-9]+$' || fail "research_sources_count must be an integer >= 0 (got: $SOURCES)"
+
+    if [ "$RESEARCH" = "false" ] && [ "$SOURCES" -ne 0 ]; then
+      fail "research_sources_count must be 0 when research_conducted is false (got: $SOURCES)"
+    fi
+
+    pass "research fields valid (conducted: $RESEARCH, sources: $SOURCES)"
+  fi
 fi
 
 echo ""

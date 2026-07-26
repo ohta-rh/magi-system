@@ -51,6 +51,8 @@ assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/valid-output-v1.1.txt" "v1.1 compari
 assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/valid-output-conditional.txt" "v1.0 Conditional Approval"
 assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/valid-output-reject.txt" "v1.0 Reject verdict"
 assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/valid-output-empty-risks.txt" "v1.0 empty risks array"
+assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/valid-output-v1.2.txt" "v1.2 standard with research fields"
+assert_valid "$OUTPUT_VALIDATOR" "$FIXTURES/no-research-flag.txt" "v1.2 research_conducted=false with 0 sources"
 
 echo ""
 
@@ -62,6 +64,7 @@ assert_invalid "$OUTPUT_VALIDATOR" "$FIXTURES/malformed-missing-fields.txt" "mis
 assert_invalid "$OUTPUT_VALIDATOR" "$FIXTURES/malformed-bad-score-range.txt" "score out of 1-5 range"
 assert_invalid "$OUTPUT_VALIDATOR" "$FIXTURES/malformed-conditions-mismatch.txt" "Conditional Approval with null conditions"
 assert_invalid "$OUTPUT_VALIDATOR" "$FIXTURES/malformed-v1.1-bad-recommendation.txt" "v1.1 recommendation mismatch"
+assert_invalid "$OUTPUT_VALIDATOR" "$FIXTURES/malformed-v1.2-research-mismatch.txt" "v1.2 research_conducted=false with 3 sources"
 
 echo ""
 echo "━━━ MAGI_JUDGMENT Extraction Tests ━━━"
