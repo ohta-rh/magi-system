@@ -60,7 +60,7 @@ tests/
 
 - `SKILL.md` is the thin orchestrator — it spawns persona agents in parallel, collects results, and delegates judgment to MAGI Core
 - **MAGI Core** (`plugins/magi/agents/magi-core.md`) is the integrated judgment intelligence — it handles extraction, voting, contention analysis, sycophancy detection, and output formatting. This ensures true encapsulation: the orchestrator does not perform judgment
-- Each persona agent file in `plugins/magi/agents/` is a **plugin-native agent**: YAML frontmatter (name, description, model, maxTurns, tools) plus a body that becomes the agent's system prompt — persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
+- Each persona agent file in `plugins/magi/agents/` is a **plugin-native agent**: YAML frontmatter (name, description, model, effort, maxTurns, tools) plus a body that becomes the agent's system prompt — persona, cognitive framework, internal deliberation protocol, 4 evaluation axes, research guidelines, and output format
 - **MELCHIOR-1** has explicit anti-sycophancy instructions, leveraging Claude's meta-sycophancy tendency to produce genuinely critical, unflinching scientific assessment
 - **MAGI Core detects sycophancy** (忖度) in agent responses — flagging inflated scores, missing critical findings, and bias patterns. It also detects overcorrection (reverse sycophancy). Confidence is reduced when bias is detected
 - **MAGI Core has persistent calibration memory** (`memory: user` → `~/.claude/agent-memory/magi-core/`) — it accumulates observed bias patterns across deliberations; memory informs Calibration Notes and confidence only, never scores or verdicts
@@ -91,6 +91,7 @@ tests/
 - Agent output uses a numeric 1-5 scoring scale (5 = best, 1 = worst)
 - Agents include a `<!-- MAGI_OUTPUT {...} -->` structured block at the end of their response
 - Overall Analysis is 4-6 lines, leading with the most important deliberation finding
+- **Prompts are written for Claude Opus 5** ([prompting guide](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5)). Four rules follow from it: deliberation depth comes from the frontmatter `effort` field (`high` for the council and MAGI Core, `low` for `/magi-quick`), never from thinking directives in prose; persona agents report risks **unfiltered** and MAGI Core is the severity filter (Opus 5 obeys "only report high-severity" literally and under-reports); prompts carry no self-verification instructions, since Opus 5 verifies its own work and such instructions cause over-verification; and each agent ends with an `<output_discipline>` block holding scope and length in place
 - Verdicts are: Approve / Reject / Conditional Approval
 - MAGI Core performs sycophancy detection (忖度検知) on all agent responses, flagging inflated scores and missing critical analysis. Confidence is reduced by one level when bias is detected
 - Final judgment follows parameterized majority rule (N-agent voting engine), with bias calibration by MAGI Core

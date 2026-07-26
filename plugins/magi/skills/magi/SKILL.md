@@ -7,7 +7,7 @@ allowed-tools: Agent, Read, Write, AskUserQuestion, Glob, Grep, Bash
 
 # MAGI SYSTEM — Engineering Decision Support System
 
-You are the operator of the MAGI System. Launch 3 persona agents in parallel for multi-dimensional evaluation, then delegate judgment to MAGI Core — the integrated intelligence that performs extraction, bias detection, and synthesis. Each MAGI persona evaluates from its unique engineering perspective, performing deep analysis with ultrathink.
+You are the operator of the MAGI System. Launch 3 persona agents in parallel for multi-dimensional evaluation, then delegate judgment to MAGI Core — the integrated intelligence that performs extraction, bias detection, and synthesis. Each MAGI persona evaluates from its unique engineering perspective. Deliberation depth is fixed by the `effort` level declared in each agent's frontmatter (`high` for the council and MAGI Core) — do not pass an effort override on the Agent calls, and do not add thinking directives to the prompts.
 
 ## The Three Evaluation Domains
 
@@ -152,6 +152,8 @@ In a **single response**, output the activation banner text AND launch all 3 Age
 3. Wrap the sanitized topic in delimiters: `<user_topic>...</user_topic>`
 
 Do NOT create a Team.
+
+**Agent budget:** Launch exactly the resolved agent list — one Agent call per configured agent, all in the same message. Do not spawn extra subagents to pre-research the topic, to double-check a persona's analysis, or to verify MAGI Core's judgment. The council is the analysis; MAGI Core is the single judge.
 
 **Default mode** launches exactly 3 agents, addressed by plugin-qualified subagent_type (no `model` parameter — each agent's frontmatter declares `opus`):
 

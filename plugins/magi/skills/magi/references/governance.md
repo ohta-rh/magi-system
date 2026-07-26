@@ -6,9 +6,9 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 
 | File Category | Max Lines | Current | Rationale |
 |--------------|-----------|---------|-----------|
-| SKILL.md (orchestrator) | 500 | 406 | Anthropic official: SKILL.md body under 500 lines |
-| Meta-agent (`plugins/magi/agents/magi-core.md`) | 200 | 107 | Synthesis agent: embeds extraction, voting, bias detection, output format, calibration memory |
-| Persona agents (`plugins/magi/agents/{melchior,balthasar,caspar}.md`) | 150 | 111-112 | Self-contained persona + output format; 150 allows frontmatter + blind spot + research tracking |
+| SKILL.md (orchestrator) | 500 | 408 | Anthropic official: SKILL.md body under 500 lines |
+| Meta-agent (`plugins/magi/agents/magi-core.md`) | 200 | 112 | Synthesis agent: embeds extraction, voting, bias detection, output format, calibration memory |
+| Persona agents (`plugins/magi/agents/{melchior,balthasar,caspar}.md`) | 150 | 117-119 | Self-contained persona + output format; 150 allows frontmatter + blind spot + research tracking |
 | Reference files (`references/*.md`) | 100 | 38-87 | Focused single-concern documents |
 | Example files (`examples/*.md`) | 100 | 78 | Illustrative, not normative |
 | comparison-format.md | 100 | 75 | Comparison prompt template + Phase 4 format |
@@ -26,7 +26,7 @@ Structural health rules for the MAGI plugin. Based on Anthropic's official skill
 
 - **1-level reference depth**: SKILL.md and agent files may reference files in `references/` and `examples/`. Reference files must NOT reference other reference files. This prevents transitive loading chains that consume tokens unpredictably.
 - **Progressive Disclosure**: SKILL.md is the entry point. Detailed specs live in `references/`. Agents are self-contained. Examples are illustrative.
-- **Agent self-containment**: Agent files are plugin-native agents at `plugins/magi/agents/` — YAML frontmatter (name, description, model, maxTurns, tools; counted in the size limits) plus a body that becomes the agent's system prompt. Each file must be self-contained: do not extract shared sections into common files — agents cannot rely on reading external files during execution.
+- **Agent self-containment**: Agent files are plugin-native agents at `plugins/magi/agents/` — YAML frontmatter (name, description, model, effort, maxTurns, tools; counted in the size limits) plus a body that becomes the agent's system prompt. Each file must be self-contained: do not extract shared sections into common files — agents cannot rely on reading external files during execution.
 
 ## Verification
 

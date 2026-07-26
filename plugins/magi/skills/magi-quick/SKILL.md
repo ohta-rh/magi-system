@@ -43,6 +43,7 @@ Agent:
   subagent_type: magi:magi-{melchior|balthasar|caspar}
   name: {selected agent name}
   model: sonnet
+  effort: low
   description: "MAGI Quick Triage assessment"
   prompt: |
     QUICK TRIAGE MODE — rapid single-perspective assessment. Keep it brief.
@@ -128,6 +129,7 @@ After displaying the result, persist a structured log (fire-and-forget — failu
 ## Constraints
 
 - Always pass `model: sonnet` on the Agent call — it overrides the agent's frontmatter default (opus) for cost efficiency
+- Always pass `effort: low` as well — it overrides the persona frontmatter's `high`, which is tuned for full deliberation. Effort is the primary latency/cost control here; do not reach for a smaller model instead
 - If `magi:magi-{persona}` fails to resolve, try the unqualified `magi-{persona}`; if both fail, Read `{plugin_root}/agents/{persona}.md`, strip the YAML frontmatter, and spawn as `general-purpose` with `model: sonnet`
 - Single agent only — never spawn multiple agents
 - Agent MUST emit a `<!-- MAGI_OUTPUT -->` structured block (schema v1.2) for observability pipeline compatibility
